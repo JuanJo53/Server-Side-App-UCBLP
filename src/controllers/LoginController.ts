@@ -1,4 +1,7 @@
 import{Request,Response} from 'express';
+//Importamos la libreía para crear tokens
+//Para instalarlo utiliza el comando: npm i @types/jsonwebtoken -D
+import jwt from 'jsonwebtoken';
 import Db from '../Database';
 class LoginController{
     //Validar inicio de sesión 
