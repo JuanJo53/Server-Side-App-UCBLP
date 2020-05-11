@@ -17,14 +17,25 @@ class LoginController {
     //Validar inicio de sesión 
     login(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield Database_1.default.query('SELECT * FROM docente', function (err, result, fields) {
+            //Guardamos el correo y la contraseña en variables
+            const correoDocente = req.body.correo_docente;
+            const contraseniaDocente = req.body.contrasenia_docente;
+            const query = `SELECT  * FROM docente WHERE  estado_docente = true 
+                      AND correo_docente = '${correoDocente}' AND contrasenia_docente = '${contraseniaDocente}'`;
+            yield Database_1.default.query(query, function (err, result, fields) {
                 if (err)
                     throw err;
-                res.json(result);
+                //Si el resultado retorna un docente con esos datos se valida el ingreso
+                if (result.length > 0) {
+                    res.json({ text: "Usuario validado" });
+                }
+                else {
+                    res.json({ text: "Usuario no validado" });
+                }
             });
         });
     }
-    //Listar docentes 
+    //Listar docentes activos
     listarDocentes(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             yield Database_1.default.query('SELECT * FROM docente WHERE estado_docente = true', function (err, result, fields) {
