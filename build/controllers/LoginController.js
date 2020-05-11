@@ -45,6 +45,27 @@ class LoginController {
             });
         });
     }
+    //Registrar un nuevo docente
+    registrarDocente(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield Database_1.default.query('INSERT INTO docente set ?', [req.body], function (err, result, fields) {
+                if (err)
+                    throw err;
+                res.json(result);
+            });
+        });
+    }
+    //Eliminar un docente
+    eliminarDocente(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { id } = req.params;
+            yield Database_1.default.query('UPDATE docente SET estado_docente = false WHERE id_docente = ?', [id], function (err, result, fields) {
+                if (err)
+                    throw err;
+                res.json({ text: 'Eliminando docente' });
+            });
+        });
+    }
 }
 exports.loginController = new LoginController();
 //# sourceMappingURL=LoginController.js.map

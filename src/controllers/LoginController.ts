@@ -27,5 +27,21 @@ class LoginController{
             res.json(result);
         });
     }
+    //Registrar un nuevo docente
+    public async registrarDocente (req:Request,res:Response){ 
+        await Db.query('INSERT INTO docente set ?', [req.body],function(err, result, fields) {
+            if (err) throw err;
+            res.json(result);
+        });
+    }
+    //Eliminar un docente
+    public async eliminarDocente (req:Request,res:Response){ 
+        const {id} = req.params;
+        await Db.query('UPDATE docente SET estado_docente = false WHERE id_docente = ?',[id],function(err, result, fields) {
+            if (err) throw err;
+            res.json({text: 'Eliminando docente'});
+        });
+    }
+
 }
 export const loginController=new LoginController();
