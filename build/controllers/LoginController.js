@@ -14,9 +14,20 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const Database_1 = __importDefault(require("../Database"));
 class LoginController {
+    //Validar inicio de sesión 
     login(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             yield Database_1.default.query('SELECT * FROM docente', function (err, result, fields) {
+                if (err)
+                    throw err;
+                res.json(result);
+            });
+        });
+    }
+    //Listar docentes 
+    listarDocentes(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield Database_1.default.query('SELECT * FROM docente WHERE estado_docente = true', function (err, result, fields) {
                 if (err)
                     throw err;
                 res.json(result);

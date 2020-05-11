@@ -8,7 +8,8 @@ class LoginRoutes{
     }
     //configurar respuesta routas
     config():void{
-        this.router.get('/users',loginController.login);
+        this.router.get('/users/login',loginController.login);
+        this.router.get('/users',loginController.listarDocentes);
     }
 }
 const loginroutes=new LoginRoutes();
