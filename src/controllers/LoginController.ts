@@ -5,6 +5,7 @@ import jwt from 'jsonwebtoken';
 import Db from '../Database';
 class LoginController{
     //Validar inicio de sesión 
+    //Para probarlo utiliza este json : {"correo_docente":"m.ticona@acad.ucb.edu.bo","contrasenia_docente":"1234abc"}
     public async login (req:Request,res:Response){ 
         //Guardamos el correo y la contraseña en variables
         const correoDocente = req.body.correo_docente;
