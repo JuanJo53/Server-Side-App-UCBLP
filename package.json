@@ -1,0 +1,31 @@
+{
+  "name": "Server-Side-App-UCBLP",
+  "version": "1.0.0",
+  "description": "Proyecto de plataforma web que ayuda a la educación virtual de idiomas. Aquí se centra toda la programación del lado del servidor.",
+  "main": "index.js",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "morgan": "^1.10.0",
+    "promise-mysql": "^4.1.3",
+    "typescript": "^3.8.3"
+  },
+  "devDependencies": {
+    "concurrently": "^5.2.0",
+    "nodemon": "^2.0.3"
+  },
+  "scripts": {
+    "dev":"concurrently \"tsc -w\" \"nodemon build/index.js\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JuanJo53/Server-Side-App-UCBLP.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JuanJo53/Server-Side-App-UCBLP/issues"
+  },
+  "homepage": "https://github.com/JuanJo53/Server-Side-App-UCBLP#readme"
+}
