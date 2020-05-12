@@ -15,15 +15,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 //Importamos la libreía para crear tokens
 //Para instalarlo utiliza el comando: npm i @types/jsonwebtoken -D
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const bcrypt_1 = __importDefault(require("bcrypt"));
+const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const Database_1 = __importDefault(require("../Database"));
 class LoginController {
     criptPass(password) {
-        const salt = bcrypt_1.default.genSaltSync(10);
-        return bcrypt_1.default.hashSync(password, salt);
+        const salt = bcryptjs_1.default.genSaltSync(10);
+        return bcryptjs_1.default.hashSync(password, salt);
     }
     valPass(password, passwordBd) {
-        const ver = bcrypt_1.default.compareSync(password, passwordBd);
+        const ver = bcryptjs_1.default.compareSync(password, passwordBd);
         return ver;
     }
     getToken(login_id) {

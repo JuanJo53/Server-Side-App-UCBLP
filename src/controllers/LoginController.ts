@@ -2,8 +2,7 @@ import{Request,Response} from 'express';
 //Importamos la libreía para crear tokens
 //Para instalarlo utiliza el comando: npm i @types/jsonwebtoken -D
 import jwt from 'jsonwebtoken';
-import bcrypt from 'bcrypt'
-import{getRepository} from 'typeorm'
+import bcrypt from 'bcryptjs';
 import Db from '../Database'; 
 class LoginController{ 
     private criptPass(password:string):string{
