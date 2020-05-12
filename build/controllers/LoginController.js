@@ -67,6 +67,16 @@ class LoginController {
             });
         });
     }
+    listarDocente(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { id } = req.params;
+            yield Database_1.default.query('SELECT * FROM docente WHERE estado_docente=true AND id_docente=? ', [id], function (err, result, fields) {
+                if (err)
+                    throw err;
+                res.json(result);
+            });
+        });
+    }
     //Registrar un nuevo docente
     registrarDocente(req, res) {
         return __awaiter(this, void 0, void 0, function* () {

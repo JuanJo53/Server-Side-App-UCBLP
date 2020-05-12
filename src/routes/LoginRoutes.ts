@@ -12,6 +12,7 @@ class LoginRoutes{
         this.router.post('/users/signup',loginController.registrarDocente);
         this.router.get('/users',loginController.listarDocentes);
         this.router.delete('/users/:id',loginController.eliminarDocente);
+        this.router.get('/users/:id',loginController.listarDocente);
     }
 }
 const loginroutes=new LoginRoutes();

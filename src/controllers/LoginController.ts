@@ -32,7 +32,7 @@ class LoginController{
                 if(loginController.valPass(contraseniaDocente,result[0].contrasenia_docente))
                 {
                     const token=loginController.getToken(req.body.correo_docente);
-                    res.json(token);      
+                    res.json(token);    
                 }   
                 else{
                     res.json({text: "Usuario no validado"});
@@ -40,6 +40,7 @@ class LoginController{
             }
             else{
                 res.json({text: "Usuario no validado"});
+                
             }
            
         });
@@ -47,6 +48,13 @@ class LoginController{
     //Listar docentes activos
     public async listarDocentes (req:Request,res:Response){ 
         await Db.query('SELECT * FROM docente WHERE estado_docente = true', function(err, result, fields) {
+            if (err) throw err;
+            res.json(result);
+        });
+    }
+    public async listarDocente(req:Request,res:Response){ 
+        const {id} = req.params;
+        await Db.query('SELECT * FROM docente WHERE estado_docente=true AND id_docente=? ',[id], function(err, result, fields) {
             if (err) throw err;
             res.json(result);
         });
