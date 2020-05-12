@@ -12,22 +12,44 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+//Importamos la libreía para crear tokens
+//Para instalarlo utiliza el comando: npm i @types/jsonwebtoken -D
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const bcrypt_1 = __importDefault(require("bcrypt"));
 const Database_1 = __importDefault(require("../Database"));
 class LoginController {
+    criptPass(password) {
+        const salt = bcrypt_1.default.genSaltSync(10);
+        return bcrypt_1.default.hashSync(password, salt);
+    }
+    valPass(password, passwordBd) {
+        const ver = bcrypt_1.default.compareSync(password, passwordBd);
+        return ver;
+    }
+    getToken(login_id) {
+        return jsonwebtoken_1.default.sign(login_id, process.env.TOKEN_SESION_PLAT || "TOKEN_PRUEBA");
+    }
     //Validar inicio de sesión 
-    login(req, res) {
+    //Para probarlo utiliza este json : {"correo_docente":"m.ticona@acad.ucb.edu.bo","contrasenia_docente":"1234abc"}
+    validarUsuario(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             //Guardamos el correo y la contraseña en variables
             const correoDocente = req.body.correo_docente;
             const contraseniaDocente = req.body.contrasenia_docente;
             const query = `SELECT  * FROM docente WHERE  estado_docente = true 
-                      AND correo_docente = '${correoDocente}' AND contrasenia_docente = '${contraseniaDocente}'`;
+                      AND correo_docente = '${correoDocente}'`;
             yield Database_1.default.query(query, function (err, result, fields) {
                 if (err)
                     throw err;
                 //Si el resultado retorna un docente con esos datos se valida el ingreso
                 if (result.length > 0) {
-                    res.json({ text: "Usuario validado" });
+                    if (exports.loginController.valPass(contraseniaDocente, result[0].contrasenia_docente)) {
+                        const token = exports.loginController.getToken(req.body.correo_docente);
+                        res.json(token);
+                    }
+                    else {
+                        res.json({ text: "Usuario no validado" });
+                    }
                 }
                 else {
                     res.json({ text: "Usuario no validado" });
@@ -48,10 +70,12 @@ class LoginController {
     //Registrar un nuevo docente
     registrarDocente(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
+            req.body.contrasenia_docente = exports.loginController.criptPass(req.body.contrasenia_docente);
             yield Database_1.default.query('INSERT INTO docente set ?', [req.body], function (err, result, fields) {
                 if (err)
                     throw err;
-                res.json(result);
+                const token = exports.loginController.getToken(req.body.correo_docente);
+                res.json(token);
             });
         });
     }

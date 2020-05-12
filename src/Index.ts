@@ -1,8 +1,10 @@
 import express, { Application } from 'express';
+import dotenv from 'dotenv';
 import LoginRoutes from './routes/LoginRoutes';
 import morgan from 'morgan';
 import cors from 'cors';
-class Server{
+dotenv.config();
+class Server{ 
 
     public app:Application;
     constructor(){

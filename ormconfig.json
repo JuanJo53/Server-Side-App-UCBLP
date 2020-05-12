@@ -1,0 +1,10 @@
+{        
+    "type":"mysql",
+    "host":"34.95.189.118",
+    "port":3306,
+    "username":"admin_ucb_plat",
+    "password":"BaseDeDatosIdiomas-UCB",
+    "database":"plataforma_idiomas" ,
+    "entities":["build/models/**/*.js"],
+    "synchronize":true
+}

@@ -10,7 +10,8 @@ class LoginRoutes {
     ;
     //configurar respuesta routas
     config() {
-        this.router.get('/users/login', LoginController_1.loginController.login);
+        this.router.get('/users/login', LoginController_1.loginController.validarUsuario);
+        this.router.post('/users/signup', LoginController_1.loginController.registrarDocente);
         this.router.get('/users', LoginController_1.loginController.listarDocentes);
     }
 }
