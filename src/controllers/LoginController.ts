@@ -22,9 +22,9 @@ class LoginController{
         //Guardamos el correo y la contraseña en variables
         const correoDocente = req.body.correo_docente; 
         const contraseniaDocente = req.body.contrasenia_docente ;
-        const query =`SELECT  * FROM docente WHERE  estado_docente = true 
-                      AND correo_docente = '${correoDocente}'`;
-        await Db.query(query, function(err, result, fields) {
+        const query =`SELECT  id_docnete FROM docente WHERE  estado_docente = true 
+                      AND correo_docente = ?`;
+        await Db.query(query, [correoDocente],function(err, result, fields) {
             if (err) throw err;
             //Si el resultado retorna un docente con esos datos se valida el ingreso
             if(result.length>0){
@@ -47,7 +47,9 @@ class LoginController{
     }
     //Listar docentes activos
     public async listarDocentes (req:Request,res:Response){ 
-        await Db.query('SELECT * FROM docente WHERE estado_docente = true', function(err, result, fields) {
+       const  query = `SELECT id_docente,nombre_docente,ap_pat_docente, ap_mat_docente, correo_docente,
+       contrasenia_docente FROM docente where estado_docente =true;`;
+        await Db.query(query, function(err, result, fields) {
             if (err) throw err;
             res.json(result);
         });
