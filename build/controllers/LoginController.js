@@ -37,9 +37,9 @@ class LoginController {
             console.log(req.headers);
             const correoDocente = req.body.correo_docente;
             const contraseniaDocente = req.body.contrasenia_docente;
-            const query = `SELECT  * FROM docente WHERE  estado_docente = true 
-                      AND correo_docente = '${correoDocente}'`;
-            yield Database_1.default.query(query, function (err, result, fields) {
+            const query = `SELECT  id_docnete FROM docente WHERE  estado_docente = true 
+                      AND correo_docente = ?`;
+            yield Database_1.default.query(query, [correoDocente], function (err, result, fields) {
                 if (err)
                     throw err;
                 //Si el resultado retorna un docente con esos datos se valida el ingreso
@@ -65,7 +65,9 @@ class LoginController {
     //Listar docentes activos
     listarDocentes(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield Database_1.default.query('SELECT * FROM docente WHERE estado_docente = true', function (err, result, fields) {
+            const query = `SELECT id_docente,nombre_docente,ap_pat_docente, ap_mat_docente, correo_docente,
+       contrasenia_docente FROM docente where estado_docente =true;`;
+            yield Database_1.default.query(query, function (err, result, fields) {
                 if (err)
                     throw err;
                 res.json(result);
@@ -75,7 +77,9 @@ class LoginController {
     listarDocente(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { id } = req.params;
-            yield Database_1.default.query('SELECT * FROM docente WHERE estado_docente=true AND id_docente=? ', [id], function (err, result, fields) {
+            const query = `SELECT id_docente,nombre_docente,ap_pat_docente, ap_mat_docente, correo_docente,
+       contrasenia_docente FROM docente where estado_docente =true AND id_docente = ?`;
+            yield Database_1.default.query(query, [id], function (err, result, fields) {
                 if (err)
                     throw err;
                 res.json(result);
