@@ -20,6 +20,7 @@ class LoginController{
     //Para probarlo utiliza este json : {"correo_docente":"m.ticona@acad.ucb.edu.bo","contrasenia_docente":"1234abc"}
     public async validarUsuario (req:Request,res:Response){ 
         //Guardamos el correo y la contraseña en variables
+        console.log(req.headers);
         const correoDocente = req.body.correo_docente; 
         const contraseniaDocente = req.body.contrasenia_docente ;
         const query =`SELECT  * FROM docente WHERE  estado_docente = true 
@@ -27,12 +28,18 @@ class LoginController{
         await Db.query(query, function(err, result, fields) {
             if (err) throw err;
             //Si el resultado retorna un docente con esos datos se valida el ingreso
-            if(result.length>0){
 
+            if(result.length>0){
                 if(loginController.valPass(contraseniaDocente,result[0].contrasenia_docente))
                 {
+                    
                     const token=loginController.getToken(req.body.correo_docente);
-                    res.json(token);    
+                    res.json(
+                        {
+                            user:correoDocente,
+                            token:token
+                        }
+                        );    
                 }   
                 else{
                     res.json({text: "Usuario no validado"});
@@ -40,6 +47,7 @@ class LoginController{
             }
             else{
                 res.json({text: "Usuario no validado"});
+                console.log("entra");
                 
             }
            

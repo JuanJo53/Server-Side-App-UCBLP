@@ -34,6 +34,7 @@ class LoginController {
     validarUsuario(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             //Guardamos el correo y la contraseña en variables
+            console.log(req.headers);
             const correoDocente = req.body.correo_docente;
             const contraseniaDocente = req.body.contrasenia_docente;
             const query = `SELECT  * FROM docente WHERE  estado_docente = true 
@@ -45,7 +46,10 @@ class LoginController {
                 if (result.length > 0) {
                     if (exports.loginController.valPass(contraseniaDocente, result[0].contrasenia_docente)) {
                         const token = exports.loginController.getToken(req.body.correo_docente);
-                        res.json(token);
+                        res.json({
+                            user: correoDocente,
+                            token: token
+                        });
                     }
                     else {
                         res.json({ text: "Usuario no validado" });
@@ -53,6 +57,7 @@ class LoginController {
                 }
                 else {
                     res.json({ text: "Usuario no validado" });
+                    console.log("entra");
                 }
             });
         });

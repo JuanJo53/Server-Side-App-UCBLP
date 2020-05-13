@@ -5,4 +5,4 @@ export default{
         password:"BaseDeDatosIdiomas-UCB",
         database:"plataforma_idiomas" 
     }
-}
+}  
