@@ -8,7 +8,7 @@ class LoginRoutes{
     }
     //configurar respuesta routas
     config():void{
-        this.router.get('/users/login',loginController.validarUsuario);
+        this.router.post('/users/login',loginController.validarUsuario);
         this.router.post('/users/signup',loginController.registrarDocente);
         this.router.get('/users',loginController.listarDocentes);
         this.router.delete('/users/:id',loginController.eliminarDocente);
