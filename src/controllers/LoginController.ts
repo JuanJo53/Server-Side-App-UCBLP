@@ -64,7 +64,9 @@ class LoginController{
     }
     public async listarDocente(req:Request,res:Response){ 
         const {id} = req.params;
-        await Db.query('SELECT * FROM docente WHERE estado_docente=true AND id_docente=? ',[id], function(err, result, fields) {
+        const  query = `SELECT id_docente,nombre_docente,ap_pat_docente, ap_mat_docente, correo_docente,
+       contrasenia_docente FROM docente where estado_docente =true AND id_docente = ?`;
+        await Db.query(query,[id], function(err, result, fields) {
             if (err) throw err;
             res.json(result);
         });
