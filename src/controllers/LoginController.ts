@@ -23,7 +23,7 @@ class LoginController{
         console.log(req.headers);
         const correoDocente = req.body.correo_docente; 
         const contraseniaDocente = req.body.contrasenia_docente ;
-        const query =`SELECT  id_docente FROM docente WHERE  estado_docente = true 
+        const query =`SELECT  * FROM docente WHERE  estado_docente = true 
                       AND correo_docente = ?`;
         await Db.query(query, [correoDocente],function(err, result, fields) {
             if (err) throw err;
