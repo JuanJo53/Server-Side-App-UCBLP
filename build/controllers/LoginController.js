@@ -27,7 +27,7 @@ class LoginController {
         return ver;
     }
     getToken(login_id) {
-        return jsonwebtoken_1.default.sign(login_id, process.env.TOKEN_SESION_PLAT || "TOKEN_PRUEBA");
+        return jsonwebtoken_1.default.sign({ id: login_id }, process.env.TOKEN_SESION_PLAT || "TOKEN_PRUEBA", { expiresIn: 60 * 60 * 24 });
     }
     //Validar inicio de sesión 
     //Para probarlo utiliza este json : {"correo_docente":"m.ticona@acad.ucb.edu.bo","contrasenia_docente":"1234abc"}
@@ -47,10 +47,10 @@ class LoginController {
                 //Si el resultado retorna un docente con esos datos se valida el ingreso
                 if (result.length > 0) {
                     if (exports.loginController.valPass(contraseniaDocente, result[0].contrasenia_docente)) {
-                        const token = exports.loginController.getToken(req.body.correoDocente);
+                        const token = exports.loginController.getToken(result[0].id_docente);
                         console.log("Token: " + token);
                         res.json({
-                            user: correoDocente,
+                            //  user:correoDocente,
                             token: token
                         });
                         console.log("Entra");
@@ -81,13 +81,15 @@ class LoginController {
     }
     listarDocente(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { id } = req.params;
+            const id = req.docenteId;
+            console.log("ID: " + id);
             const query = `SELECT id_docente,nombre_docente,ap_pat_docente, ap_mat_docente, correo_docente,
        contrasenia_docente FROM docente where estado_docente =true AND id_docente = ?`;
             yield Database_1.default.query(query, [id], function (err, result, fields) {
                 if (err)
                     throw err;
                 res.json(result);
+                //console.log()
             });
         });
     }

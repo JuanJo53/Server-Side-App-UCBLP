@@ -14,7 +14,7 @@ class LoginController{
         return ver; 
     }
     private getToken(login_id:string):string{
-        return jwt.sign(login_id,process.env.TOKEN_SESION_PLAT||"TOKEN_PRUEBA");
+        return jwt.sign({id:login_id},process.env.TOKEN_SESION_PLAT||"TOKEN_PRUEBA",{expiresIn:60*60*24});
     }
     //Validar inicio de sesión 
     //Para probarlo utiliza este json : {"correo_docente":"m.ticona@acad.ucb.edu.bo","contrasenia_docente":"1234abc"}
@@ -36,11 +36,11 @@ class LoginController{
                 if(loginController.valPass(contraseniaDocente,result[0].contrasenia_docente))
                 {
                     
-                    const token=loginController.getToken(req.body.correoDocente);
+                    const token=loginController.getToken(result[0].id_docente);
                     console.log("Token: "+token);
                     res.json(
                         {
-                            user:correoDocente,
+                          //  user:correoDocente,
                             token:token
                         }
                         );   
@@ -68,12 +68,14 @@ class LoginController{
         });
     }
     public async listarDocente(req:Request,res:Response){ 
-        const {id} = req.params;
+        const id = req.docenteId;
+        console.log("ID: "+id);
         const  query = `SELECT id_docente,nombre_docente,ap_pat_docente, ap_mat_docente, correo_docente,
        contrasenia_docente FROM docente where estado_docente =true AND id_docente = ?`;
         await Db.query(query,[id], function(err, result, fields) {
             if (err) throw err;
             res.json(result);
+            //console.log()
         });
     }
     //Registrar un nuevo docente

@@ -1,5 +1,7 @@
 import {Router} from 'express';
 import{loginController} from '../controllers/LoginController';
+import { TokenValidation } from '../libs/VerifyToken';
+
 class LoginRoutes{
     public router:Router=Router();;
     constructor(){
@@ -12,7 +14,7 @@ class LoginRoutes{
         this.router.post('/users/signup',loginController.registrarDocente);
         this.router.get('/users',loginController.listarDocentes);
         this.router.delete('/users/:id',loginController.eliminarDocente);
-        this.router.get('/users/:id',loginController.listarDocente);
+        this.router.get('/users/profile',TokenValidation,loginController.listarDocente);
     }
 }
 const loginroutes=new LoginRoutes();
