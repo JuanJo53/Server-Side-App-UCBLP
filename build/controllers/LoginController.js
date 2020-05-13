@@ -35,8 +35,10 @@ class LoginController {
         return __awaiter(this, void 0, void 0, function* () {
             //Guardamos el correo y la contraseña en variables
             console.log(req.headers);
-            const correoDocente = req.body.correo_docente;
-            const contraseniaDocente = req.body.contrasenia_docente;
+            const correoDocente = req.body.correoDocente;
+            const contraseniaDocente = req.body.contraseniaDocente;
+            console.log("Correo: " + correoDocente);
+            console.log("Contra: " + contraseniaDocente);
             const query = `SELECT  id_docente, correo_docente,contrasenia_docente FROM docente WHERE  estado_docente = true 
                       AND correo_docente = ?`;
             yield Database_1.default.query(query, [correoDocente], function (err, result, fields) {
@@ -45,19 +47,22 @@ class LoginController {
                 //Si el resultado retorna un docente con esos datos se valida el ingreso
                 if (result.length > 0) {
                     if (exports.loginController.valPass(contraseniaDocente, result[0].contrasenia_docente)) {
-                        const token = exports.loginController.getToken(req.body.correo_docente);
+                        const token = exports.loginController.getToken(req.body.correoDocente);
+                        console.log("Token: " + token);
                         res.json({
                             user: correoDocente,
                             token: token
                         });
+                        console.log("Entra");
                     }
                     else {
                         res.json({ text: "Usuario no validado" });
+                        console.log("No entra por contrasenia");
                     }
                 }
                 else {
                     res.json({ text: "Usuario no validado" });
-                    console.log("entra");
+                    console.log("No entra por correo");
                 }
             });
         });
@@ -89,11 +94,11 @@ class LoginController {
     //Registrar un nuevo docente
     registrarDocente(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            req.body.contrasenia_docente = exports.loginController.criptPass(req.body.contrasenia_docente);
+            req.body.contraseniaDocente = exports.loginController.criptPass(req.body.contraseniaDocente);
             yield Database_1.default.query('INSERT INTO docente set ?', [req.body], function (err, result, fields) {
                 if (err)
                     throw err;
-                const token = exports.loginController.getToken(req.body.correo_docente);
+                const token = exports.loginController.getToken(req.body.correoDocente);
                 res.json(token);
             });
         });

@@ -20,35 +20,40 @@ class LoginController{
     //Para probarlo utiliza este json : {"correo_docente":"m.ticona@acad.ucb.edu.bo","contrasenia_docente":"1234abc"}
     public async validarUsuario (req:Request,res:Response){ 
         //Guardamos el correo y la contraseña en variables
+      
         console.log(req.headers);
-        const correoDocente = req.body.correo_docente; 
-        const contraseniaDocente = req.body.contrasenia_docente ;
+        const correoDocente:string = req.body.correoDocente; 
+        const contraseniaDocente:string = req.body.contraseniaDocente;
+        console.log("Correo: "+correoDocente);
+        console.log("Contra: "+contraseniaDocente);
         const query =`SELECT  id_docente, correo_docente,contrasenia_docente FROM docente WHERE  estado_docente = true 
                       AND correo_docente = ?`;
-        await Db.query(query, [correoDocente],function(err, result, fields) {
+        await Db.query(query,[correoDocente],function(err, result, fields) {
             if (err) throw err;
             //Si el resultado retorna un docente con esos datos se valida el ingreso
-
+            
             if(result.length>0){
                 if(loginController.valPass(contraseniaDocente,result[0].contrasenia_docente))
                 {
                     
-                    const token=loginController.getToken(req.body.correo_docente);
+                    const token=loginController.getToken(req.body.correoDocente);
+                    console.log("Token: "+token);
                     res.json(
                         {
                             user:correoDocente,
                             token:token
                         }
-                        );    
+                        );   
+                        console.log("Entra"); 
                 }   
                 else{
                     res.json({text: "Usuario no validado"});
+                    console.log("No entra por contrasenia");
                 }
             }
             else{
                 res.json({text: "Usuario no validado"});
-                console.log("entra");
-                
+                console.log("No entra por correo");
             }
            
         });
@@ -73,10 +78,10 @@ class LoginController{
     }
     //Registrar un nuevo docente
     public async registrarDocente (req:Request,res:Response){ 
-        req.body.contrasenia_docente=loginController.criptPass(req.body.contrasenia_docente);
+        req.body.contraseniaDocente=loginController.criptPass(req.body.contraseniaDocente);
         await Db.query('INSERT INTO docente set ?', [req.body],function(err, result, fields) {
             if (err) throw err;
-            const token=loginController.getToken(req.body.correo_docente)
+            const token=loginController.getToken(req.body.correoDocente)
             res.json(token);  
         });
     }
