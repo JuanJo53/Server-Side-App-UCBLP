@@ -6,11 +6,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 exports.TokenValidation = (req, res, next) => {
     const token = req.header('authorization');
-    if (!token)
+    console.log("Token: " + token);
+    if (token == null) {
+        console.log("no definido");
         return res.status(401).json('Acceso denegado');
-    const payload = jsonwebtoken_1.default.verify(token, process.env.TOKEN_SESION_PLAT || 'tokentest');
-    req.docenteId = payload.id;
-    console.log("ID doc:" + payload);
-    next();
+    }
+    else {
+        const payload = jsonwebtoken_1.default.verify(token, process.env.TOKEN_SESION_PLAT || 'tokentest');
+        req.docenteId = payload.id;
+        console.log("ID doc:" + payload);
+        next();
+    }
 };
 //# sourceMappingURL=VerifyToken.js.map

@@ -83,12 +83,12 @@ class LoginController {
         return __awaiter(this, void 0, void 0, function* () {
             const id = req.docenteId;
             console.log("ID: " + id);
-            const query = `SELECT id_docente,nombre_docente,ap_pat_docente, ap_mat_docente, correo_docente,
-       contrasenia_docente FROM docente where estado_docente =true AND id_docente = ?`;
+            const query = `SELECT nombre_docente,ap_pat_docente, ap_mat_docente, correo_docente
+        FROM docente where estado_docente =true AND id_docente = ?`;
             yield Database_1.default.query(query, [id], function (err, result, fields) {
                 if (err)
                     throw err;
-                res.json(result);
+                res.json(result[0]);
                 //console.log()
             });
         });
