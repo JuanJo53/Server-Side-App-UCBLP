@@ -10,7 +10,7 @@ class CursoRoutes{
     }
     //configurar respuesta routas
     config():void{
-        this.router.get('/class-room/:id',cursoController.obtenerCursosDocente);
+        this.router.get('/class-room/',TokenValidation,cursoController.obtenerCursosDocente);
     }
 }
 const cursoRoutes=new CursoRoutes();
