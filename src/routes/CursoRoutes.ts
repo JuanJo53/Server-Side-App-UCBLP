@@ -11,6 +11,7 @@ class CursoRoutes{
     //configurar respuesta routas
     config():void{
         this.router.get('/teacher/class-room',TokenValidation,cursoController.obtenerCursosDocente);
+        this.router.get('/teacher/class-room/prueba',cursoController.obtenerCursosDocentePrueba);
     }
 }
 const cursoRoutes=new CursoRoutes();
