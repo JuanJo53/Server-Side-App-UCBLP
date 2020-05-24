@@ -8,12 +8,35 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+const Database_1 = __importDefault(require("../Database"));
 class ClassController {
     listaAlumnos(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { id } = req.params;
-            console.log("ID Curso: " + id);
+            const query = `select alumno.id_alumno, alumno.nombre_alumno, alumno.ap_paterno_alumno,alumno.ap_materno_alumno, sum(nota_modulo.nota_modulo*modulo.rubrica/100) as 'nota'
+        from curso_alumno inner join alumno on 
+        curso_alumno.id_alumno = alumno.id_alumno
+        inner join nota_modulo on
+        alumno.id_alumno=nota_modulo.id_alumno
+        inner join modulo on 
+        nota_modulo.id_modulo=modulo.id_modulo
+        inner join curso on
+        curso.id_curso=modulo.id_curso
+        where curso_alumno.id_curso= ?
+        and curso.estado_curso = true 
+        and alumno.estado_alumno=true
+        and modulo.estado_modulo=true
+        group by curso_alumno.id_alumno
+        order by alumno.ap_paterno_alumno;`;
+            yield Database_1.default.query(query, [id], function (err, result, fields) {
+                if (err)
+                    throw err;
+                res.json(result);
+            });
         });
     }
 }
