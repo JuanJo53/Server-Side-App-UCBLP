@@ -70,7 +70,7 @@ class ClassController {
                         res.json(result);
                     }
                     else {
-                        res.json({ text: 'Alumno no encontrado' });
+                        res.json({ text: 'Alumno no encontrado' }).status(404);
                     }
                 }
             });
