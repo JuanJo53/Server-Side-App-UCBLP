@@ -58,7 +58,7 @@ class ClassController {
     obtenerAlumnoAltaCurso(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const correoAlumno = req.body.correoAlumno;
-            const query = `SELECT id_alumno FROM alumno WHERE correo_alumno = ? AND estado_alumno = true`;
+            const query = `SELECT id_alumno,nombre_alumno,ap_paterno_alumno,ap_materno_alumno FROM alumno WHERE correo_alumno = ? AND estado_alumno = true`;
             Database_1.default.query(query, [correoAlumno], function (err, result, fields) {
                 if (err) {
                     res.status(403).json({ text: 'Error' });
@@ -80,6 +80,8 @@ class ClassController {
         return __awaiter(this, void 0, void 0, function* () {
             const idAlunmo = req.body.idAlunmo;
             const idCurso = req.body.idCurso;
+            console.log(idAlunmo);
+            console.log(idCurso);
             const query = `INSERT INTO curso_alumno (id_alumno,id_curso,estado_curso_alumno,tx_id,tx_username,tx_host,tx_date)
                       VALUES (?,?,true,1,'root',' 192.168.0.10',CURRENT_TIMESTAMP())`;
             Database_1.default.query(query, [idAlunmo, idCurso], function (err, result, fields) {
@@ -89,7 +91,7 @@ class ClassController {
                     throw err;
                 }
                 else {
-                    res.status(200).json({ text: 'El alumno ha sido eliminado con éxito' });
+                    res.status(200).json({ text: 'El alumno ha sido agregado con éxito' });
                 }
             });
         });
