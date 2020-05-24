@@ -46,13 +46,11 @@ class ClassController {
             const query = `UPDATE curso_alumno SET estado_curso_alumno = false WHERE id_curso_alumno= ?`;
             Database_1.default.query(query, [id], function (err, result, fields) {
                 if (err) {
-                    res.status(403);
-                    res.json({ text: 'Error en la eliminación' });
+                    res.json({ text: 'Error en la eliminación' }).status(403);
                     throw err;
                 }
                 else {
-                    res.json({ text: 'El alumno ha sido eliminado con éxito' });
-                    res.status(200);
+                    res.json({ text: 'El alumno ha sido eliminado con éxito' }).status(200);
                 }
             });
         });
@@ -86,9 +84,11 @@ class ClassController {
                       VALUES (?,?,true,1,'root',' 192.168.0.10',CURRENT_TIMESTAMP())`;
             Database_1.default.query(query, [idAlunmo, idCurso], function (err, result, fields) {
                 if (err) {
+                    res.json({ text: 'No se pudo agregar al estudiante' }).status(403);
                     throw err;
                 }
                 else {
+                    res.json({ text: 'El alumno ha sido eliminado con éxito' }).status(200);
                 }
             });
         });
