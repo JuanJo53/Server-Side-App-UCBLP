@@ -2,6 +2,7 @@ import express, { Application } from 'express';
 import dotenv from 'dotenv';
 import LoginRoutes from './routes/LoginRoutes';
 import CursoRoutes from './routes/CursoRoutes';
+import ClassRoutes from './routes/ClassRoutes';
 import morgan from 'morgan';
 import cors from 'cors';
 dotenv.config();
@@ -26,6 +27,7 @@ class Server{
     routes():void{
         this.app.use(LoginRoutes);
         this.app.use(CursoRoutes);
+        this.app.use(ClassRoutes);
     }
     start():void{
         this.app.listen(this.app.get('port'));

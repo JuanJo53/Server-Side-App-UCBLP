@@ -7,6 +7,7 @@ const express_1 = __importDefault(require("express"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const LoginRoutes_1 = __importDefault(require("./routes/LoginRoutes"));
 const CursoRoutes_1 = __importDefault(require("./routes/CursoRoutes"));
+const ClassRoutes_1 = __importDefault(require("./routes/ClassRoutes"));
 const morgan_1 = __importDefault(require("morgan"));
 const cors_1 = __importDefault(require("cors"));
 dotenv_1.default.config();
@@ -28,6 +29,7 @@ class Server {
     routes() {
         this.app.use(LoginRoutes_1.default);
         this.app.use(CursoRoutes_1.default);
+        this.app.use(ClassRoutes_1.default);
     }
     start() {
         this.app.listen(this.app.get('port'));
