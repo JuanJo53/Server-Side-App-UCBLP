@@ -63,13 +63,13 @@ class ClassController{
     }
 
     public async altaAlumnoCurso(req: Request,res:Response){
-        const idAlunmo = req.body.idAlunmo;
+        const idAlumno = req.body.idAlumno;
         const idCurso = req.body.idCurso;
-        console.log(idAlunmo);
+        console.log(idAlumno);
         console.log(idCurso);
         const query =`INSERT INTO curso_alumno (id_alumno,id_curso,estado_curso_alumno,tx_id,tx_username,tx_host,tx_date)
                       VALUES (?,?,true,1,'root',' 192.168.0.10',CURRENT_TIMESTAMP())`;
-        Db.query(query,[idAlunmo,idCurso],function(err,result,fields){
+        Db.query(query,[idAlumno,idCurso],function(err,result,fields){
             if(err){
                 res.statusMessage="sql err";
                 res.status(211).json({ text: 'No se pudo agregar al estudiante'});
