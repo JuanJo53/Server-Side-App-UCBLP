@@ -26,10 +26,11 @@ class ClassController {
         nota_modulo.id_modulo=modulo.id_modulo
         inner join curso on
         curso.id_curso=modulo.id_curso
-        where curso_alumno.id_curso= ?
+        where curso_alumno.id_curso=1
         and curso.estado_curso = true 
         and alumno.estado_alumno=true
         and modulo.estado_modulo=true
+        and curso_alumno.estado_curso_alumno=true
         group by curso_alumno.id_alumno
         order by alumno.ap_paterno_alumno;`;
             yield Database_1.default.query(query, [id], function (err, result, fields) {
