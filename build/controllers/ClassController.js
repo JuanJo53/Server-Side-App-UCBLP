@@ -57,10 +57,10 @@ class ClassController {
             });
         });
     }
-    altaAlumnoCurso(req, res) {
+    obtenerAlumnoAltaCurso(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const correoAlumno = req.body.correoAlumno;
-            const query = `SELECT id_alumno FROM alumno WHERE correo_alumno = ?`;
+            const query = `SELECT id_alumno FROM alumno WHERE correo_alumno = ? AND estado_alumno = true`;
             Database_1.default.query(query, [correoAlumno], function (err, result, fields) {
                 if (err) {
                     res.status(403);
@@ -74,6 +74,21 @@ class ClassController {
                     else {
                         res.json({ text: 'Alumno no encontrado' });
                     }
+                }
+            });
+        });
+    }
+    altaAlumnoCurso(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const idAlunmo = req.body.idAlunmo;
+            const idCurso = req.body.idCurso;
+            const query = `INSERT INTO curso_alumno (id_alumno,id_curso,estado_curso_alumno,tx_id,tx_username,tx_host,tx_date)
+                      VALUES (?,?,true,1,'root',' 192.168.0.10',CURRENT_TIMESTAMP())`;
+            Database_1.default.query(query, [idAlunmo, idCurso], function (err, result, fields) {
+                if (err) {
+                    throw err;
+                }
+                else {
                 }
             });
         });

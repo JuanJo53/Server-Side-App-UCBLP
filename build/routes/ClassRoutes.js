@@ -14,7 +14,7 @@ class ClassRoutes {
         //this.router.get('/teacher/class-room',TokenValidation,cursoController.obtenerCursosDocente);
         this.router.get('/teacher/my-class/students/:id', VerifyToken_1.TokenValidation, ClassController_1.classController.listaAlumnos);
         this.router.delete('/teacher/my-class/students/:id', VerifyToken_1.TokenValidation, ClassController_1.classController.bajaAlumnoCurso);
-        this.router.get('/teacher/my-class/students', ClassController_1.classController.altaAlumnoCurso);
+        this.router.get('/teacher/my-class/students/profile', ClassController_1.classController.obtenerAlumnoAltaCurso);
     }
 }
 const classRoutes = new ClassRoutes();
