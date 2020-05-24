@@ -40,7 +40,7 @@ class ClassController {
             });
         });
     }
-    bajaAlumno(req, res) {
+    bajaAlumnoCurso(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { id } = req.params;
             const query = `UPDATE curso_alumno SET estado_curso_alumno = false WHERE id_curso_alumno= ?`;
@@ -53,6 +53,27 @@ class ClassController {
                 else {
                     res.json({ text: 'El alumno ha sido eliminado con éxito' });
                     res.status(200);
+                }
+            });
+        });
+    }
+    altaAlumnoCurso(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const correoAlumno = req.body.correoAlumno;
+            const query = `SELECT id_alumno FROM alumno WHERE correo_alumno = ?`;
+            Database_1.default.query(query, [correoAlumno], function (err, result, fields) {
+                if (err) {
+                    res.status(403);
+                    res.json({ text: 'Error' });
+                    throw err;
+                }
+                else {
+                    if (result.length > 0) {
+                        res.json(result);
+                    }
+                    else {
+                        res.json({ text: 'Alumno no encontrado' });
+                    }
                 }
             });
         });

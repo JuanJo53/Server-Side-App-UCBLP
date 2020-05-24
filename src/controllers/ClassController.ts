@@ -26,7 +26,7 @@ class ClassController{
             res.json(result);   
         });
     }
-    public async bajaAlumno(req:Request,res:Response){
+    public async bajaAlumnoCurso(req:Request,res:Response){
         const {id}=req.params;
         const query =`UPDATE curso_alumno SET estado_curso_alumno = false WHERE id_curso_alumno= ?`
         Db.query(query, [id], function (err, result, fields) {
@@ -41,6 +41,28 @@ class ClassController{
             }
         });
     }
+    
+    public async altaAlumnoCurso(req:Request,res:Response){
+        const correoAlumno = req.body.correoAlumno;
+        const query =`SELECT id_alumno FROM alumno WHERE correo_alumno = ?`
+        Db.query(query, [correoAlumno], function (err, result, fields) {
+            if (err) {
+                res.status(403);
+                res.json({ text: 'Error' });
+                throw err;
+            }
+            else {
+                if (result.length>0){
+                    res.json(result);
+                }
+                else{
+                    res.json({ text:'Alumno no encontrado'})
+                }
+                     
+            }
+        });
+    }
+
 
 
 }

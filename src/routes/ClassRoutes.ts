@@ -12,8 +12,9 @@ class ClassRoutes{
     //configurar respuesta routas
     config():void{
         //this.router.get('/teacher/class-room',TokenValidation,cursoController.obtenerCursosDocente);
-        this.router.get('/teacher/my-class/students/:id',classController.listaAlumnos);
-        this.router.delete('/teacher/my-class/students/:id',classController.bajaAlumno);
+        this.router.get('/teacher/my-class/students/:id',TokenValidation,classController.listaAlumnos);
+        this.router.delete('/teacher/my-class/students/:id',TokenValidation,classController.bajaAlumnoCurso);
+        this.router.get('/teacher/my-class/students',classController.altaAlumnoCurso);
         
     }
 }
