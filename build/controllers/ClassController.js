@@ -61,16 +61,16 @@ class ClassController {
             const query = `SELECT id_alumno FROM alumno WHERE correo_alumno = ? AND estado_alumno = true`;
             Database_1.default.query(query, [correoAlumno], function (err, result, fields) {
                 if (err) {
-                    res.status(403);
-                    res.json({ text: 'Error' });
+                    res.status(403).json({ text: 'Error' });
                     throw err;
                 }
                 else {
                     if (result.length > 0) {
-                        res.json(result);
+                        res.status(200).json(result);
                     }
                     else {
-                        res.json({ text: 'Alumno no encontrado' }).status(404);
+                        res.statusMessage = "student not found";
+                        res.status(210).json({ text: 'Alumno no encontrado' });
                     }
                 }
             });
@@ -84,11 +84,12 @@ class ClassController {
                       VALUES (?,?,true,1,'root',' 192.168.0.10',CURRENT_TIMESTAMP())`;
             Database_1.default.query(query, [idAlunmo, idCurso], function (err, result, fields) {
                 if (err) {
-                    res.json({ text: 'No se pudo agregar al estudiante' }).status(403);
+                    res.statusMessage = "sql err";
+                    res.status(211).json({ text: 'No se pudo agregar al estudiante' });
                     throw err;
                 }
                 else {
-                    res.json({ text: 'El alumno ha sido eliminado con éxito' }).status(200);
+                    res.status(200).json({ text: 'El alumno ha sido eliminado con éxito' });
                 }
             });
         });
