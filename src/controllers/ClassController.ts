@@ -18,6 +18,7 @@ class ClassController{
         and curso.estado_curso = true 
         and alumno.estado_alumno=true
         and modulo.estado_modulo=true
+        and nota_modulo.estado_nota_modulo=true
         and curso_alumno.estado_curso_alumno=true
         group by curso_alumno.id_alumno , curso_alumno.id_curso_alumno
         order by alumno.ap_paterno_alumno;`;

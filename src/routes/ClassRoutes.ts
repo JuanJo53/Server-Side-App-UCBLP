@@ -15,7 +15,6 @@ class ClassRoutes{
         this.router.get('/teacher/my-class/students/:id',TokenValidation,classController.listaAlumnos);
         this.router.delete('/teacher/my-class/students/:id',TokenValidation,classController.bajaAlumnoCurso);
         this.router.post('/teacher/my-class/students/profile',TokenValidation,classController.obtenerAlumnoAltaCurso);
-        this.router.post('/teacher/my-class/students',TokenValidation,classController.obtenerAlumnoAltaCurso);
         this.router.post('/teacher/my-class/students/add-student',TokenValidation,classController.altaAlumnoCurso);
         
     }
