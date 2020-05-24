@@ -26,6 +26,22 @@ class ClassController{
             res.json(result);   
         });
     }
+    public async bajaAlumno(req:Request,res:Response){
+        const {id}=req.params;
+        const query =`UPDATE curso_alumno SET estado_curso_alumno = false WHERE id_curso_alumno= ?`
+        Db.query(query, [id], function (err, result, fields) {
+            if (err) {
+                res.status(403);
+                res.json({ text: 'Error en la eliminación' });
+                throw err;
+            }
+            else {
+                res.json({ text: 'El alumno ha sido eliminado con éxito' });
+                res.status(200);
+            }
+        });
+    }
+
 
 }
 

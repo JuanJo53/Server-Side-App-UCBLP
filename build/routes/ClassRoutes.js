@@ -12,6 +12,7 @@ class ClassRoutes {
     config() {
         //this.router.get('/teacher/class-room',TokenValidation,cursoController.obtenerCursosDocente);
         this.router.get('/teacher/my-class/students/:id', ClassController_1.classController.listaAlumnos);
+        this.router.delete('/teacher/my-class/students/:id', ClassController_1.classController.bajaAlumno);
     }
 }
 const classRoutes = new ClassRoutes();

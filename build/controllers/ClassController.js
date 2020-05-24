@@ -40,6 +40,23 @@ class ClassController {
             });
         });
     }
+    bajaAlumno(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { id } = req.params;
+            const query = `UPDATE curso_alumno SET estado_curso_alumno = false WHERE id_curso_alumno= ?`;
+            Database_1.default.query(query, [id], function (err, result, fields) {
+                if (err) {
+                    res.status(403);
+                    res.json({ text: 'Error en la eliminación' });
+                    throw err;
+                }
+                else {
+                    res.json({ text: 'El alumno ha sido eliminado con éxito' });
+                    res.status(200);
+                }
+            });
+        });
+    }
 }
 exports.classController = new ClassController();
 //# sourceMappingURL=ClassController.js.map
