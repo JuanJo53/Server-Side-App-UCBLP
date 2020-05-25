@@ -10,10 +10,10 @@ class ThemeRoutes{
     }
     //configurar respuesta routas
     config():void{
-        this.router.get('/teacher/class-room/themes',themeController.listarTemas);
-        this.router.post('/teacher/class-room/themes',themeController.agregarTema);
-        this.router.put('/teacher/class-room/themes/:id',themeController.actualizarTema);
-        this.router.delete('/teacher/class-room/themes/:id',themeController.eliminarTema);
+        this.router.get('/teacher/class-room/themes/:id',TokenValidation,themeController.listarTemas);
+        this.router.post('/teacher/class-room/themes',TokenValidation,themeController.agregarTema);
+        this.router.put('/teacher/class-room/themes/:id',TokenValidation,themeController.actualizarTema);
+        this.router.delete('/teacher/class-room/themes/:id',TokenValidation,themeController.eliminarTema);
     }
 }
 const themeRoutes=new ThemeRoutes();

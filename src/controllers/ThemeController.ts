@@ -22,7 +22,7 @@ class ThemeController{
     public async listarTemas(req:Request,res:Response){
         const {id} =req.params;
         const query = `SELECT id_tema,numero_tema,nombre_tema,id_imagen FROM tema INNER JOIN curso ON
-        curso.id_curso=tema.id_curso WHERE id_curso = ? AND tema.estado_tema=true`;
+        curso.id_curso=tema.id_curso WHERE curso.id_curso = ? AND tema.estado_tema=true`;
         Db.query(query,[id], function(err,result,fields){
             if(err){
                 res.status(500).json({text:'No se pudo cargar la lista de temas'});
