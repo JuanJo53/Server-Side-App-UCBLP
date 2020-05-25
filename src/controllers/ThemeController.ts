@@ -15,7 +15,7 @@ class ThemeController{
                 throw err;
             }
             else{
-                res.status(200).json({text:'El tema ha sido agregcreadoado correctamente'});
+                res.status(200).json({text:'El tema ha sido creado correctamente'});
             }
         });
     }
