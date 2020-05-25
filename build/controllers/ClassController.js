@@ -83,16 +83,40 @@ class ClassController {
             const idCurso = req.body.idCurso;
             console.log(idAlumno);
             console.log(idCurso);
-            const query = `INSERT INTO curso_alumno (id_alumno,id_curso,estado_curso_alumno,tx_id,tx_username,tx_host,tx_date)
-                      VALUES (?,?,true,1,'root',' 192.168.0.10',CURRENT_TIMESTAMP())`;
-            Database_1.default.query(query, [idAlumno, idCurso], function (err, result, fields) {
+            const queryver = `SELECT id_curso_alumno from curso_alumno where curso_alumno.id_curso=? and curso_alumno.id_alumno=? and curso_alumno.estado_curso_alumno=true`;
+            Database_1.default.query(queryver, [idCurso, idAlumno], function (err, result0, fields) {
                 if (err) {
-                    res.statusMessage = "sql err";
-                    res.status(211).json({ text: 'No se pudo agregar al estudiante' });
-                    throw err;
+                    if (err) {
+                        res.status(403).json({ text: err });
+                    }
                 }
                 else {
-                    res.status(200).json({ text: 'El alumno ha sido agregado con éxito' });
+                    if (result0.length > 0) {
+                        res.statusMessage = "found";
+                        res.status(212).json({ text: 'Ya esta isncrito el estudiante' });
+                    }
+                    else {
+                        const query = `INSERT INTO curso_alumno (id_alumno,id_curso,estado_curso_alumno,tx_id,tx_username,tx_host,tx_date)
+                      VALUES (?,?,true,1,'root',' 192.168.0.10',CURRENT_TIMESTAMP())`;
+                        Database_1.default.query(query, [idAlumno, idCurso], function (err, result, fields) {
+                            if (err) {
+                                res.statusMessage = "sql err";
+                                res.status(211).json({ text: 'No se pudo agregar al estudiante' });
+                                throw err;
+                            }
+                            else {
+                                const query2 = `SELECT id_curso_alumno  from curso_alumno where curso_alumno.id_curso=? and curso_alumno.id_alumno=?  and curso_alumno.estado_curso_alumno=true`;
+                                Database_1.default.query(query2, [idCurso, idAlumno], function (err, result2, fields) {
+                                    if (err) {
+                                        res.status(403).json({ text: 'Error' });
+                                    }
+                                    else {
+                                        res.status(200).json(result2);
+                                    }
+                                });
+                            }
+                        });
+                    }
                 }
             });
         });
