@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const ThemeController_1 = require("../controllers/ThemeController");
-class ThemeRoutes {
+class ImageRoutes {
     constructor() {
         this.router = express_1.Router();
         this.config();
@@ -16,6 +16,6 @@ class ThemeRoutes {
         this.router.delete('/teacher/class-room/themes/:id', ThemeController_1.themeController.eliminarTema);
     }
 }
-const themeRoutes = new ThemeRoutes();
-exports.default = themeRoutes.router;
-//# sourceMappingURL=ThemeRoutes.js.map
+const imageRoutes = new ImageRoutes();
+exports.default = imageRoutes.router;
+//# sourceMappingURL=ImageRoutes.js.map

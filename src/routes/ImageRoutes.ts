@@ -2,7 +2,7 @@ import {Router} from 'express';
 import{themeController} from '../controllers/ThemeController';
 import { TokenValidation } from '../libs/VerifyToken';
 
-class ThemeRoutes{
+class ImageRoutes{
     public router:Router=Router();;
     constructor(){
         this.config();
@@ -16,5 +16,5 @@ class ThemeRoutes{
         this.router.delete('/teacher/class-room/themes/:id',themeController.eliminarTema);
     }
 }
-const themeRoutes=new ThemeRoutes();
-export default themeRoutes.router;
+const imageRoutes=new ImageRoutes();
+export default imageRoutes.router;
