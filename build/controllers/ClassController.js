@@ -121,6 +121,51 @@ class ClassController {
             });
         });
     }
+    insertarAsistencia(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { id } = req.params;
+            const q = `SELECT * FROM asistencia  INNER JOIN clase on
+                asistencia.id_clase = clase.id_clase
+                where id_curso = ? `;
+            Database_1.default.query(q, [id], function (e, r, f) {
+                if (e) {
+                    res.status(500).json({ text: 'Error' });
+                }
+                else {
+                    if (r.length > 0) {
+                        res.status(200).json({ text: 'asistencias creadas' });
+                    }
+                    else {
+                        const query = 'SELECT id_clase FROM clase WHERE id_curso = ? ';
+                        Database_1.default.query(query, [id], function (err, result, fields) {
+                            if (err) {
+                                throw err;
+                            }
+                            else {
+                                for (let i = 0; i < result.length; i++) {
+                                    const query = 'SELECT id_alumno FROM curso_alumno WHERE id_curso =? and estado_curso_alumno =true';
+                                    Database_1.default.query(query, [id], function (err1, result1, fields) {
+                                        for (let j = 0; j < result1.length; j++) {
+                                            const query3 = `INSERT INTO asistencia (id_clase,id_alumno,asistencia,estado_asistencia,tx_id,tx_username,tx_host,tx_date)
+                            VALUES (?,?,false,true,1,'root',' 192.168.0.10',CURRENT_TIMESTAMP())`;
+                                            Database_1.default.query(query3, [result[i].id_clase, result1[j].id_alumno], function (err2, result2, fields2) {
+                                                if (err2) {
+                                                    res.status(500).json({ text: 'Error' });
+                                                    throw err2;
+                                                }
+                                                else {
+                                                }
+                                            });
+                                        }
+                                    });
+                                }
+                            }
+                        });
+                    }
+                }
+            });
+        });
+    }
 }
 exports.classController = new ClassController();
 //# sourceMappingURL=ClassController.js.map
