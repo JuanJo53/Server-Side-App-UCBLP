@@ -11,14 +11,14 @@ class ThemeController{
         VALUES (?,?,?,true,?,1,'root','192.168.0.10',CURRENT_TIMESTAMP()) `;
         Db.query(query,[numeroTema,nombreTema,idCurso,idImagen],function(err, result, fields){
             if(err){
-                res.status(501).json({text:'El tema no pudo ser creado'});
-                throw err;
+                res.status(501).json({text:'No se pudo crear el tema'});
+                    throw err;
             }
             else{
-                res.status(200).json({text:'El tema ha sido creado correctamente'});
+                res.status(200).json({text:'Tema creado exitosamente'});
             }
         });
-    }
+    }    
     public async listarTemas(req:Request,res:Response){
         const {id} =req.params;
         const query = `SELECT id_tema,numero_tema,nombre_tema,id_imagen FROM tema INNER JOIN curso ON

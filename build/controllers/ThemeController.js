@@ -24,11 +24,11 @@ class ThemeController {
         VALUES (?,?,?,true,?,1,'root','192.168.0.10',CURRENT_TIMESTAMP()) `;
             Database_1.default.query(query, [numeroTema, nombreTema, idCurso, idImagen], function (err, result, fields) {
                 if (err) {
-                    res.status(501).json({ text: 'El tema no pudo ser creado' });
+                    res.status(501).json({ text: 'No se pudo crear el tema' });
                     throw err;
                 }
                 else {
-                    res.status(200).json({ text: 'El tema ha sido creado correctamente' });
+                    res.status(200).json({ text: 'Tema creado exitosamente' });
                 }
             });
         });

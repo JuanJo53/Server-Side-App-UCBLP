@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const VerifyToken_1 = require("../libs/VerifyToken");
-const ImageController_1 = require("controllers/ImageController");
+const ImageController_1 = require("../controllers/ImageController");
 class ImageRoutes {
     constructor() {
         this.router = express_1.Router();

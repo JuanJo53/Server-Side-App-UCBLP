@@ -11,8 +11,8 @@ public async listarImagenes(req:Request,res:Response){
             else{
                 res.status(200).json(result);
             }
-        });
-
+        });  
+ 
     }
 }
 
