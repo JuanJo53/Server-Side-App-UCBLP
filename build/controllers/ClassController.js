@@ -169,7 +169,7 @@ class ClassController {
     listaAlumnosAsistencia(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const fecha = req.body.fechaClase;
-            const { id } = req.params;
+            const id = req.body.id;
             const query = `SELECT asistencia.id_clase_alumno ,alumno.nombre_alumno,alumno.ap_paterno_alumno,alumno.ap_materno_alumno, asistencia.asistencia
         FROM  asistencia INNER JOIN alumno ON 
         asistencia.id_alumno=alumno.id_alumno
@@ -186,6 +186,24 @@ class ClassController {
                 }
                 else {
                     res.status(200).json(result);
+                }
+            });
+        });
+    }
+    listaFechasAsistencia(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const id = req.body.id;
+            const queryFechas = `SELECT fecha_clase 
+        FROM  clase INNER JOIN curso ON
+        curso.id_curso = clase.id_curso
+        AND clase.estado_clase= true
+        AND curso.id_curso=?`;
+            Database_1.default.query(queryFechas, [id], function (errFecha, resultFecha, fieldsFecha) {
+                if (errFecha) {
+                    res.status(500).json({ text: 'Error' });
+                }
+                else {
+                    res.status(200).json(resultFecha);
                 }
             });
         });
