@@ -19,7 +19,7 @@ class ClassRoutes {
         this.router.get('/teacher/my-class/generate-assistance/:id', ClassController_1.classController.insertarAsistencia);
         this.router.get('/teacher/my-class/list-assistance/:id', ClassController_1.classController.listaAlumnosAsistencia);
         this.router.put('/teacher/my-class/update-assistance/:id', ClassController_1.classController.actualizarAsistencia);
-        this.router.put('/teacher/my-class/assistance-dates/', ClassController_1.classController.listaFechasAsistencia);
+        this.router.get('/teacher/my-class/assistance-dates/', ClassController_1.classController.listaFechasAsistencia);
     }
 }
 const classRoutes = new ClassRoutes();
