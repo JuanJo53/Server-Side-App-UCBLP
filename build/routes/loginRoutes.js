@@ -11,7 +11,7 @@ class LoginRoutes {
     ;
     //configurar respuesta routas
     config() {
-        this.router.post('/users/login', LoginController_1.loginController.validarUsuario);
+        this.router.post('/users/login', LoginController_1.loginController.validarDocente);
         this.router.post('/users/signup', LoginController_1.loginController.registrarDocente);
         this.router.get('/users', LoginController_1.loginController.listarDocentes);
         this.router.delete('/users/:id', LoginController_1.loginController.eliminarDocente);

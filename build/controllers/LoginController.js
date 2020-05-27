@@ -31,7 +31,7 @@ class LoginController {
     }
     //Validar inicio de sesión 
     //Para probarlo utiliza este json : {"correo_docente":"m.ticona@acad.ucb.edu.bo","contrasenia_docente":"1234abc"}
-    validarUsuario(req, res) {
+    validarDocente(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             //Guardamos el correo y la contraseña en variables
             console.log(req.headers);
