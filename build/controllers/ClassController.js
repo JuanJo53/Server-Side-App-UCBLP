@@ -192,15 +192,16 @@ class ClassController {
     }
     listaFechasAsistencia(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const id = req.body.id;
-            const queryFechas = `SELECT fecha_clase 
+            const { id } = req.params;
+            const queryFechas = `SELECT Month(fecha_clase) as mes 
         FROM  clase INNER JOIN curso ON
         curso.id_curso = clase.id_curso
         AND clase.estado_clase= true
-        AND curso.id_curso=?`;
+        AND curso.id_curso=?
+        group by mes`;
             Database_1.default.query(queryFechas, [id], function (errFecha, resultFecha, fieldsFecha) {
                 if (errFecha) {
-                    res.status(500).json({ text: 'Error' });
+                    res.status(500).json({ text: errFecha });
                 }
                 else {
                     res.status(200).json(resultFecha);

@@ -17,9 +17,9 @@ class ClassRoutes{
         this.router.post('/teacher/my-class/students/profile',TokenValidation,classController.obtenerAlumnoAltaCurso);
         this.router.post('/teacher/my-class/students/add-student',TokenValidation,classController.altaAlumnoCurso);
         this.router.get('/teacher/my-class/generate-assistance/:id',classController.insertarAsistencia);
-        this.router.get('/teacher/my-class/list-assistance/:id',classController.listaAlumnosAsistencia);
+        this.router.post('/teacher/my-class/list-assistance/',classController.listaAlumnosAsistencia);
         this.router.put('/teacher/my-class/update-assistance/:id',classController.actualizarAsistencia);
-        this.router.get('/teacher/my-class/assistance-dates/',classController.listaFechasAsistencia);
+        this.router.get('/teacher/my-class/assistance-dates/:id',classController.listaFechasAsistencia);
         
     }
 }
