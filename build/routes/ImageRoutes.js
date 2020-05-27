@@ -11,7 +11,7 @@ class ImageRoutes {
     ;
     //configurar respuesta routas
     config() {
-        this.router.get('/teacher/modules/themes/images', VerifyToken_1.TokenValidation, ImageController_1.imageController.listarImagenes);
+        this.router.get('/teacher/modules/themes/images/get', VerifyToken_1.TokenValidation, ImageController_1.imageController.listarImagenes);
     }
 }
 const imageRoutes = new ImageRoutes();
