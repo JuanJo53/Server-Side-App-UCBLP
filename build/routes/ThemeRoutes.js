@@ -12,9 +12,9 @@ class ThemeRoutes {
     //configurar respuesta routas
     config() {
         this.router.get('/teacher/modules/themes/:id', VerifyToken_1.TokenValidation, ThemeController_1.themeController.listarTemas);
-        this.router.post('/teacher/class-room/themes', VerifyToken_1.TokenValidation, ThemeController_1.themeController.agregarTema);
-        this.router.put('/teacher/class-room/themes/:id', VerifyToken_1.TokenValidation, ThemeController_1.themeController.actualizarTema);
-        this.router.delete('/teacher/class-room/themes/:id', VerifyToken_1.TokenValidation, ThemeController_1.themeController.eliminarTema);
+        this.router.post('/teacher/modules/themes', VerifyToken_1.TokenValidation, ThemeController_1.themeController.agregarTema);
+        this.router.put('/teacher/modules/themes/:id', VerifyToken_1.TokenValidation, ThemeController_1.themeController.actualizarTema);
+        this.router.delete('/teacher/modules/themes/:id', VerifyToken_1.TokenValidation, ThemeController_1.themeController.eliminarTema);
     }
 }
 const themeRoutes = new ThemeRoutes();
