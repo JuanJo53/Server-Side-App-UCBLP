@@ -34,13 +34,14 @@ class ThemeController{
         });
     }
     public async actualizarTema(req:Request,res:Response){
+        console.log(req.body);
         const id =req.body.idTema;
         const numeroTema = req.body.numeroTema;
         const nombreTema = req.body.nombreTema;
         const estadoTema = req.body.estado;
         const idImagen = req.body.idImagen;
         const query = `UPDATE tema SET numero_tema=?, nombre_tema=?, id_imagen=?,tema_habilitado=? WHERE id_tema= ?`;
-        Db.query(query,[numeroTema,nombreTema,idImagen,id,estadoTema], function(err,result,fields){
+        Db.query(query,[numeroTema,nombreTema,idImagen,estadoTema,id], function(err,result,fields){
             if(err){
                 res.status(500).json({text:'No se pudo actualizar tema'});
                 throw err;
