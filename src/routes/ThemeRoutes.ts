@@ -12,7 +12,7 @@ class ThemeRoutes{
     config():void{
         this.router.get('/teacher/modules/themes/:id',TokenValidation,themeController.listarTemas);
         this.router.post('/teacher/modules/themes',TokenValidation,themeController.agregarTema);
-        this.router.put('/teacher/modules/themes/:id',TokenValidation,themeController.actualizarTema);
+        this.router.put('/teacher/modules/themes/',TokenValidation,themeController.actualizarTema);
         this.router.delete('/teacher/modules/themes/:id',TokenValidation,themeController.eliminarTema);
     }
 }
