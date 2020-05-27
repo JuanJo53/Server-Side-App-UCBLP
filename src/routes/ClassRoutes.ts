@@ -19,6 +19,7 @@ class ClassRoutes{
         this.router.get('/teacher/my-class/generate-assistance/:id',classController.insertarAsistencia);
         this.router.get('/teacher/my-class/list-assistance/:id',classController.listaAlumnosAsistencia);
         this.router.put('/teacher/my-class/update-assistance/:id',classController.actualizarAsistencia);
+        this.router.put('/teacher/my-class/assistance-dates/',classController.listaFechasAsistencia);
         
     }
 }
