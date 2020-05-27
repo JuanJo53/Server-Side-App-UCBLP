@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Request, Response, query } from 'express';
 import Db from '../Database';
 
 class ClassController {
@@ -153,7 +153,40 @@ class ClassController {
 
 
     }
-
+    public async listaAlumnosAsistencia(req:Request,res:Response){
+        const fecha=req.body.fechaClase;
+        const {id} = req.params;
+        const query=`SELECT asistencia.id_clase_alumno ,alumno.nombre_alumno,alumno.ap_paterno_alumno,alumno.ap_materno_alumno, asistencia.asistencia
+        FROM  asistencia INNER JOIN alumno ON 
+        asistencia.id_alumno=alumno.id_alumno
+        INNER JOIN clase ON
+        clase.id_clase=asistencia.id_clase
+        INNER JOIN curso ON
+        curso.id_curso = clase.id_curso
+        WHERE fecha_clase = '2020-02-16'
+        AND estado_asistencia = true
+        AND curso.id_curso=1`;
+        Db.query(query,[fecha,id],function(err,result,fields){
+            if(err){
+                res.status(500).json({text:'Error'});
+            }
+            else{
+                res.status(200).json(result);
+            }
+        }) ;
+    }
+    public async actualizarAsistencia(req:Request,res:Response){
+        const {id} = req.params;
+        const query = `UPDATE asistencia SET asistencia = true WHERE id_clase_alumno = ?`;
+        Db.query(query,[id],function(err,result,fields){
+            if(err){
+                res.status(500).json({text:'Error en la actualización'});
+                throw err;
+            }else{
+                res.status(200).json({text:'Asistencia registrada'});
+            }
+        });
+    }
 
 
 }

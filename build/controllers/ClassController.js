@@ -166,6 +166,45 @@ class ClassController {
             });
         });
     }
+    listaAlumnosAsistencia(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const fecha = req.body.fechaClase;
+            const { id } = req.params;
+            const query = `SELECT asistencia.id_clase_alumno ,alumno.nombre_alumno,alumno.ap_paterno_alumno,alumno.ap_materno_alumno, asistencia.asistencia
+        FROM  asistencia INNER JOIN alumno ON 
+        asistencia.id_alumno=alumno.id_alumno
+        INNER JOIN clase ON
+        clase.id_clase=asistencia.id_clase
+        INNER JOIN curso ON
+        curso.id_curso = clase.id_curso
+        WHERE fecha_clase = '2020-02-16'
+        AND estado_asistencia = true
+        AND curso.id_curso=1`;
+            Database_1.default.query(query, [fecha, id], function (err, result, fields) {
+                if (err) {
+                    res.status(500).json({ text: 'Error' });
+                }
+                else {
+                    res.status(200).json(result);
+                }
+            });
+        });
+    }
+    actualizarAsistencia(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { id } = req.params;
+            const query = `UPDATE asistencia SET asistencia = true WHERE id_clase_alumno = ?`;
+            Database_1.default.query(query, [id], function (err, result, fields) {
+                if (err) {
+                    res.status(500).json({ text: 'Error en la actualización' });
+                    throw err;
+                }
+                else {
+                    res.status(200).json({ text: 'Asistencia registrada' });
+                }
+            });
+        });
+    }
 }
 exports.classController = new ClassController();
 //# sourceMappingURL=ClassController.js.map
