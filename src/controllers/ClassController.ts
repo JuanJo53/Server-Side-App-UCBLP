@@ -106,8 +106,48 @@ class ClassController {
             }
         });
     }
+    public async crearAsistencia(req: Request, res: Response){
+        const id = req.body.idCurso;
+        const query = `SELECT fecha_clase
+                        FROM clase WHERE clase.id_Curso=? AND fecha_clase=CURRENT_DATE()`;
+        Db.query(query, [id], function (e, r, f) {
+            if(e){
+                return res.status(500).json({text:'Error'});
+            }
+            else{
+                if (r.length == 0) {
+                    const query2 = `INSERT INTO clase 
+                                (id_Curso,fecha_clase,estado_clase,tx_id,tx_username,tx_host,tx_date) 
+                                VALUES(?,CURRENT_DATE(),true,1,'root',' 192.168.0.10',CURRENT_TIMESTAMP());`;
+                Db.query(query2, [id], function (e2, r2, f2) {
+                    if(e2){
+                        return res.status(500).json({text:e2});
+                    }
+                    else{
+                        const query3 = `SELECT id_clase  
+                                FROM clase where clase.fecha_clase=CURRENT_DATE() and clase.id_Curso=?`;
+                                Db.query(query3, [id], function (e3, r3, f3) {
+                                    if(e3){
+                                        return res.status(500).json({text:'Error'});    
+                                    }
+                                    else{                                     
+                                        return res.status(200).json({text:r3});
+                                    }
+                                })
+                    }
+                })
+                }
+                else{
+                    return res.status(500).json({text:"La clase ya existe"});
+                }
+                
+            }
+        })
+        
+                    }
     public async insertarAsistencia(req: Request, res: Response) {
-        const { id } = req.params;
+        const id = req.body.idCurso;
+        const fecha=req.body.fecha;
         const q = `SELECT * FROM asistencia  INNER JOIN clase on
                 asistencia.id_clase = clase.id_clase
                 where id_curso = ? `;
@@ -153,6 +193,48 @@ class ClassController {
 
 
     }
+    public async listaAlumnosAsistencia2(req:Request,res:Response){
+        const fecha=req.body.fechaClase;
+        const id=req.body.id;
+        const queryAl = `SELECT curso_alumno.id_alumno, alumno.nombre_alumno,alumno.ap_paterno_alumno,alumno.ap_materno_alumno 
+        FROM curso_alumno INNER JOIN alumno ON curso_alumno.id_alumno=alumno.id_alumno WHERE id_curso =? and estado_curso_alumno =true`;
+        Db.query(queryAl,[id],function(err,result,fields){
+            if(err){
+                res.status(500).json({text:err});
+            }
+            else{
+               for(let i in result){
+                const query2=`SELECT asistencia.asistencia,DAY(clase.fecha_clase) as dia
+                FROM  asistencia 
+                INNER JOIN clase ON
+                clase.id_clase=asistencia.id_clase
+                INNER JOIN curso ON
+                curso.id_curso = clase.id_curso
+                WHERE MONTH(fecha_clase) =?                
+                AND asistencia.id_alumno=?
+                AND estado_asistencia = true
+                AND curso.id_curso=?
+                ORDER BY dia`
+                Db.query(query2,[fecha,result[i].id_alumno,id],function(err2,result2,fields2){
+                    if(err2){
+                        res.status(500).json({text:err2});
+                        return false;
+                    }
+                    else{
+                        result[i].asistencia=result2;
+                        if(Number(i)==result.length-1){
+                            res.status(200).json(result);
+                            return true;                          
+                        }
+                    }
+                }) ;
+                   
+               }
+
+            }
+        })                        
+        
+    }
     public async listaAlumnosAsistencia(req:Request,res:Response){
         const fecha=req.body.fechaClase;
         const id=req.body.id;
@@ -163,9 +245,9 @@ class ClassController {
         clase.id_clase=asistencia.id_clase
         INNER JOIN curso ON
         curso.id_curso = clase.id_curso
-        WHERE fecha_clase = '2020-02-16'
+        WHERE MONTH(fecha_clase) =?
         AND estado_asistencia = true
-        AND curso.id_curso=1`;
+        AND curso.id_curso=?`;
         Db.query(query,[fecha,id],function(err,result,fields){
             if(err){
                 res.status(500).json({text:'Error'});
