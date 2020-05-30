@@ -1,5 +1,5 @@
 import {Router} from 'express';
-//import{themeController} from '../controllers/ThemeController';
+import{lessonController} from '../controllers/LessonController';
 import { TokenValidation } from '../libs/VerifyToken';
 
 class LessonsRoutes{
@@ -10,9 +10,9 @@ class LessonsRoutes{
     }
     //configurar respuesta routas
     config():void{
-        this.router.get('/teacher/modules/themes/:id');
-        this.router.post('/teacher/modules/themes');
-        this.router.put('/teacher/modules/themes/');
+        this.router.get('/teacher/modules/themes/lessons/:id',lessonController.listarLecciones);
+        this.router.post('/teacher/modules/themes/lessons/:id',lessonController.agregarLeccion);
+        this.router.put('/teacher/modules/themes/lessons/:id',lessonController.editarLeccion);
         this.router.delete('/teacher/modules/themes/:id');
     }
 }

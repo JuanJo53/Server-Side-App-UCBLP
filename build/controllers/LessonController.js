@@ -22,11 +22,12 @@ class LessonController {
             const idTipoLeccion = req.body.idTipoLeccion;
             const idImagen = req.body.idImagen;
             const query = `INSERT INTO leccion 
-        (id_tema,numero_leccion,nombre_leccion,estao_leccion,id_tipo_leccion,id_imagen,tx_id,tx_username,tx_host,tx_date)
+        (id_tema,numero_leccion,nombre_leccion,estado_leccion,id_tipo_leccion,id_imagen,tx_id,tx_username,tx_host,tx_date)
         VALUES (?,?,?,true,?,?,1,'root','192.168.0.10',CURRENT_TIMESTAMP())`;
             Database_1.default.query(query, [id, numeroLeccion, nombreLeccion, idTipoLeccion, idImagen], function (err, result, fields) {
                 if (err) {
                     res.status(500).json({ text: 'Error al crear nueva lección' });
+                    throw err;
                 }
                 else {
                     res.status(200).json({ text: 'Lección creada correctamente' });
@@ -36,15 +37,16 @@ class LessonController {
     }
     editarLeccion(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const id = req.body.idLeccion;
+            const { id } = req.params;
             const numeroLeccion = req.body.numeroLeccion;
             const nombreLeccion = req.body.nombreLeccion;
             const idTipoLeccion = req.body.idTipoLeccion;
             const idImagen = req.body.idImagen;
             const query = `UPDATE leccion SET numero_leccion=?, nombre_leccion=?, id_imagen=?,id_tipo_leccion=? WHERE id_leccion= ?`;
-            Database_1.default.query(query, [numeroLeccion, nombreLeccion, idTipoLeccion, idImagen, id], function (err, result, fields) {
+            Database_1.default.query(query, [numeroLeccion, nombreLeccion, idImagen, idTipoLeccion, id], function (err, result, fields) {
                 if (err) {
                     res.status(500).json({ text: 'Error al actualizar lección lección' });
+                    throw err;
                 }
                 else {
                     res.status(200).json({ text: 'Lección actualizada correctamente' });
@@ -70,10 +72,12 @@ class LessonController {
     listarLecciones(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { id } = req.params;
-            const query = `SELECT leccion.id_leccion, leccion.numero_leccion, leccion.nombre_leccion,leccion.id_imagen
+            const query = `SELECT leccion.id_leccion, leccion.numero_leccion, leccion.nombre_leccion,tipo_leccion.tipo_leccion,leccion.id_imagen
                         FROM leccion INNER JOIN tema ON
                         leccion.id_tema=tema.id_tema
-                        WHERE id_tema = ? AND
+                        INNER JOIN tipo_leccion ON
+                        tipo_leccion.id_tipo_leccion = leccion.id_tipo_leccion
+                        WHERE tema.id_tema = ? AND
                         estado_leccion = true`;
             Database_1.default.query(query, [id], function (err, result, fields) {
                 if (err) {
