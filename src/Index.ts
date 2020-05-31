@@ -5,6 +5,8 @@ import CursoRoutes from './routes/CursoRoutes';
 import ClassRoutes from './routes/ClassRoutes';
 import ThemeRoutes from './routes/ThemeRoutes';
 import ImageRoutes from './routes/ImageRoutes';
+import LessonRoutes from './routes/LessonRoutes';
+import ModuleRoutes from './routes/ModuleRoutes';
 import morgan from 'morgan';
 import cors from 'cors';
 dotenv.config();
@@ -32,6 +34,8 @@ class Server{
         this.app.use(ClassRoutes);
         this.app.use(ThemeRoutes);
         this.app.use(ImageRoutes);
+        this.app.use(LessonRoutes);
+        this.app.use(ModuleRoutes);
     }
     start():void{
         this.app.listen(this.app.get('port'));

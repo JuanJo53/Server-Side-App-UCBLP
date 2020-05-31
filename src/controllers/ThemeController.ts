@@ -21,8 +21,8 @@ class ThemeController{
     }    
     public async listarTemas(req:Request,res:Response){
         const {id} =req.params;
-        const query = `SELECT id_tema,numero_tema,nombre_tema,id_imagen,tema_habilitado FROM tema INNER JOIN curso ON
-        curso.id_curso=tema.id_curso WHERE curso.id_curso = ? AND tema.estado_tema=true`;
+        const query = `SELECT id_tema,numero_tema,nombre_tema,id_imagen,estado_tema FROM tema INNER JOIN curso ON
+        curso.id_curso=tema.id_curso WHERE curso.id_curso = ? AND (tema.estado_tema=true OR tema.estado_tema=2)`;
         Db.query(query,[id], function(err,result,fields){
             if(err){
                 res.status(500).json({text:'No se pudo cargar la lista de temas'});
@@ -40,7 +40,7 @@ class ThemeController{
         const nombreTema = req.body.nombreTema;
         const estadoTema = req.body.estado;
         const idImagen = req.body.idImagen;
-        const query = `UPDATE tema SET numero_tema=?, nombre_tema=?, id_imagen=?,tema_habilitado=? WHERE id_tema= ?`;
+        const query = `UPDATE tema SET numero_tema=?, nombre_tema=?, id_imagen=?,estado_tema=? WHERE id_tema= ?`;
         Db.query(query,[numeroTema,nombreTema,idImagen,estadoTema,id], function(err,result,fields){
             if(err){
                 res.status(500).json({text:'No se pudo actualizar tema'});
