@@ -11,8 +11,8 @@ class LessonsRoutes{
     //configurar respuesta routas
     config():void{
         this.router.get('/teacher/modules/themes/lessons/:id',TokenValidation,lessonController.listarLecciones);
-        this.router.post('/teacher/modules/themes/lessons/:id',TokenValidation,lessonController.agregarLeccion);
-        this.router.put('/teacher/modules/themes/lessons/:id',TokenValidation,lessonController.editarLeccion);
+        this.router.post('/teacher/modules/themes/lessons/',TokenValidation,lessonController.agregarLeccion);
+        this.router.put('/teacher/modules/themes/lessons/',TokenValidation,lessonController.editarLeccion);
         this.router.delete('/teacher/modules/themes/lessons/:id',TokenValidation,lessonController.eliminarLeccion);
     }
 }

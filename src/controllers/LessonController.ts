@@ -3,7 +3,7 @@ import Db from '../Database';
 
 class LessonController{
     public async agregarLeccion(req: Request, res: Response){
-        const {id} = req.params;
+        const id = req.body.id;
         const numeroLeccion = req.body.numeroLeccion;
         const nombreLeccion = req.body.nombreLeccion;
         const idTipoLeccion = req.body.idTipoLeccion;
@@ -22,7 +22,7 @@ class LessonController{
         });
     }
     public async editarLeccion(req:Request,res:Response){
-        const {id} =req.params;
+        const id =req.body.id;
         const numeroLeccion = req.body.numeroLeccion;
         const nombreLeccion = req.body.nombreLeccion;
         const idTipoLeccion = req.body.idTipoLeccion;

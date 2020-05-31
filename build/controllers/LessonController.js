@@ -16,7 +16,7 @@ const Database_1 = __importDefault(require("../Database"));
 class LessonController {
     agregarLeccion(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { id } = req.params;
+            const id = req.body.id;
             const numeroLeccion = req.body.numeroLeccion;
             const nombreLeccion = req.body.nombreLeccion;
             const idTipoLeccion = req.body.idTipoLeccion;
@@ -37,7 +37,7 @@ class LessonController {
     }
     editarLeccion(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { id } = req.params;
+            const id = req.body.id;
             const numeroLeccion = req.body.numeroLeccion;
             const nombreLeccion = req.body.nombreLeccion;
             const idTipoLeccion = req.body.idTipoLeccion;
