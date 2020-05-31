@@ -203,6 +203,7 @@ class ClassController {
                 res.status(500).json({text:err});
             }
             else{
+                var c=1;
                for(let i in result){
                 const query2=`SELECT asistencia.asistencia,DAY(clase.fecha_clase) as dia
                 FROM  asistencia 
@@ -222,11 +223,12 @@ class ClassController {
                     }
                     else{
                         result[i].asistencia=result2;
-                        if(Number(i)==result.length-1){
+                        if(c==result.length){
                             res.status(200).json(result);
                             return true;                          
                         }
                     }
+                    c++;
                 }) ;
                    
                }
