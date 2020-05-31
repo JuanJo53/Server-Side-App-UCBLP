@@ -81,6 +81,26 @@ class CursoController {
             });
         });
     }
+    agregarCurso(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { id } = req.params;
+            const nombreCurso = req.body.nombreCurso;
+            const idSemestre = req.body.idSemestre;
+            const idNivel = req.body.idNivel;
+            console.log("ID: " + id);
+            const query = `insert into curso (nombre_curso,estado_curso,id_docente,id_semestre,id_nivel,tx_id,tx_username,tx_host,tx_date) 
+        values(?,true,?,?,?,1,'root','192.168.0.10',CURRENT_TIMESTAMP());`;
+            Database_1.default.query(query, [nombreCurso, id, idSemestre, idNivel], function (err, result, fields) {
+                if (err) {
+                    res.status(500).json({ text: 'Error al crear el curso' });
+                    throw err;
+                }
+                else {
+                    res.status(200).json({ text: 'Cruso creado correctamente' });
+                }
+            });
+        });
+    }
 }
 exports.cursoController = new CursoController();
 //# sourceMappingURL=CursoController.js.map

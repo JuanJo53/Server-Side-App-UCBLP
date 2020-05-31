@@ -124,11 +124,26 @@ class ModuleController {
             const query = `UPDATE modulo SET  modulo_habilitado = false  WHERE id_modulo = ?`;
             Database_1.default.query(query, [id], function (err, result, fields) {
                 if (err) {
-                    res.status(500).json({ text: 'Error al actualizar el módulo' });
+                    res.status(500).json({ text: 'Error al desactivar el módulo' });
                     throw err;
                 }
                 else {
-                    res.status(500).json({ text: 'Módulo actualizado' });
+                    res.status(500).json({ text: 'Módulo desactivado' });
+                }
+            });
+        });
+    }
+    activarModulo(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { id } = req.params;
+            const query = `UPDATE modulo SET  modulo_habilitado = true  WHERE id_modulo = ?`;
+            Database_1.default.query(query, [id], function (err, result, fields) {
+                if (err) {
+                    res.status(500).json({ text: 'Error al activar el módulo' });
+                    throw err;
+                }
+                else {
+                    res.status(500).json({ text: 'Módulo activado' });
                 }
             });
         });
