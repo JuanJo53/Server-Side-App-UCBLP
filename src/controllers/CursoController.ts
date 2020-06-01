@@ -77,7 +77,6 @@ class CursoController {
         const nombreCurso = req.body.nombreCurso;
         const idSemestre = req.body.idSemestre;
         const idNivel = req.body.idNivel;
-        console.log("ID: " + id);
         const query = `insert into curso (nombre_curso,estado_curso,id_docente,id_semestre,id_nivel,tx_id,tx_username,tx_host,tx_date) 
         values(?,true,?,?,?,1,'root','192.168.0.10',CURRENT_TIMESTAMP());`;
         Db.query(query, [nombreCurso, id, idSemestre, idNivel], function (err, result, fields) {
@@ -86,32 +85,25 @@ class CursoController {
                 throw err;
             }
             else {
-                
+                console.log("Last ID " + result.insertId);
                 const query2 = `SELECT id_curso FROM curso WHERE id_curso = LAST_INSERT_ID()`;
-                Db.query(query2, function (err2, result2, fields2) {
-                    if (err2) {
-                        res.status(500).json({ text: 'Error al recuperar el id' });
-                        throw err2;
-                    }
-                    else {
-                       const idCurso=result2[0].id_curso; 
-                       const query3=`insert into modulo (nombre_modulo,rubrica,id_curso,id_color,estado_modulo,id_tipo_modulo,id_imagen,tx_id,tx_username,tx_host,tx_date) values 
+                const query3 = `insert into modulo (nombre_modulo,rubrica,id_curso,id_color,estado_modulo,id_tipo_modulo,id_imagen,tx_id,tx_username,tx_host,tx_date) values 
                        ('Assistance',5.00,?,1,true,1,1,1,'root',' 192.168.0.10',CURRENT_TIMESTAMP()),
                        ('Theme Lessons',20.00,?,1,true,1,1,1,'root',' 192.168.0.10',CURRENT_TIMESTAMP()),
                        ('Theme Practices',10.00,?,1,true,1,1,1,'root',' 192.168.0.10',CURRENT_TIMESTAMP()),
                        ('Theme Test',20.00,?,1,true,1,1,1,'root',' 192.168.0.10',CURRENT_TIMESTAMP()),
                        ('Assesments',45.00,?,1,true,1,1,1,'root',' 192.168.0.10',CURRENT_TIMESTAMP());`;
-                       Db.query(query3,[idCurso,idCurso,idCurso,idCurso,idCurso],function(err3, result3, fields3){
-                            if(err3){
-                                res.status(500).json({ text: 'Error alcrear módulos' });
-                                throw err3;
-                            }
-                            else{
-                                res.status(200).json({text:'Curso creado con éxito'})
-                            }
-                       });
+                Db.query(query3, [result.insertId, result.insertId, result.insertId, result.insertId, result.insertId], function (err3, result3, fields3) {
+                    if (err3) {
+                        res.status(500).json({ text: 'Error al crear módulos' });
+                        throw err3;
+                    }
+                    else {
+                        res.status(200).json({ text: 'Curso creado con éxito' })
                     }
                 });
+
+
 
             }
         });
