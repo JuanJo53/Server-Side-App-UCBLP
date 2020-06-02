@@ -32,7 +32,7 @@ class ModuleController{
         INNER JOIN imagen ON 
         imagen.id_imagen=modulo.id_imagen
         WHERE curso.id_curso = ?
-        AND modulo.estado_modulo = true`;
+        AND modulo.estado_modulo = 1 OR modulo.estado_modulo =2`;
         Db.query(query,[id],function(err,result,fields){
             if(err){
                 res.status(500).json({text:'No se pudo listar los módulos personalizados'});
@@ -53,7 +53,7 @@ class ModuleController{
         INNER JOIN imagen ON 
         imagen.id_imagen=modulo.id_imagen
         WHERE curso.id_curso = ?
-        AND modulo.estado_modulo = true
+        AND modulo.estado_modulo = 1
         AND modulo.id_tipo_modulo = 1`;
         Db.query(query,[id],function(err,result,fields){
             if(err){
@@ -100,7 +100,7 @@ class ModuleController{
     }
     public async desactivarModulo(req:Request,res:Response){
         const {id} = req.params;
-        const query = `UPDATE modulo SET  modulo_habilitado = false  WHERE id_modulo = ?`;
+        const query = `UPDATE modulo SET  estado_modulo = 2  WHERE id_modulo = ?`;
         Db.query(query,[id],function(err,result,fields){
             if(err){
                 res.status(500).json({text:'Error al desactivar el módulo'});
@@ -113,7 +113,7 @@ class ModuleController{
     }
     public async activarModulo(req:Request,res:Response){
         const {id} = req.params;
-        const query = `UPDATE modulo SET  modulo_habilitado = true  WHERE id_modulo = ?`;
+        const query = `UPDATE modulo SET  estado_modulo = 1  WHERE id_modulo = ?`;
         Db.query(query,[id],function(err,result,fields){
             if(err){
                 res.status(500).json({text:'Error al activar el módulo'});
@@ -126,7 +126,7 @@ class ModuleController{
     }
     public async eliminarModulo(req:Request,res:Response){
         const {id} = req.params;
-        const query = `UPDATE modulo SET  modulo_habilitado = false, estado_modulo=false  WHERE id_modulo = ?`;
+        const query = `UPDATE modulo SET   estado_modulo=0  WHERE id_modulo = ?`;
         Db.query(query,[id],function(err,result,fields){
             if(err){
                 res.status(500).json({text:'Error al actualizar el módulo'});
