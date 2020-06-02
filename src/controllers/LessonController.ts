@@ -24,11 +24,12 @@ class LessonController{
     public async editarLeccion(req:Request,res:Response){
         const id =req.body.id;
         const numeroLeccion = req.body.numeroLeccion;
-        const nombreLeccion = req.body.nombreLeccion;
+        const nombreLeccion = req.body.nombre;
         const idTipoLeccion = req.body.idTipoLeccion;
         const idImagen=req.body.idImagen;
-        const query = `UPDATE leccion SET numero_leccion=?, nombre_leccion=?, id_imagen=?,id_tipo_leccion=? WHERE id_leccion= ?`;
-        Db.query(query,[numeroLeccion,nombreLeccion,idImagen,idTipoLeccion,id],function(err,result,fields){
+        const estado=req.body.estado;
+        const query = `UPDATE leccion SET numero_leccion=?, nombre_leccion=?, estado_leccion = ?,id_imagen=?,id_tipo_leccion=? WHERE id_leccion= ?`;
+        Db.query(query,[numeroLeccion,nombreLeccion,estado,idImagen,idTipoLeccion,id],function(err,result,fields){
             if(err){
                 res.status(500).json({text:'Error al actualizar lección lección'});
                 throw err;
@@ -51,16 +52,30 @@ class LessonController{
             }
         });
     }
-
+    public async listarTipoLeccion(req:Request,res:Response){
+        const query = `SELECT tipo_leccion.id_tipo_leccion,tipo_leccion.tipo_leccion
+                        FROM tipo_leccion
+                        WHERE tipo_leccion.estado_tipo_leccion`;
+        Db.query(query,function(err,result,fields){
+            if(err){
+                res.status(500).json({text:'No se pudo listar las lecciones'});
+                throw err;
+            }
+            else{
+                res.status(200).json(result);
+            }
+        });                
+        
+    }
     public async listarLecciones(req:Request,res:Response){
         const {id} = req.params;
-        const query = `SELECT leccion.id_leccion, leccion.numero_leccion, leccion.nombre_leccion,tipo_leccion.tipo_leccion,leccion.id_imagen
+        const query = `SELECT leccion.estado_leccion,leccion.id_leccion, leccion.numero_leccion, leccion.nombre_leccion,tipo_leccion.id_tipo_leccion,leccion.id_imagen
                         FROM leccion INNER JOIN tema ON
                         leccion.id_tema=tema.id_tema
                         INNER JOIN tipo_leccion ON
                         tipo_leccion.id_tipo_leccion = leccion.id_tipo_leccion
                         WHERE tema.id_tema = ? AND
-                        estado_leccion = true`;
+                        estado_leccion != false`;
         Db.query(query,[id],function(err,result,fields){
             if(err){
                 res.status(500).json({text:'No se pudo listar las lecciones'});
