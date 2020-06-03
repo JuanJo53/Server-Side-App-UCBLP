@@ -16,9 +16,9 @@ const Database_1 = __importDefault(require("../Database"));
 class LessonController {
     agregarLeccion(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const id = req.body.id;
+            const id = req.body.idTema;
             const numeroLeccion = req.body.numeroLeccion;
-            const nombreLeccion = req.body.nombreLeccion;
+            const nombreLeccion = req.body.nombre;
             const idTipoLeccion = req.body.idTipoLeccion;
             const idImagen = req.body.idImagen;
             const query = `INSERT INTO leccion 
@@ -26,8 +26,8 @@ class LessonController {
         VALUES (?,?,?,true,?,?,1,'root','192.168.0.10',CURRENT_TIMESTAMP())`;
             Database_1.default.query(query, [id, numeroLeccion, nombreLeccion, idTipoLeccion, idImagen], function (err, result, fields) {
                 if (err) {
+                    console.log(err);
                     res.status(500).json({ text: 'Error al crear nueva lección' });
-                    throw err;
                 }
                 else {
                     res.status(200).json({ text: 'Lección creada correctamente' });
