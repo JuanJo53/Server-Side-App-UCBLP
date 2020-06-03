@@ -45,7 +45,7 @@ class ModuleController {
         INNER JOIN imagen ON 
         imagen.id_imagen=modulo.id_imagen
         WHERE curso.id_curso = ?
-        AND modulo.estado_modulo = true`;
+        AND modulo.estado_modulo = 1 OR modulo.estado_modulo =2`;
             Database_1.default.query(query, [id], function (err, result, fields) {
                 if (err) {
                     res.status(500).json({ text: 'No se pudo listar los módulos personalizados' });
@@ -68,7 +68,7 @@ class ModuleController {
         INNER JOIN imagen ON 
         imagen.id_imagen=modulo.id_imagen
         WHERE curso.id_curso = ?
-        AND modulo.estado_modulo = true
+        AND modulo.estado_modulo = 1
         AND modulo.id_tipo_modulo = 1`;
             Database_1.default.query(query, [id], function (err, result, fields) {
                 if (err) {
@@ -121,7 +121,7 @@ class ModuleController {
     desactivarModulo(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { id } = req.params;
-            const query = `UPDATE modulo SET  modulo_habilitado = false  WHERE id_modulo = ?`;
+            const query = `UPDATE modulo SET  estado_modulo = 2  WHERE id_modulo = ?`;
             Database_1.default.query(query, [id], function (err, result, fields) {
                 if (err) {
                     res.status(500).json({ text: 'Error al desactivar el módulo' });
@@ -136,7 +136,7 @@ class ModuleController {
     activarModulo(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { id } = req.params;
-            const query = `UPDATE modulo SET  modulo_habilitado = true  WHERE id_modulo = ?`;
+            const query = `UPDATE modulo SET  estado_modulo = 1  WHERE id_modulo = ?`;
             Database_1.default.query(query, [id], function (err, result, fields) {
                 if (err) {
                     res.status(500).json({ text: 'Error al activar el módulo' });
@@ -151,7 +151,7 @@ class ModuleController {
     eliminarModulo(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { id } = req.params;
-            const query = `UPDATE modulo SET  modulo_habilitado = false, estado_modulo=false  WHERE id_modulo = ?`;
+            const query = `UPDATE modulo SET   estado_modulo=0  WHERE id_modulo = ?`;
             Database_1.default.query(query, [id], function (err, result, fields) {
                 if (err) {
                     res.status(500).json({ text: 'Error al actualizar el módulo' });
