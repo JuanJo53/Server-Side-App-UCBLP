@@ -56,7 +56,7 @@ class LessonController{
     public async listarTipoLeccion(req:Request,res:Response){
         const query = `SELECT tipo_leccion.id_tipo_leccion,tipo_leccion.tipo_leccion
                         FROM tipo_leccion
-                        WHERE tipo_leccion.estado_tipo_leccion`;
+                        WHERE tipo_leccion.estado_tipo_leccion=true`;
         Db.query(query,function(err,result,fields){
             if(err){
                 res.status(500).json({text:'No se pudo listar las lecciones'});
