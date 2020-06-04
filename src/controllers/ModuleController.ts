@@ -2,19 +2,31 @@ import{Request,Response, query} from 'express';
 import Db from '../Database'; 
 
 class ModuleController{
-
+    public async listarColores(req:Request,res:Response){
+        const query = `SELECT color.id_color,color.valor
+                        FROM color
+                        WHERE color.estado_color=true`;
+        Db.query(query,function(err,result,fields){
+            if(err){
+                res.status(500).json({text:'No se pudo listar los colores'});
+            }
+            else{
+                res.status(200).json(result);
+            }
+        });                
+        
+    }
     public async agregarModuloPersonalizado(req:Request,res:Response){
         const nombreModulo=req.body.nombreModulo;
         const rubrica = req.body.rubrica;
         const idCurso = req.body.idCurso;
         const idColor = req.body.idColor;
         const idImagen = req.body.idImagen;
-        const query =`insert into modulo (nombre_modulo,rubrica,id_curso,id_color,estado_modulo,modulo_habilitado,id_tipo_modulo,id_imagen,tx_id,tx_username,tx_host,tx_date) values 
-        (?,?,?,?,true,true,2,?,1,'root',' 192.168.0.10',CURRENT_TIMESTAMP()) `;
+        const query =`insert into modulo (nombre_modulo,rubrica,id_curso,id_color,estado_modulo,id_tipo_modulo,id_imagen,tx_id,tx_username,tx_host,tx_date) values 
+        (?,?,?,?,true,2,?,1,'root',' 192.168.0.10',CURRENT_TIMESTAMP()) `;
         Db.query(query,[nombreModulo,rubrica,idCurso,idColor,idImagen],function(err,result,fields){
             if(err){
                 res.status(500).json({text:'Error al crear el módulo'});
-                throw err;
             }
             else{
                 res.status(200).json({text:'Módulo creado correctamente'});
@@ -24,7 +36,7 @@ class ModuleController{
 
     public async listarModulos(req: Request,res:Response){
         const {id} = req.params;
-        const query =`SELECT modulo.id_modulo,modulo.nombre_modulo, modulo.rubrica, imagen.imagen,color.valor ,modulo.id_tipo_modulo FROM 
+        const query =`SELECT modulo.id_modulo,modulo.nombre_modulo, modulo.rubrica, imagen.id_imagen,color.id_color ,modulo.id_tipo_modulo, modulo.estado_modulo FROM 
         modulo INNER JOIN curso ON
         curso.id_curso= modulo.id_curso
         INNER JOIN color ON
@@ -32,11 +44,10 @@ class ModuleController{
         INNER JOIN imagen ON 
         imagen.id_imagen=modulo.id_imagen
         WHERE curso.id_curso = ?
-        AND modulo.estado_modulo = 1 OR modulo.estado_modulo =2`;
+        AND modulo.estado_modulo !=0`;
         Db.query(query,[id],function(err,result,fields){
             if(err){
                 res.status(500).json({text:'No se pudo listar los módulos personalizados'});
-                throw err;
             }
             else{
                 res.status(200).json(result);
@@ -58,7 +69,6 @@ class ModuleController{
         Db.query(query,[id],function(err,result,fields){
             if(err){
                 res.status(500).json({text:'No se pudo listar los módulos personalizados'});
-                throw err;
             }
             else{
                 res.status(200).json(result);
@@ -66,35 +76,36 @@ class ModuleController{
         });
     }
     public async editarModuloPersonalizado(req:Request,res:Response){
-        const {id} = req.params;
+        const id = req.body.id;
         const nombreModulo=req.body.nombreModulo;
         const rubrica = req.body.rubrica;
         const idColor = req.body.idColor;
         const idImagen = req.body.idColor;
-        const query = `UPDATE modulo SET nombre_modulo = ?, rubrica = ?, id_color=?, id_imagen =? WHERE id_modulo = ?`;
-        Db.query(query,[nombreModulo,rubrica,idColor,idImagen,id],function(err,result,fields){
+        const estado=req.body.estado;
+        const query = `UPDATE modulo SET estado_modulo=?,nombre_modulo = ?, rubrica = ?, id_color=?, id_imagen =? WHERE id_modulo = ?`;
+        Db.query(query,[estado,nombreModulo,rubrica,idColor,idImagen,id],function(err,result,fields){
             if(err){
+                console.log(err);
                 res.status(500).json({text:'Error al actualizar el módulo'});
-                throw err;
             }
             else{
-                res.status(500).json({text:'Módulo actualizado'});
+                res.status(200).json({text:'Módulo actualizado'});
             }
         });
     }
     public async editarModuloPredeterminado(req:Request,res:Response){
-        const {id} = req.params;
+        const id = req.body.id;
         const rubrica = req.body.rubrica;
         const idColor = req.body.idColor;
         const idImagen = req.body.idColor;
-        const query = `UPDATE modulo SET  rubrica = ?, id_color=?, id_imagen =? WHERE id_modulo = ?`;
-        Db.query(query,[rubrica,idColor,idImagen,id],function(err,result,fields){
+        const estado=req.body.estado;
+        const query = `UPDATE modulo SET  estado_modulo = ? rubrica = ?, id_color=?, id_imagen =? WHERE id_modulo = ?`;
+        Db.query(query,[estado,rubrica,idColor,idImagen,id],function(err,result,fields){
             if(err){
                 res.status(500).json({text:'Error al actualizar el módulo'});
-                throw err;
             }
             else{
-                res.status(500).json({text:'Módulo actualizado'});
+                res.status(200).json({text:'Módulo actualizado'});
             }
         });
     }
@@ -104,10 +115,9 @@ class ModuleController{
         Db.query(query,[id],function(err,result,fields){
             if(err){
                 res.status(500).json({text:'Error al desactivar el módulo'});
-                throw err;
             }
             else{
-                res.status(500).json({text:'Módulo desactivado'});
+                res.status(200).json({text:'Módulo desactivado'});
             }
         });
     }
@@ -117,10 +127,9 @@ class ModuleController{
         Db.query(query,[id],function(err,result,fields){
             if(err){
                 res.status(500).json({text:'Error al activar el módulo'});
-                throw err;
             }
             else{
-                res.status(500).json({text:'Módulo activado'});
+                res.status(200).json({text:'Módulo activado'});
             }
         });
     }
@@ -130,10 +139,9 @@ class ModuleController{
         Db.query(query,[id],function(err,result,fields){
             if(err){
                 res.status(500).json({text:'Error al actualizar el módulo'});
-                throw err;
             }
             else{
-                res.status(500).json({text:'Módulo actualizado'});
+                res.status(200).json({text:'Módulo actualizado'});
             }
         });
     }

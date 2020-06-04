@@ -10,13 +10,14 @@ class ModuleRoutes{
     }
     //configurar respuesta routas
     config():void{
-        this.router.post('/teacher/modules',moduleController.agregarModuloPersonalizado);
-        this.router.get('/teacher/modules',moduleController.listarModulos);
-        this.router.put('/teacher/modules/personalized/:id',moduleController.editarModuloPersonalizado );
-        this.router.put('/teacher/modules/predeterminated/:id',moduleController.editarModuloPredeterminado);
-        this.router.put('/teacher/modules/disable/:id',moduleController.desactivarModulo);
-        this.router.put('/teacher/modules/enable/:id',moduleController.activarModulo);
-        this.router.delete('/teacher/modules/delete/:id',moduleController.eliminarModulo);
+        this.router.post('/teacher/evaluation',TokenValidation,moduleController.agregarModuloPersonalizado);
+        this.router.get('/teacher/evaluation/:id',TokenValidation,moduleController.listarModulos);
+        this.router.get('/teacher/evaluation/get/color',TokenValidation,moduleController.listarColores);
+        this.router.put('/teacher/evaluation/personalized/',TokenValidation,moduleController.editarModuloPersonalizado );
+        this.router.put('/teacher/evaluation/predeterminated/',TokenValidation,moduleController.editarModuloPredeterminado);
+        this.router.put('/teacher/evaluation/disable/:id',TokenValidation,moduleController.desactivarModulo);
+        this.router.put('/teacher/evaluation/enable/:id',TokenValidation,moduleController.activarModulo);
+        this.router.delete('/teacher/evaluation/delete/:id',TokenValidation,moduleController.eliminarModulo);
     }
 }
 const moduleRoutes=new ModuleRoutes();

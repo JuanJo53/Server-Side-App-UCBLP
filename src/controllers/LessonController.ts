@@ -3,9 +3,10 @@ import Db from '../Database';
 
 class LessonController{
     public async agregarLeccion(req: Request, res: Response){
-        const id = req.body.id;
+        
+        const id = req.body.idTema;
         const numeroLeccion = req.body.numeroLeccion;
-        const nombreLeccion = req.body.nombreLeccion;
+        const nombreLeccion = req.body.nombre;
         const idTipoLeccion = req.body.idTipoLeccion;
         const idImagen=req.body.idImagen;
         const query = `INSERT INTO leccion 
@@ -13,8 +14,8 @@ class LessonController{
         VALUES (?,?,?,true,?,?,1,'root','192.168.0.10',CURRENT_TIMESTAMP())`;
         Db.query(query,[id,numeroLeccion,nombreLeccion,idTipoLeccion,idImagen],function(err,result,fields){
             if(err){
+                console.log(err);
                 res.status(500).json({text:'Error al crear nueva lección'});
-                throw err;
             }
             else{
                 res.status(200).json({text:'Lección creada correctamente'});
@@ -55,7 +56,7 @@ class LessonController{
     public async listarTipoLeccion(req:Request,res:Response){
         const query = `SELECT tipo_leccion.id_tipo_leccion,tipo_leccion.tipo_leccion
                         FROM tipo_leccion
-                        WHERE tipo_leccion.estado_tipo_leccion`;
+                        WHERE tipo_leccion.estado_tipo_leccion=true`;
         Db.query(query,function(err,result,fields){
             if(err){
                 res.status(500).json({text:'No se pudo listar las lecciones'});
