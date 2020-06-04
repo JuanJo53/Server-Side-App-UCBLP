@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
+const VerifyToken_1 = require("../libs/VerifyToken");
 const ForoController_1 = require("../controllers/ForoController");
 class ForoRoutes {
     constructor() {
@@ -10,10 +11,10 @@ class ForoRoutes {
     ;
     //configurar respuesta routas
     config() {
-        this.router.post('/teacher/forums', ForoController_1.foroController.crearForo);
-        this.router.get('/teacher/forums', ForoController_1.foroController.listarForos);
-        this.router.put('/teacher/forums/:id', ForoController_1.foroController.modificarForos);
-        this.router.delete('/teacher/forums', ForoController_1.foroController.eliminarForo);
+        this.router.post('/teacher/forums', VerifyToken_1.TokenValidation, ForoController_1.foroController.crearForo);
+        this.router.get('/teacher/forums/:id', VerifyToken_1.TokenValidation, ForoController_1.foroController.listarForos);
+        this.router.put('/teacher/forums/', VerifyToken_1.TokenValidation, ForoController_1.foroController.modificarForos);
+        this.router.delete('/teacher/forums', VerifyToken_1.TokenValidation, ForoController_1.foroController.eliminarForo);
     }
 }
 const foroRoutes = new ForoRoutes();

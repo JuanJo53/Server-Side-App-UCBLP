@@ -11,8 +11,8 @@ class ForoRoutes{
     //configurar respuesta routas
     config():void{
         this.router.post('/teacher/forums',TokenValidation,foroController.crearForo);
-        this.router.get('/teacher/forums',TokenValidation,foroController.listarForos);
-        this.router.put('/teacher/forums/:id',TokenValidation,foroController.modificarForos);
+        this.router.get('/teacher/forums/:id',TokenValidation,foroController.listarForos);
+        this.router.put('/teacher/forums/',TokenValidation,foroController.modificarForos);
         this.router.delete('/teacher/forums',TokenValidation,foroController.eliminarForo);
        
     }

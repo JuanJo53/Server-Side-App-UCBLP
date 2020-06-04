@@ -16,11 +16,11 @@ class ClassRoutes {
         this.router.delete('/teacher/my-class/students/:id', VerifyToken_1.TokenValidation, ClassController_1.classController.bajaAlumnoCurso);
         this.router.post('/teacher/my-class/students/profile', VerifyToken_1.TokenValidation, ClassController_1.classController.obtenerAlumnoAltaCurso);
         this.router.post('/teacher/my-class/students/add-student', VerifyToken_1.TokenValidation, ClassController_1.classController.altaAlumnoCurso);
-        this.router.get('/teacher/my-class/generate-assistance/:id', ClassController_1.classController.insertarAsistencia);
-        this.router.post('/teacher/my-class/list-assistance/', ClassController_1.classController.listaAlumnosAsistencia2);
-        this.router.put('/teacher/my-class/update-assistance/:id', ClassController_1.classController.actualizarAsistencia);
-        this.router.get('/teacher/my-class/assistance-dates/:id', ClassController_1.classController.listaFechasAsistencia);
-        this.router.post('/teacher/my-class/add-class-assistance', ClassController_1.classController.crearAsistencia);
+        this.router.get('/teacher/my-class/generate-assistance/:id', VerifyToken_1.TokenValidation, ClassController_1.classController.insertarAsistencia);
+        this.router.post('/teacher/my-class/list-assistance/', VerifyToken_1.TokenValidation, ClassController_1.classController.listaAlumnosAsistencia2);
+        this.router.put('/teacher/my-class/update-assistance/:id', VerifyToken_1.TokenValidation, ClassController_1.classController.actualizarAsistencia);
+        this.router.get('/teacher/my-class/assistance-dates/:id', VerifyToken_1.TokenValidation, ClassController_1.classController.listaFechasAsistencia);
+        this.router.post('/teacher/my-class/add-class-assistance', VerifyToken_1.TokenValidation, ClassController_1.classController.crearAsistencia);
     }
 }
 const classRoutes = new ClassRoutes();
