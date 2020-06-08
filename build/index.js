@@ -14,6 +14,7 @@ const LessonRoutes_1 = __importDefault(require("./routes/LessonRoutes"));
 const ModuleRoutes_1 = __importDefault(require("./routes/ModuleRoutes"));
 const ForoRoutes_1 = __importDefault(require("./routes/ForoRoutes"));
 const RecursoRoutes_1 = __importDefault(require("./routes/RecursoRoutes"));
+const PreguntaRoutes_1 = __importDefault(require("./routes/PreguntaRoutes"));
 const morgan_1 = __importDefault(require("morgan"));
 const cors_1 = __importDefault(require("cors"));
 dotenv_1.default.config();
@@ -42,6 +43,7 @@ class Server {
         this.app.use(ModuleRoutes_1.default);
         this.app.use(ForoRoutes_1.default);
         this.app.use(RecursoRoutes_1.default);
+        this.app.use(PreguntaRoutes_1.default);
     }
     start() {
         this.app.listen(this.app.get('port'));
