@@ -96,7 +96,7 @@ class CursoController {
                 }
                 else {
                     console.log("Last ID " + result.insertId);
-                    const query2 = `SELECT id_curso FROM curso WHERE id_curso = LAST_INSERT_ID()`;
+                    // const query2 = `SELECT id_curso FROM curso WHERE id_curso = LAST_INSERT_ID()`;
                     const query3 = `insert into modulo (nombre_modulo,rubrica,id_curso,id_color,estado_modulo,id_tipo_modulo,id_imagen,tx_id,tx_username,tx_host,tx_date) values 
                        ('Assistance',5.00,?,1,true,1,1,1,'root',' 192.168.0.10',CURRENT_TIMESTAMP()),
                        ('Theme Lessons',20.00,?,1,true,1,1,1,'root',' 192.168.0.10',CURRENT_TIMESTAMP()),
