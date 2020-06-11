@@ -14,6 +14,7 @@ class ForoRoutes{
         this.router.get('/teacher/forums/:id',TokenValidation,foroController.listarForos);
         this.router.put('/teacher/forums/',TokenValidation,foroController.modificarForos);
         this.router.delete('/teacher/forums',TokenValidation,foroController.eliminarForo);
+        this.router.post('/teacher/forums/message',foroController.agregarMensaje);
        
     }
 }
