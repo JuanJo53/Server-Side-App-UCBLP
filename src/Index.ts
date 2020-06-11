@@ -11,6 +11,7 @@ import ForoRoutes from './routes/ForoRoutes';
 import RecursoRoutes from './routes/RecursoRoutes';
 import PreguntaRoutes from './routes/PreguntaRoutes';
 import TestRoutes from './routes/TestRoutes';
+import PracticaRoutes from './routes/PracticaRoutes';
 import morgan from 'morgan';
 import cors from 'cors';
 import { ConFirebase } from './FIrebase';
@@ -49,6 +50,7 @@ class Server{
         this.app.use(RecursoRoutes);
         this.app.use(PreguntaRoutes);
         this.app.use(TestRoutes);
+        this.app.use(PracticaRoutes);
     }
     start():void{
         this.app.listen(this.app.get('port'));

@@ -16,6 +16,7 @@ const ForoRoutes_1 = __importDefault(require("./routes/ForoRoutes"));
 const RecursoRoutes_1 = __importDefault(require("./routes/RecursoRoutes"));
 const PreguntaRoutes_1 = __importDefault(require("./routes/PreguntaRoutes"));
 const TestRoutes_1 = __importDefault(require("./routes/TestRoutes"));
+const PracticaRoutes_1 = __importDefault(require("./routes/PracticaRoutes"));
 const morgan_1 = __importDefault(require("morgan"));
 const cors_1 = __importDefault(require("cors"));
 const FIrebase_1 = require("./FIrebase");
@@ -49,6 +50,7 @@ class Server {
         this.app.use(RecursoRoutes_1.default);
         this.app.use(PreguntaRoutes_1.default);
         this.app.use(TestRoutes_1.default);
+        this.app.use(PracticaRoutes_1.default);
     }
     start() {
         this.app.listen(this.app.get('port'));

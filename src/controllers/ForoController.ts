@@ -66,5 +66,21 @@ class ForoController{
             }
         });
     }
+    public async agregarMensaje(req:Request,res:Response){
+        const idForo = req.body.idForo;
+        const codigoUsuario = req.body.codigoUsuario;
+        const mensaje = req.body.mensaje;
+        const query =`INSERT INTO mensaje (id_foro,codigo_usuario,mensaje,estado_mensaje,tx_id,tx_username,tx_host,tx_date)
+        VALUES (?,?,?,true,1,'root','192.168.0.10',CURRENT_TIMESTAMP())`;
+        Db.query(query,[idForo,codigoUsuario,mensaje],function(err,result,fields){
+            if(err){
+                res.status(500).json({text:'Error al enviar el mensaje'});
+                throw err;
+            }
+            else{
+                res.status(200).json({text:'Mensaje enviado con éxito'});
+            }
+        });
+    }
 }
 export const foroController=new ForoController();
