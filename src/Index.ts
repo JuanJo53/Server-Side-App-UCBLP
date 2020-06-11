@@ -13,10 +13,13 @@ import PreguntaRoutes from './routes/PreguntaRoutes';
 import TestRoutes from './routes/TestRoutes';
 import morgan from 'morgan';
 import cors from 'cors';
+import { ConFirebase } from './FIrebase';
 dotenv.config();
 class Server{ 
 
+
     public app:Application;
+    
     constructor(){
         this.app=express();
         this.config();
@@ -24,6 +27,8 @@ class Server{
     }
     //configurar modulos
     config():void{
+        let newCon=new ConFirebase();
+        newCon.iniciar();
         this.app.set('port',process.env.PORT || 3000);
         this.app.use(morgan('dev'));
         this.app.use(cors());

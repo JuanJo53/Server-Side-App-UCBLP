@@ -11,9 +11,90 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const Database_1 = __importDefault(require("../Database"));
+const firebase = __importStar(require("firebase-admin"));
+const Pregunta_1 = require("../model/Pregunta");
+const Storage_1 = __importDefault(require("../Storage"));
 class TestControloler {
+    generateId() {
+        // Alphanumeric characters
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        let autoId = '';
+        for (let i = 0; i < 20; i++) {
+            autoId += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        return autoId;
+    }
+    crearImaasdf(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            var filename = './src/archivos/asdf.jpg';
+            const bucketName = 'bucket-name';
+            const a = yield Storage_1.default.bucket("archivos-idiomas");
+            const nombre = exports.testController.generateId();
+            var date = String(Date.now());
+            a.upload(filename, { destination: "audio/" + nombre + date }).then((val) => {
+                console.log(val);
+            }).catch((err) => {
+                console.log(err);
+            });
+        });
+    }
+    subirPdf(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            var filename = './src/archivos/asdf.jpg';
+            const bucketName = 'bucket-name';
+            const a = yield Storage_1.default.bucket("archivos-idiomas");
+            const nombre = exports.testController.generateId();
+            var date = String(Date.now());
+            const url = yield a.file("pdf/" + nombre + date).getSignedUrl({
+                action: "write",
+                version: "v4",
+                expires: Date.now() + 100 * 60 * 60,
+            });
+            console.log(url);
+            res.json(url);
+        });
+    }
+    subirAudio(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            var filename = './src/archivos/asdf.jpg';
+            const bucketName = 'bucket-name';
+            const a = yield Storage_1.default.bucket("archivos-idiomas");
+            const nombre = exports.testController.generateId();
+            var date = String(Date.now());
+            const url = yield a.file("audio/" + nombre + date).getSignedUrl({
+                action: "write",
+                version: "v4",
+                expires: Date.now() + 100 * 60 * 60,
+            });
+            console.log(url);
+            res.json(url);
+        });
+    }
+    subirVideo(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            var filename = './src/archivos/asdf.jpg';
+            const bucketName = 'bucket-name';
+            const a = yield Storage_1.default.bucket("archivos-idiomas");
+            const nombre = exports.testController.generateId();
+            var date = String(Date.now());
+            const url = yield a.file("video/" + nombre + date).getSignedUrl({
+                action: "write",
+                version: "v4",
+                expires: Date.now() + 100 * 60 * 60,
+            });
+            console.log(url);
+            res.json(url);
+        });
+    }
     agregarExamen(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const idTema = req.body.idTema;
@@ -82,27 +163,110 @@ class TestControloler {
             });
         });
     }
-    agregarPreguntasExamen(req, res) {
+    cargarPreguntas(req) {
+        let preg = new Pregunta_1.Pregunta();
+        preg.pregunta = req.pregunta;
+        preg.respuestas = req.respuestas;
+        preg.opciones = req.opciones;
+        if (req.archivo && req.archivo != null && req.archivo != 'undefined') {
+            preg.archivo = req.archivo;
+            console.log(req.archivo);
+        }
+        return preg;
+    }
+    agregarPregunta(cod, idTipo, idTipoRes) {
         return __awaiter(this, void 0, void 0, function* () {
-            const idExamen = req.body.idExamen;
-            const preguntasExamen = req.body.preguntasExamen;
-            console.log(idExamen);
-            console.log(preguntasExamen[0].idPregunta);
-            console.log(preguntasExamen[0].puntuacion);
-            const query = `INSERT INTO examen_pregunta (id_pregunta,id_examen,puntuacion_examen_pregunta,estado_examen_pregunta,tx_id,tx_username,tx_host,tx_date)
-        VALUES (?,?,?,true,1,'root','192.168.0.10',CURRENT_TIMESTAMP())`;
-            for (let i = 0; i < preguntasExamen.length; i++) {
-                Database_1.default.query(query, [preguntasExamen[i].idPregunta, idExamen, preguntasExamen[i].puntuacion], function (err, result, fields) {
+            const codigoPregunta = cod;
+            const idTipoPregunta = idTipo;
+            const idTipoRespuesta = idTipoRes;
+            const query = `insert into pregunta (codigo_pregunta,id_tipo_pregunta,id_tipo_respuesta,estado_pregunta,tx_id,tx_username,tx_host,tx_date)
+        values (?,?,?,true,1,'root','192.168.0.10',CURRENT_TIMESTAMP());`;
+            Database_1.default.query(query, [codigoPregunta, idTipoPregunta, idTipoRespuesta], function (err, result, fields) {
+                return __awaiter(this, void 0, void 0, function* () {
                     if (err) {
-                        res.status(500).json({ text: 'Error al agregar preguntas al examen' });
-                        throw err;
+                        return false;
                     }
                     else {
-                        if ((i + 1) == preguntasExamen.length) {
-                            res.status(200).json({ text: 'Preguntas agregadas correctamente' });
-                        }
+                        return result.insertId;
                     }
                 });
+            });
+        });
+    }
+    agregarPreguntasExamen(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const idExamen = req.body.idExamen;
+                const preguntasExamen = req.body.preguntasExamen;
+                const query = `INSERT INTO examen_pregunta (id_pregunta,id_examen,puntuacion_examen_pregunta,estado_examen_pregunta,tx_id,tx_username,tx_host,tx_date)
+            VALUES (?,?,?,true,1,'root','192.168.0.10',CURRENT_TIMESTAMP())`;
+                var c = 0;
+                for (let i = 0; i < preguntasExamen.length; i++) {
+                    var tipo_req = req.body.preguntasExamen[i].tipo;
+                    if (tipo_req == true) {
+                        Database_1.default.query(query, [req.body.preguntasExamen[i].id, idExamen, preguntasExamen[i].puntuacion], function (err, result, fields) {
+                            if (err) {
+                                res.status(500).json({ text: 'Error al agregar preguntas al examen' });
+                                console.log(err);
+                                return false;
+                            }
+                            else {
+                                c++;
+                                if (c == preguntasExamen.length) {
+                                    console.log("entra 2");
+                                    res.status(200).json({ text: 'Preguntas agregadas correctamente' });
+                                    return true;
+                                }
+                            }
+                        });
+                    }
+                    else {
+                        const db = firebase.firestore();
+                        let pregun = exports.testController.cargarPreguntas(req.body.preguntasExamen[i].body);
+                        db.collection('Preguntas').add(JSON.parse(JSON.stringify(pregun))).then((val) => {
+                            var data = preguntasExamen[i];
+                            const codigoPregunta = val.id;
+                            const idTipoPregunta = data.idTipoPregunta;
+                            const idTipoRespuesta = data.idTipoRespuesta;
+                            const query2 = `insert into pregunta (codigo_pregunta,id_tipo_pregunta,id_tipo_respuesta,estado_pregunta,tx_id,tx_username,tx_host,tx_date)
+                    values (?,?,?,true,1,'root','192.168.0.10',CURRENT_TIMESTAMP());`;
+                            Database_1.default.query(query2, [codigoPregunta, idTipoPregunta, idTipoRespuesta], function (err, result, fields) {
+                                return __awaiter(this, void 0, void 0, function* () {
+                                    if (err) {
+                                        res.status(500).json("Ocurrio un Error al Agregar la pregunta");
+                                        console.log(err);
+                                        return false;
+                                    }
+                                    else {
+                                        Database_1.default.query(query, [result.insertId, idExamen, preguntasExamen[i].puntuacion], function (err2, result2, fields) {
+                                            if (err2) {
+                                                res.status(500).json({ text: 'Error al agregar preguntas al examen' });
+                                                console.log(err2);
+                                                return false;
+                                            }
+                                            else {
+                                                c++;
+                                                if (c == preguntasExamen.length) {
+                                                    console.log("entra 2");
+                                                    res.status(200).json({ text: 'Preguntas agregadas correctamente' });
+                                                    return false;
+                                                }
+                                            }
+                                        });
+                                    }
+                                });
+                            });
+                        }).catch((err) => {
+                            res.status(500).json("Ocurrio un Error al Agregar la pregunta");
+                            console.log(err);
+                            return false;
+                        });
+                    }
+                }
+            }
+            catch (e) {
+                console.log(e);
+                res.status(500).json("Ocurrio un Error al Agregar la pregunta");
             }
         });
     }

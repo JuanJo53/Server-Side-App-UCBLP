@@ -18,6 +18,7 @@ const PreguntaRoutes_1 = __importDefault(require("./routes/PreguntaRoutes"));
 const TestRoutes_1 = __importDefault(require("./routes/TestRoutes"));
 const morgan_1 = __importDefault(require("morgan"));
 const cors_1 = __importDefault(require("cors"));
+const FIrebase_1 = require("./FIrebase");
 dotenv_1.default.config();
 class Server {
     constructor() {
@@ -27,6 +28,8 @@ class Server {
     }
     //configurar modulos
     config() {
+        let newCon = new FIrebase_1.ConFirebase();
+        newCon.iniciar();
         this.app.set('port', process.env.PORT || 3000);
         this.app.use(morgan_1.default('dev'));
         this.app.use(cors_1.default());
