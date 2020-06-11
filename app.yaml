@@ -1,0 +1,4 @@
+runtime: nodejs10
+
+beta_settings:  
+  cloud_sql_instances: grand-citadel-275922:southamerica-east1:db-ucb-idiomas

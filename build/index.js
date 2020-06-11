@@ -12,8 +12,14 @@ const ThemeRoutes_1 = __importDefault(require("./routes/ThemeRoutes"));
 const ImageRoutes_1 = __importDefault(require("./routes/ImageRoutes"));
 const LessonRoutes_1 = __importDefault(require("./routes/LessonRoutes"));
 const ModuleRoutes_1 = __importDefault(require("./routes/ModuleRoutes"));
+const ForoRoutes_1 = __importDefault(require("./routes/ForoRoutes"));
+const RecursoRoutes_1 = __importDefault(require("./routes/RecursoRoutes"));
+const PreguntaRoutes_1 = __importDefault(require("./routes/PreguntaRoutes"));
+const TestRoutes_1 = __importDefault(require("./routes/TestRoutes"));
+const PracticaRoutes_1 = __importDefault(require("./routes/PracticaRoutes"));
 const morgan_1 = __importDefault(require("morgan"));
 const cors_1 = __importDefault(require("cors"));
+const FIrebase_1 = require("./FIrebase");
 dotenv_1.default.config();
 class Server {
     constructor() {
@@ -23,6 +29,8 @@ class Server {
     }
     //configurar modulos
     config() {
+        let newCon = new FIrebase_1.ConFirebase();
+        newCon.iniciar();
         this.app.set('port', process.env.PORT || 3000);
         this.app.use(morgan_1.default('dev'));
         this.app.use(cors_1.default());
@@ -38,6 +46,11 @@ class Server {
         this.app.use(ImageRoutes_1.default);
         this.app.use(LessonRoutes_1.default);
         this.app.use(ModuleRoutes_1.default);
+        this.app.use(ForoRoutes_1.default);
+        this.app.use(RecursoRoutes_1.default);
+        this.app.use(PreguntaRoutes_1.default);
+        this.app.use(TestRoutes_1.default);
+        this.app.use(PracticaRoutes_1.default);
     }
     start() {
         this.app.listen(this.app.get('port'));

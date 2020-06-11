@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "grand-citadel-275922",
+  "private_key_id": "bb818e0f0a8cb62483767d050726146da7d607e1",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCWGGCH0oegorwL\ngfYyspiZ0n9GPQGNO9nf3b/LHi4Xovug5JFJ+HcZgmYhQFFePrXJt4xUxLkVPXs6\nLjGJw0n81ZaC2OS8Ca2DOKT9RD/Ls1no9ic+Z7pRKItTxv7QSRsoqUPA0HNgm41v\npZ8YAjp9n9YJhFcopOoYGbX9FkoJBI0IVKNnlJdgGpHVG/S0uRVBPfrl24bPyejB\nslO14pwRLH+tg1ssdUW/Y1mDcbcxf3Ep/8zfXvk+82m0qaK0rPUrnLtpzQu5GLNt\niQkLLm01HsuFKZ4qi3KFqH43lgrjPQYCIUYjyPNPBYuS5qAiPnhX1JURFq5EONiS\njSWWfTuTAgMBAAECggEADzvHJFHaQRPzKOnWTnvw3//Muhi7/RUbfkyXyCo2fGCm\n0EQSeOL2V4j0C6DnAT01HxV5cSsMK9szFAsXLQe8jSQyY/JWeL00tpI7sJbKMMbx\ns6K0BfHqJ42JYoXaW9Jnpr9TKJEffKkc+D1jgcDMJe7gftPHMtFWDv8hCOBHwFVl\nhsEt+k7C2WJqCMctOSJ0lEEXX8UO7l8jA1Y+rgHL99hHYdnTmLGqOm1A0O91tkpg\nxaonib1GMZ2ZvCdbbxaGor9xBPuDWZIjctV5IgJ67Zqc4V/aQEVMRT/0kW4JTmR4\nhgaN9+jqjtfHM9yBYLMVaQ831Dhx39Qz95tvaP117QKBgQDR8iw0KBAIqmV74HPz\nCY6xMSeOYqRfjlrcQC09Wx5y45s15DG+cY29PxN3VxaDoc9QOTSsh6CCwCKUoGrB\nwUoYtgQAiw/FMYXI/srQru165L/yR9dvYYUn7RPqWz0bv87LW4mPl/5evV3K2a3V\nSlnCNY8dV+oDKxw4NRZRh/ZN3wKBgQC3BTI9bSyRoRZO97U6GUCb9Txn+fPA/zGv\nVB0mqeDaskhJr2icTlIqfehEAFq28rt1+isComrGNRTdZt/3C3FEImIuzCr4tFrH\n6QpPtCepoIABmB+a8yW3A315ChEMrirl+m9NJjU2HEs1LndYPR3+91B1zSOU5kRL\nsyQoChsgzQKBgQDPH6yciCnJYtJcNEQwMe2kwmnT/11LKJZbVLVNIugXUJV/xXGO\nAVlkqyX5RuHfW3O8IbPlwqiIViXHm7u3C4qednPcVVVppkHm2fgdiXahF6yGynmw\nWPWVPj+3pevTxJev6M7962X48bnmtnrZQlDrWQuoV2N3XMCqczVhmlFU4QKBgCnh\niYae9gT5PNajPphl8O//ZWxRuWLfwunhMK6JT0gcZghemGy0S38nwr/U6O1WjGlJ\n7w+yRQbIXNbxVKz+tFOoHpmg5PB2rRN0E4T7r9vUO5ahzhGyNF418T+CezZQoMZx\n0YhxBto0DU3FLVBG5BdVVtcuM0c+jkBYZRy4e069AoGBAL1y5WkVEIUYj4hc3/Os\ncUmWSCLR7jW+L7Qc4nvmFSU/ON3OqZd6th7CyWHM2vWJGTfeu/fO+AR4a5hy/jCa\nKcQwhWaMFlyooRREU/Lg0rVVo/tZq+gtOT5MWIFDuztfZibo0VaQIx8EJXZbnqLG\nmgHPdNUVQMDQK+MQD2ncNjsY\n-----END PRIVATE KEY-----\n",
+  "client_email": "grand-citadel-275922@appspot.gserviceaccount.com",
+  "client_id": "111683369565707585198",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/grand-citadel-275922%40appspot.gserviceaccount.com"
+}
