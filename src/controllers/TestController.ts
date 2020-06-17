@@ -5,7 +5,7 @@ import * as firebase from 'firebase-admin';
 import {Pregunta} from '../model/Pregunta';
 import storage from '../Storage'
 
-class TestControloler{
+class TestController{
     private generateId():string{
         // Alphanumeric characters
         const chars =
@@ -180,7 +180,7 @@ public async agregarExamen(req:Request,res:Response){
             const query = `INSERT INTO examen_pregunta (id_pregunta,id_examen,puntuacion_examen_pregunta,estado_examen_pregunta,tx_id,tx_username,tx_host,tx_date)
             VALUES (?,?,?,true,1,'root','192.168.0.10',CURRENT_TIMESTAMP())`;
             var c=0;
-            for(let i=0;i<preguntasExamen.length;i++){                    
+            for(let i=0;i<preguntasExamen.length;i++){                  
                 var tipo_req=req.body.preguntasExamen[i].tipo;
                 if(tipo_req==true){     
                     Db.query(query,[req.body.preguntasExamen[i].id,idExamen,preguntasExamen[i].puntuacion],function(err,result,fields){
@@ -317,4 +317,4 @@ public async agregarExamen(req:Request,res:Response){
     }
 }
 
-export const testController=new TestControloler();
+export const testController=new TestController();

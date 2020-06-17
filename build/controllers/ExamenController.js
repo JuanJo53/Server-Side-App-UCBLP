@@ -23,7 +23,7 @@ const Database_1 = __importDefault(require("../Database"));
 const firebase = __importStar(require("firebase-admin"));
 const Pregunta_1 = require("../model/Pregunta");
 const Storage_1 = __importDefault(require("../Storage"));
-class TestController {
+class TestControloler {
     generateId() {
         // Alphanumeric characters
         const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -342,5 +342,5 @@ class TestController {
         });
     }
 }
-exports.testController = new TestController();
-//# sourceMappingURL=TestController.js.map
+exports.testController = new TestControloler();
+//# sourceMappingURL=ExamenController.js.map

@@ -91,27 +91,31 @@ class CursoController {
         values(?,true,?,?,?,1,'root','192.168.0.10',CURRENT_TIMESTAMP());`;
             Database_1.default.query(query, [nombreCurso, id, idSemestre, idNivel], function (err, result, fields) {
                 if (err) {
-                    res.status(500).json({ text: 'Error al crear el curso' });
+                    res.status(500).json({ text: 'Error al crear el curso ' });
                     throw err;
                 }
                 else {
                     console.log("Last ID " + result.insertId);
-                    // const query2 = `SELECT id_curso FROM curso WHERE id_curso = LAST_INSERT_ID()`;
-                    const query3 = `insert into modulo (nombre_modulo,rubrica,id_curso,id_color,estado_modulo,id_tipo_modulo,id_imagen,tx_id,tx_username,tx_host,tx_date) values 
-                       ('Assistance',5.00,?,1,true,1,1,1,'root',' 192.168.0.10',CURRENT_TIMESTAMP()),
-                       ('Theme Lessons',20.00,?,1,true,1,1,1,'root',' 192.168.0.10',CURRENT_TIMESTAMP()),
-                       ('Theme Practices',10.00,?,1,true,1,1,1,'root',' 192.168.0.10',CURRENT_TIMESTAMP()),
-                       ('Theme Test',20.00,?,1,true,1,1,1,'root',' 192.168.0.10',CURRENT_TIMESTAMP()),
-                       ('Assesments',45.00,?,1,true,1,1,1,'root',' 192.168.0.10',CURRENT_TIMESTAMP());`;
-                    Database_1.default.query(query3, [result.insertId, result.insertId, result.insertId, result.insertId, result.insertId], function (err3, result3, fields3) {
-                        if (err3) {
-                            res.status(500).json({ text: 'Error al crear módulos' });
-                            throw err3;
-                        }
-                        else {
-                            res.status(200).json({ text: 'Curso creado con éxito' });
-                        }
-                    });
+                    exports.cursoController.agregarModulosPredeterminados(req, res, result.insertId);
+                }
+            });
+        });
+    }
+    agregarModulosPredeterminados(req, res, idCurso) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const query3 = `insert into modulo (nombre_modulo,rubrica,id_curso,id_color,estado_modulo,id_tipo_modulo,id_imagen,tx_id,tx_username,tx_host,tx_date) values 
+        ('Assistance',5.00,?,1,true,1,1,1,'root',' 192.168.0.10',CURRENT_TIMESTAMP()),
+        ('Theme Lessons',20.00,?,1,true,1,1,1,'root',' 192.168.0.10',CURRENT_TIMESTAMP()),
+        ('Theme Practices',10.00,?,1,true,1,1,1,'root',' 192.168.0.10',CURRENT_TIMESTAMP()),
+        ('Theme Test',20.00,?,1,true,1,1,1,'root',' 192.168.0.10',CURRENT_TIMESTAMP()),
+        ('Assesments',45.00,?,1,true,1,1,1,'root',' 192.168.0.10',CURRENT_TIMESTAMP());`;
+            Database_1.default.query(query3, [idCurso, idCurso, idCurso, idCurso, idCurso], function (err, result, fields) {
+                if (err) {
+                    res.status(500).json({ text: 'Error al crear módulos' });
+                    throw err;
+                }
+                else {
+                    res.status(200).json({ text: 'Curso creado con éxito' });
                 }
             });
         });
