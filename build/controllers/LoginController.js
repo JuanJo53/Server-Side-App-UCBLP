@@ -97,7 +97,7 @@ class LoginController {
     registrarDocente(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             req.body.contraseniaDocente = exports.loginController.criptPass(req.body.contraseniaDocente);
-            yield Database_1.default.query('INSERT INTO docente set ?', [req.body], function (err, result, fields) {
+            Database_1.default.query('INSERT INTO docente set ?', [req.body], function (err, result, fields) {
                 if (err)
                     throw err;
                 const token = exports.loginController.getToken(req.body.correoDocente);

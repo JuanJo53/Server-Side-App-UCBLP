@@ -81,7 +81,7 @@ class LoginController{
     //Registrar un nuevo docente
     public async registrarDocente (req:Request,res:Response){ 
         req.body.contraseniaDocente=loginController.criptPass(req.body.contraseniaDocente);
-        await Db.query('INSERT INTO docente set ?', [req.body],function(err, result, fields) {
+         Db.query('INSERT INTO docente set ?', [req.body],function(err, result, fields) {
             if (err) throw err;
             const token=loginController.getToken(req.body.correoDocente)
             res.json(token);  
