@@ -23,7 +23,7 @@ const Database_1 = __importDefault(require("../Database"));
 const firebase = __importStar(require("firebase-admin"));
 const Pregunta_1 = require("../model/Pregunta");
 const Storage_1 = __importDefault(require("../Storage"));
-class TestController {
+class TestControloler {
     generateId() {
         // Alphanumeric characters
         const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -110,30 +110,22 @@ class TestController {
                 }
                 else {
                     if (preguntasExamen != null && preguntasExamen.length > 0) {
+                        const query2 = `INSERT INTO examen_pregunta (id_pregunta,id_examen,puntuacion_examen_pregunta,estado_examen_pregunta,tx_id,tx_username,tx_host,tx_date)
+                VALUES (?,?,?,true,1,'root','192.168.0.10',CURRENT_TIMESTAMP())`;
                         console.log("Last ID " + result.insertId);
-                        exports.testController.agregarPreguntasAExamenRecienCreado(req, res, result.insertId);
+                        for (let i = 0; i < preguntasExamen.length; i++) {
+                            Database_1.default.query(query2, [preguntasExamen[i].idPregunta, result.insertId, preguntasExamen[i].puntuacion], function (err2, result2, fields2) {
+                                if (err2) {
+                                    res.status(500).json({ text: 'Error al registrar las preguntas' });
+                                    throw err2;
+                                }
+                                else {
+                                    //Do nothing
+                                }
+                            });
+                        }
                     }
                     res.status(200).json({ text: 'Examen creado correctamente' });
-                }
-            });
-        });
-    }
-    agregarPreguntasAExamenRecienCreado(req, res, idExamen) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const preguntasExamen = req.body.preguntasExamen;
-            const valores = [];
-            const query = `INSERT INTO examen_pregunta (id_pregunta,id_examen,puntuacion_examen_pregunta,estado_examen_pregunta,tx_id,tx_username,tx_host)
-                VALUES ? `;
-            for (let i = 0; i < preguntasExamen.length; i++) {
-                valores.push([preguntasExamen[i].idPregunta, idExamen, preguntasExamen[i].puntuacion, true, 1, 'root', '192.168.0.10']);
-            }
-            Database_1.default.query(query, [valores], function (err, result, fields) {
-                if (err) {
-                    res.status(500).json({ text: 'Error al registrar las preguntas' });
-                    throw err;
-                }
-                else {
-                    //Do nothing
                 }
             });
         });
@@ -350,5 +342,5 @@ class TestController {
         });
     }
 }
-exports.testController = new TestController();
-//# sourceMappingURL=TestController.js.map
+exports.testController = new TestControloler();
+//# sourceMappingURL=ExamenController.js.map

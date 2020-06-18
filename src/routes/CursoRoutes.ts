@@ -12,7 +12,7 @@ class CursoRoutes{
     config():void{
         this.router.get('/teacher/class-room',TokenValidation,cursoController.obtenerCursosDocente);
         this.router.get('/teacher/class-room/prueba',TokenValidation,cursoController.obtenerCursosDocentePrueba);
-        this.router.post('/teacher/class-room',TokenValidation,cursoController.agregarCurso);
+        this.router.post('/teacher/class-room',cursoController.agregarCurso);
     }
 }
 const cursoRoutes=new CursoRoutes();

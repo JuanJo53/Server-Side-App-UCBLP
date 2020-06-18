@@ -5,7 +5,7 @@ import * as firebase from 'firebase-admin';
 import {Pregunta} from '../model/Pregunta';
 import storage from '../Storage'
 
-class TestControloler{
+class TestController{
     private generateId():string{
         // Alphanumeric characters
         const chars =
@@ -97,25 +97,33 @@ public async agregarExamen(req:Request,res:Response){
             }
             else{
                 if(preguntasExamen!=null && preguntasExamen.length>0){ 
-                const query2=`INSERT INTO examen_pregunta (id_pregunta,id_examen,puntuacion_examen_pregunta,estado_examen_pregunta,tx_id,tx_username,tx_host,tx_date)
-                VALUES (?,?,?,true,1,'root','192.168.0.10',CURRENT_TIMESTAMP())`;
-                console.log("Last ID " + result.insertId);
-                for(let i=0;i<preguntasExamen.length;i++){
-                    Db.query(query2,[preguntasExamen[i].idPregunta,result.insertId,preguntasExamen[i].puntuacion],function(err2,result2,fields2){
-                        if(err2){
-                            res.status(500).json({text:'Error al registrar las preguntas'});
-                            throw err2;
-                        }
-                        else{
-                            //Do nothing
-                        }
-                    });
-                }
+                    console.log("Last ID " + result.insertId);
+                    testController.agregarPreguntasAExamenRecienCreado(req,res,result.insertId);
+                
             }
                 res.status(200).json({text:'Examen creado correctamente'});
             }
         });  
  
+    }
+    private async agregarPreguntasAExamenRecienCreado(req:Request,res:Response,idExamen:Number){
+        const preguntasExamen = req.body.preguntasExamen;
+        const valores=[];
+        const query=`INSERT INTO examen_pregunta (id_pregunta,id_examen,puntuacion_examen_pregunta,estado_examen_pregunta,tx_id,tx_username,tx_host)
+                VALUES ? `;  
+                for(let i=0;i<preguntasExamen.length;i++){
+                    valores.push([preguntasExamen[i].idPregunta,idExamen,preguntasExamen[i].puntuacion,true,1,'root','192.168.0.10']);
+                }
+                    Db.query(query,[valores],function(err,result,fields){
+                        if(err){
+                            res.status(500).json({text:'Error al registrar las preguntas'});
+                            throw err;
+                        }
+                        else{
+                            //Do nothing
+                        }
+                    });
+                
     }
     public async modificarExamen(req:Request,res: Response){
         const idExamen = req.body.idExamen;
@@ -180,7 +188,7 @@ public async agregarExamen(req:Request,res:Response){
             const query = `INSERT INTO examen_pregunta (id_pregunta,id_examen,puntuacion_examen_pregunta,estado_examen_pregunta,tx_id,tx_username,tx_host,tx_date)
             VALUES (?,?,?,true,1,'root','192.168.0.10',CURRENT_TIMESTAMP())`;
             var c=0;
-            for(let i=0;i<preguntasExamen.length;i++){                    
+            for(let i=0;i<preguntasExamen.length;i++){                  
                 var tipo_req=req.body.preguntasExamen[i].tipo;
                 if(tipo_req==true){     
                     Db.query(query,[req.body.preguntasExamen[i].id,idExamen,preguntasExamen[i].puntuacion],function(err,result,fields){
@@ -317,4 +325,4 @@ public async agregarExamen(req:Request,res:Response){
     }
 }
 
-export const testController=new TestControloler();
+export const testController=new TestController();

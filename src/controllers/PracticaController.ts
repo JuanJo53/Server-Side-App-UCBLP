@@ -9,7 +9,7 @@ public async agregarPractica(req:Request,res:Response){
     const inicioPractica=req.body.inicioPractica;
     const finPractica = req.body.finPractica;
     const preguntasPractica = req.body.preguntasPractica;
-    console.log(preguntasPractica);
+  
     const query =`INSERT INTO practica (id_leccion,nombre_practica,numero_practica,inicio_practica,fin_practica,estado_practica,tx_id,tx_username,tx_host,tx_date)
     VALUES (?,?,?,?,?,true,1,'root','192.168.0.10',CURRENT_TIMESTAMP())`;
     Db.query(query,[idLeccion,nombrePractica,numeroPractica,inicioPractica,finPractica],function(err,result,fields){
@@ -19,25 +19,33 @@ public async agregarPractica(req:Request,res:Response){
             }
             else{
                 if(preguntasPractica!=null && preguntasPractica.length>0){ 
-                const query2=`INSERT INTO practica_pregunta (id_pregunta,id_practica,puntuacion_practica_pregunta,estado_pregunta_practica ,tx_id,tx_username,tx_host,tx_date)
-                VALUES (?,?,?,true,1,'root','192.168.0.10',CURRENT_TIMESTAMP())`;
-                console.log("Last ID " + result.insertId);
-                for(let i=0;i<preguntasPractica.length;i++){
-                    Db.query(query2,[preguntasPractica[i].idPregunta,result.insertId,preguntasPractica[i].puntuacion],function(err2,result2,fields2){
-                        if(err2){
-                            res.status(500).json({text:'Error al registrar las preguntas'});
-                            throw err2;
-                        }
-                        else{
-                            //Do nothing
-                        }
-                    });
-                }
+                    practicaController.agregarPreguntasAPracticaRecienCreada(req,res,result.insertId);    
             }
                res.status(200).json({text:'Práctica creada correctamente'});
             }
         });  
  
+    }
+    public async agregarPreguntasAPracticaRecienCreada(req:Request,res: Response,idPractica:Number){
+        const preguntasPractica = req.body.preguntasPractica;
+        console.log(preguntasPractica);
+        var valores=[];
+        const query = `INSERT INTO practica_pregunta (id_pregunta,id_practica,puntuacion_practica_pregunta,estado_pregunta_practica ,tx_id,tx_username,tx_host)
+        VALUES ?`;
+        for(let i=0;i<preguntasPractica.length;i++){
+            valores.push([preguntasPractica[i].idPregunta,idPractica,preguntasPractica[i].puntuacion,true,1,'root','192.168.0.10']);
+            }
+            Db.query(query,[valores],function(err,result,fields){
+                if(err){
+                    res.status(500).json({text:'Error al agregar preguntas a la práctica'});
+                    throw err;
+                }
+                else{
+                       //do Nothing    
+                }
+            });
+        
+       
     }
     public async modificarPractica(req:Request,res: Response){
         const idPractica = req.body.idPractica;
@@ -73,22 +81,25 @@ public async agregarPractica(req:Request,res:Response){
     public async agregarPreguntasPractica(req:Request,res: Response){
         const idPractica = req.body.idPractica;
         const preguntasPractica = req.body.preguntasPractica;
-        const query = `INSERT INTO practica_pregunta (id_pregunta,id_practica,puntuacion_practica_pregunta,estado_pregunta_practica ,tx_id,tx_username,tx_host,tx_date)
-        VALUES (?,?,?,true,1,'root','192.168.0.10',CURRENT_TIMESTAMP())`;
+        var valores=[];
+        const query = `INSERT INTO practica_pregunta (id_pregunta,id_practica,puntuacion_practica_pregunta,estado_pregunta_practica ,tx_id,tx_username,tx_host)
+        VALUES ?`;
         for(let i=0;i<preguntasPractica.length;i++){
-            Db.query(query,[preguntasPractica[i].idPregunta,idPractica,preguntasPractica[i].puntuacion],function(err,result,fields){
+            valores.push([preguntasPractica[i].idPregunta,idPractica,preguntasPractica[i].puntuacion,true,1,'root','192.168.0.10']);
+            }
+            Db.query(query,[valores],function(err,result,fields){
                 if(err){
                     res.status(500).json({text:'Error al agregar preguntas al examen'});
                     throw err;
                 }
                 else{
-                    if((i+1)==preguntasPractica.length){
+                    
                         res.status(200).json({text:'Preguntas agregadas correctamente'});
-                    }
+                
                    
                 }
             });
-        }
+        
        
     }
     public async modificarPreguntaPractica(req:Request,res:Response){
