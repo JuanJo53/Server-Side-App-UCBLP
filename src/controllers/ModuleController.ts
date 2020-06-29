@@ -22,10 +22,12 @@ class ModuleController{
         const idCurso = req.body.idCurso;
         const idColor = req.body.idColor;
         const idImagen = req.body.idImagen;
+        console.log(req.body);
         const query =`insert into modulo (nombre_modulo,rubrica,id_curso,id_color,estado_modulo,id_tipo_modulo,id_imagen,tx_id,tx_username,tx_host,tx_date) values 
         (?,?,?,?,true,2,?,1,'root',' 192.168.0.10',CURRENT_TIMESTAMP()) `;
         Db.query(query,[nombreModulo,rubrica,idCurso,idColor,idImagen],function(err,result,fields){
             if(err){
+                console.log(err);
                 res.status(500).json({text:'Error al crear el módulo'});
             }
             else{

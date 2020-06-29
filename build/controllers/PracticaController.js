@@ -11,29 +11,46 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const Database_1 = __importDefault(require("../Database"));
+const firebase = __importStar(require("firebase-admin"));
+const Pregunta_1 = require("../model/Pregunta");
 class PreacticaController {
     agregarPractica(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const idLeccion = req.body.idLeccion;
-            const nombrePractica = req.body.nombrePractica;
-            const numeroPractica = req.body.numeroPractica;
-            const inicioPractica = req.body.inicioPractica;
-            const finPractica = req.body.finPractica;
-            const preguntasPractica = req.body.preguntasPractica;
-            const query = `INSERT INTO practica (id_leccion,nombre_practica,numero_practica,inicio_practica,fin_practica,estado_practica,tx_id,tx_username,tx_host,tx_date)
-    VALUES (?,?,?,?,?,true,1,'root','192.168.0.10',CURRENT_TIMESTAMP())`;
-            Database_1.default.query(query, [idLeccion, nombrePractica, numeroPractica, inicioPractica, finPractica], function (err, result, fields) {
+            const nombrePractica = req.body.nombre;
+            const numeroPractica = req.body.numero;
+            const inicioFecha = req.body.fechaini;
+            const inicioHora = req.body.horaini;
+            const finFecha = req.body.fechafin;
+            const finHora = req.body.horafin;
+            const query = `INSERT INTO practica (
+        id_leccion,
+        nombre_practica,
+        numero_practica,
+        inicio_fecha,
+        inicio_hora,
+        fin_fecha,
+        fin_hora,
+        estado_practica,
+        tx_id,tx_username,tx_host,tx_date)
+    VALUES (?,?,?,?,?,?,?,true,1,'root','192.168.0.10',CURRENT_TIMESTAMP())`;
+            Database_1.default.query(query, [idLeccion, nombrePractica,
+                numeroPractica, inicioFecha, inicioHora, finFecha, finHora], function (err, result, fields) {
                 if (err) {
+                    console.log(err);
                     res.status(500).json({ text: 'Error al crear la práctica ' });
-                    throw err;
                 }
                 else {
-                    if (preguntasPractica != null && preguntasPractica.length > 0) {
-                        exports.practicaController.agregarPreguntasAPracticaRecienCreada(req, res, result.insertId);
-                    }
-                    res.status(200).json({ text: 'Práctica creada correctamente' });
+                    res.status(200).json({ idPractica: result.insertId });
                 }
             });
         });
@@ -57,6 +74,94 @@ class PreacticaController {
                     //do Nothing    
                 }
             });
+        });
+    }
+    cargarPreguntas(req) {
+        let preg = new Pregunta_1.Pregunta();
+        preg.pregunta = req.pregunta;
+        preg.respuestas = req.respuesta;
+        preg.opciones = req.opciones;
+        if (req.archivo && req.archivo != null && req.archivo !== 'undefined') {
+            preg.archivo = req.archivo;
+            console.log(req.archivo);
+        }
+        return preg;
+    }
+    agregarPreguntasPractica(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const idPractica = req.body.idPractica;
+                const preguntasPractica = req.body.preguntas;
+                const query = `INSERT INTO practica_pregunta (id_pregunta,id_practica,puntuacion_practica_pregunta,estado_pregunta_practica,tx_id,tx_username,tx_host,tx_date)
+            VALUES (?,?,?,true,1,'root','192.168.0.10',CURRENT_TIMESTAMP())`;
+                var c = 0;
+                for (let i = 0; i < preguntasPractica.length; i++) {
+                    var tipo_req = req.body.preguntas[i].tipo;
+                    if (tipo_req == true) {
+                        Database_1.default.query(query, [req.body.preguntas[i].id, idPractica, preguntasPractica[i].puntuacion], function (err, result, fields) {
+                            if (err) {
+                                res.status(500).json({ text: 'Error al agregar preguntas al examen' });
+                                console.log(err);
+                                return false;
+                            }
+                            else {
+                                c++;
+                                if (c == preguntasPractica.length) {
+                                    console.log("entra 2");
+                                    res.status(200).json({ text: 'Preguntas agregadas correctamente' });
+                                    return true;
+                                }
+                            }
+                        });
+                    }
+                    else {
+                        const db = firebase.firestore();
+                        let pregun = exports.practicaController.cargarPreguntas(req.body.preguntas[i]);
+                        db.collection('Preguntas').add(JSON.parse(JSON.stringify(pregun))).then((val) => {
+                            var data = preguntasPractica[i];
+                            const codigoPregunta = val.id;
+                            const idTipoPregunta = data.idTipoPregunta;
+                            const idTipoRespuesta = data.idTipoRespuesta;
+                            const query2 = `insert into pregunta (codigo_pregunta,id_tipo_pregunta,id_tipo_respuesta,estado_pregunta,tx_id,tx_username,tx_host,tx_date)
+                    values (?,?,?,true,1,'root','192.168.0.10',CURRENT_TIMESTAMP());`;
+                            Database_1.default.query(query2, [codigoPregunta, idTipoPregunta, idTipoRespuesta], function (err, result, fields) {
+                                return __awaiter(this, void 0, void 0, function* () {
+                                    if (err) {
+                                        res.status(500).json("Ocurrio un Error al Agregar la pregunta");
+                                        console.log(err);
+                                        return false;
+                                    }
+                                    else {
+                                        Database_1.default.query(query, [result.insertId, idPractica, preguntasPractica[i].puntuacion], function (err2, result2, fields) {
+                                            if (err2) {
+                                                res.status(500).json({ text: 'Error al agregar preguntas al examen' });
+                                                console.log(err2);
+                                                return false;
+                                            }
+                                            else {
+                                                c++;
+                                                if (c == preguntasPractica.length) {
+                                                    console.log("entra 2");
+                                                    res.status(200).json({ text: 'Preguntas agregadas correctamente' });
+                                                    return false;
+                                                }
+                                            }
+                                        });
+                                    }
+                                });
+                            });
+                        }).catch((err) => {
+                            res.status(500).json("Ocurrio un Error al Agregar la pregunta");
+                            console.log(err);
+                            return false;
+                        });
+                    }
+                }
+            }
+            catch (e) {
+                console.log(e);
+                res.status(500).json("Ocurrio un Error al Agregar la pregunta");
+            }
         });
     }
     modificarPractica(req, res) {
@@ -94,27 +199,6 @@ class PreacticaController {
             });
         });
     }
-    agregarPreguntasPractica(req, res) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const idPractica = req.body.idPractica;
-            const preguntasPractica = req.body.preguntasPractica;
-            var valores = [];
-            const query = `INSERT INTO practica_pregunta (id_pregunta,id_practica,puntuacion_practica_pregunta,estado_pregunta_practica ,tx_id,tx_username,tx_host)
-        VALUES ?`;
-            for (let i = 0; i < preguntasPractica.length; i++) {
-                valores.push([preguntasPractica[i].idPregunta, idPractica, preguntasPractica[i].puntuacion, true, 1, 'root', '192.168.0.10']);
-            }
-            Database_1.default.query(query, [valores], function (err, result, fields) {
-                if (err) {
-                    res.status(500).json({ text: 'Error al agregar preguntas al examen' });
-                    throw err;
-                }
-                else {
-                    res.status(200).json({ text: 'Preguntas agregadas correctamente' });
-                }
-            });
-        });
-    }
     modificarPreguntaPractica(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const idPracticaPregunta = req.body.idPracticaPregunta;
@@ -135,16 +219,19 @@ class PreacticaController {
     listarPracticas(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { id } = req.params;
-            const query = `SELECT practica.id_practica,practica.numero_practica,practica.nombre_practica,practica.inicio_practica,practica.fin_practica
+            console.log(id);
+            const query = `SELECT practica.id_practica,practica.numero_practica,practica.nombre_practica,practica.inicio_fecha,inicio_hora,practica.fin_fecha,practica.fin_hora
         FROM practica INNER JOIN leccion ON
         leccion.id_leccion = practica.id_leccion
         WHERE leccion.id_leccion=?
         AND practica.estado_practica=true`;
             Database_1.default.query(query, [id], function (err, result, fields) {
                 if (err) {
+                    console.log(err);
                     res.status(500).json({ text: 'No se pudo listar las practicas' });
                 }
                 else {
+                    console.log(result);
                     res.status(200).json(result);
                 }
             });
