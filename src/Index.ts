@@ -12,6 +12,7 @@ import RecursoRoutes from './routes/RecursoRoutes';
 import PreguntaRoutes from './routes/PreguntaRoutes';
 import TestRoutes from './routes/TestRoutes';
 import PracticaRoutes from './routes/PracticaRoutes';
+import AlumnoRoutes from './routes/ALumnoRoutes';
 import morgan from 'morgan';
 import cors from 'cors';
 import { ConFirebase } from './FIrebase';
@@ -51,6 +52,7 @@ class Server{
         this.app.use(PreguntaRoutes);
         this.app.use(TestRoutes);
         this.app.use(PracticaRoutes);
+        this.app.use(AlumnoRoutes);
     }
     start():void{
         this.app.listen(this.app.get('port'));
