@@ -12,9 +12,6 @@ class TestRoutes {
     config() {
         this.router.get('/teacher/test/:id', TestController_1.testController.listarExamenes);
         this.router.post('/teacher/test', TestController_1.testController.agregarExamen);
-        this.router.get('/teacher/storagepdf', TestController_1.testController.subirPdf);
-        this.router.get('/teacher/storagevideo', TestController_1.testController.subirVideo);
-        this.router.get('/teacher/storageaudio', TestController_1.testController.subirAudio);
         this.router.put('/teacher/test', TestController_1.testController.modificarExamen);
         this.router.delete('/teacher/test/:id', TestController_1.testController.eliminarExamen);
         this.router.get('/teacher/test/questions/:id', TestController_1.testController.listarPreguntasExamen);

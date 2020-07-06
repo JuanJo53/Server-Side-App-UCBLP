@@ -77,12 +77,39 @@ class ModuleController{
             }
         });
     }
+    public async actualizarRubricas(req:Request,res:Response){
+        console.log(req.body);
+        const rubricas = req.body.rubricas;
+
+        const query = `UPDATE modulo SET rubrica = ? WHERE id_modulo = ?`;
+        var tam=rubricas.length;
+        if(tam>0){
+            for(let rubrica of rubricas){
+                Db.query(query,[rubrica.rubrica,rubrica.id_modulo],function(err,result,fields){
+                    if(err){
+                        console.log(err);
+                        res.status(500).json({text:'Error al actualizar el módulo'});
+                    }
+                    else{
+                        tam--;
+                        if(tam==0){
+                            res.status(200).json({text:'Módulo actualizado'});
+                        }
+                    }
+                });
+            }
+        }
+        else{
+            res.status(200).json({text:'Módulo actualizado'});
+        }
+    }
     public async editarModuloPersonalizado(req:Request,res:Response){
+        console.log(req.body);
         const id = req.body.id;
         const nombreModulo=req.body.nombreModulo;
         const rubrica = req.body.rubrica;
         const idColor = req.body.idColor;
-        const idImagen = req.body.idColor;
+        const idImagen = req.body.idImagen;
         const estado=req.body.estado;
         const query = `UPDATE modulo SET estado_modulo=?,nombre_modulo = ?, rubrica = ?, id_color=?, id_imagen =? WHERE id_modulo = ?`;
         Db.query(query,[estado,nombreModulo,rubrica,idColor,idImagen,id],function(err,result,fields){
@@ -99,11 +126,12 @@ class ModuleController{
         const id = req.body.id;
         const rubrica = req.body.rubrica;
         const idColor = req.body.idColor;
-        const idImagen = req.body.idColor;
+        const idImagen = req.body.idImagen;
         const estado=req.body.estado;
-        const query = `UPDATE modulo SET  estado_modulo = ? rubrica = ?, id_color=?, id_imagen =? WHERE id_modulo = ?`;
+        const query = `UPDATE modulo SET  estado_modulo = ?, rubrica = ?, id_color=?, id_imagen =? WHERE id_modulo = ?`;
         Db.query(query,[estado,rubrica,idColor,idImagen,id],function(err,result,fields){
             if(err){
+                console.log(err);
                 res.status(500).json({text:'Error al actualizar el módulo'});
             }
             else{

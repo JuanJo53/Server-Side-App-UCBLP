@@ -22,79 +22,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Database_1 = __importDefault(require("../Database"));
 const firebase = __importStar(require("firebase-admin"));
 const Pregunta_1 = require("../model/Pregunta");
-const Storage_1 = __importDefault(require("../Storage"));
 class TestController {
-    generateId() {
-        // Alphanumeric characters
-        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-        let autoId = '';
-        for (let i = 0; i < 20; i++) {
-            autoId += chars.charAt(Math.floor(Math.random() * chars.length));
-        }
-        return autoId;
-    }
-    crearImaasdf(req, res) {
-        return __awaiter(this, void 0, void 0, function* () {
-            var filename = './src/archivos/asdf.jpg';
-            const bucketName = 'bucket-name';
-            const a = yield Storage_1.default.bucket("archivos-idiomas");
-            const nombre = exports.testController.generateId();
-            var date = String(Date.now());
-            a.upload(filename, { destination: "audio/" + nombre + date }).then((val) => {
-                console.log(val);
-            }).catch((err) => {
-                console.log(err);
-            });
-        });
-    }
-    subirPdf(req, res) {
-        return __awaiter(this, void 0, void 0, function* () {
-            var filename = './src/archivos/asdf.jpg';
-            const bucketName = 'bucket-name';
-            const a = yield Storage_1.default.bucket("archivos-idiomas");
-            const nombre = exports.testController.generateId();
-            var date = String(Date.now());
-            const url = yield a.file("pdf/" + nombre + date).getSignedUrl({
-                action: "write",
-                version: "v4",
-                expires: Date.now() + 100 * 60 * 60,
-            });
-            console.log(url);
-            res.json(url);
-        });
-    }
-    subirAudio(req, res) {
-        return __awaiter(this, void 0, void 0, function* () {
-            var filename = './src/archivos/asdf.jpg';
-            const bucketName = 'bucket-name';
-            const a = yield Storage_1.default.bucket("archivos-idiomas");
-            const nombre = exports.testController.generateId();
-            var date = String(Date.now());
-            const url = yield a.file("audio/" + nombre + date).getSignedUrl({
-                action: "write",
-                version: "v4",
-                expires: Date.now() + 100 * 60 * 60,
-            });
-            console.log(url);
-            res.json(url);
-        });
-    }
-    subirVideo(req, res) {
-        return __awaiter(this, void 0, void 0, function* () {
-            var filename = './src/archivos/asdf.jpg';
-            const bucketName = 'bucket-name';
-            const a = yield Storage_1.default.bucket("archivos-idiomas");
-            const nombre = exports.testController.generateId();
-            var date = String(Date.now());
-            const url = yield a.file("video/" + nombre + date).getSignedUrl({
-                action: "write",
-                version: "v4",
-                expires: Date.now() + 100 * 60 * 60,
-            });
-            console.log(url);
-            res.json(url);
-        });
-    }
     agregarExamen(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const idTema = req.body.idTema;

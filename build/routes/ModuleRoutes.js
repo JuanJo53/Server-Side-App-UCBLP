@@ -14,11 +14,12 @@ class ModuleRoutes {
         this.router.post('/teacher/evaluation', VerifyToken_1.TokenValidation, ModuleController_1.moduleController.agregarModuloPersonalizado);
         this.router.get('/teacher/evaluation/:id', VerifyToken_1.TokenValidation, ModuleController_1.moduleController.listarModulos);
         this.router.get('/teacher/evaluation/get/color', VerifyToken_1.TokenValidation, ModuleController_1.moduleController.listarColores);
-        this.router.put('/teacher/evaluation/personalized/', VerifyToken_1.TokenValidation, ModuleController_1.moduleController.editarModuloPersonalizado);
-        this.router.put('/teacher/evaluation/predeterminated/', VerifyToken_1.TokenValidation, ModuleController_1.moduleController.editarModuloPredeterminado);
+        this.router.put('/teacher/evaluation/personalized', VerifyToken_1.TokenValidation, ModuleController_1.moduleController.editarModuloPersonalizado);
+        this.router.put('/teacher/evaluation/predeterminated', VerifyToken_1.TokenValidation, ModuleController_1.moduleController.editarModuloPredeterminado);
         this.router.put('/teacher/evaluation/disable/:id', VerifyToken_1.TokenValidation, ModuleController_1.moduleController.desactivarModulo);
         this.router.put('/teacher/evaluation/enable/:id', VerifyToken_1.TokenValidation, ModuleController_1.moduleController.activarModulo);
         this.router.delete('/teacher/evaluation/delete/:id', VerifyToken_1.TokenValidation, ModuleController_1.moduleController.eliminarModulo);
+        this.router.post('/teacher/evaluation/rubric', VerifyToken_1.TokenValidation, ModuleController_1.moduleController.actualizarRubricas);
     }
 }
 const moduleRoutes = new ModuleRoutes();
