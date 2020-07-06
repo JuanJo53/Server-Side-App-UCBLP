@@ -12,7 +12,7 @@ import RecursoRoutes from './routes/RecursoRoutes';
 import PreguntaRoutes from './routes/PreguntaRoutes';
 import TestRoutes from './routes/TestRoutes';
 import PracticaRoutes from './routes/PracticaRoutes';
-import AlumnoRoutes from './routes/ALumnoRoutes';
+import AlumnoRoutes from './routes/AlumnoRoutes';
 import morgan from 'morgan';
 import cors from 'cors';
 import { ConFirebase } from './FIrebase';

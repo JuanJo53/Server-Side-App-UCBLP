@@ -11,7 +11,9 @@ class AlumnoRoutes{
     //configurar respuesta routas
     config():void{
         this.router.get('/student/profile',TokenValidation,alumnoController.obtenerPerfilAlumno);
-        this.router.get('/student/qualifications',TokenValidation,alumnoController.obtenerCalificacionesAlumnoModulo);
+        this.router.get('/student/qualifications/modules',alumnoController.obtenerCalificacionesAlumnoModulo);
+        this.router.get('/student/qualification/avg/practices',alumnoController.obtenerPromedioAlumnoPracticas);
+        this.router.put('/student/qualification/practices/uptade',alumnoController.actualizarNotaModuloPracticas);
     }
 }
 const alumnoRoutes=new AlumnoRoutes();

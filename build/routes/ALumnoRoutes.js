@@ -12,9 +12,11 @@ class AlumnoRoutes {
     //configurar respuesta routas
     config() {
         this.router.get('/student/profile', VerifyToken_1.TokenValidation, AlumnoController_1.alumnoController.obtenerPerfilAlumno);
-        this.router.get('/student/qualifications', VerifyToken_1.TokenValidation, AlumnoController_1.alumnoController.obtenerCalificacionesAlumnoModulo);
+        this.router.get('/student/qualifications/modules', AlumnoController_1.alumnoController.obtenerCalificacionesAlumnoModulo);
+        this.router.get('/student/qualification/avg/practices', AlumnoController_1.alumnoController.obtenerPromedioAlumnoPracticas);
+        this.router.put('/student/qualification/practices/uptade', AlumnoController_1.alumnoController.actualizarNotaModuloPracticas);
     }
 }
 const alumnoRoutes = new AlumnoRoutes();
 exports.default = alumnoRoutes.router;
-//# sourceMappingURL=ALumnoRoutes.js.map
+//# sourceMappingURL=AlumnoRoutes.js.map

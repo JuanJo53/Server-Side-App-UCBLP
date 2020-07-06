@@ -70,6 +70,63 @@ class AlumnoController {
             });
         });
     }
+    obtenerPromedioAlumnoPracticas(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const idAlumno = req.body.idAlumno;
+            const idCurso = req.body.idCurso;
+            const query = `SELECT AVG(np.nota_practica) AS notaPromedioPracticas
+        FROM nota_practica np 
+        JOIN alumno alu ON
+        np.id_alumno = alu.id_alumno
+        JOIN curso_alumno ca ON
+        ca.id_alumno=alu.id_alumno
+        JOIN curso cur ON
+        cur.id_curso = ca.id_curso
+        WHERE np.estado_nota_practica=true
+        AND alu.estado_alumno = true
+        AND ca.estado_curso_alumno = true
+        AND cur.estado_curso=true
+        AND alu.id_alumno = ?
+        AND cur.id_curso = ?;`;
+            Database_1.default.query(query, [idAlumno, idCurso], function (err, result, fields) {
+                if (err) {
+                    res.status(500).json({ text: 'Error al obtener nota del alumno' });
+                }
+                else {
+                    res.status(200).json(result);
+                }
+            });
+        });
+    }
+    actualizarNotaModuloPracticas(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const idAlumno = req.body.idAlumno;
+            const idCurso = req.body.idCurso;
+            const idNotaModulo = req.body.idNotaModulo;
+            const query = `UPDATE nota_modulo SET nota_modulo=(SELECT AVG(np.nota_practica)
+        FROM nota_practica np 
+        JOIN alumno alu ON
+        np.id_alumno = alu.id_alumno
+        JOIN curso_alumno ca ON
+        ca.id_alumno=alu.id_alumno
+        JOIN curso cur ON
+        cur.id_curso = ca.id_curso
+        WHERE np.estado_nota_practica=true
+        AND alu.estado_alumno = true
+        AND ca.estado_curso_alumno = true
+        AND cur.estado_curso=true
+        AND alu.id_alumno = ?
+        AND cur.id_curso = ?) where id_nota_modulo = ?;`;
+            Database_1.default.query(query, [idAlumno, idCurso, idNotaModulo], function (err, result, fields) {
+                if (err) {
+                    res.status(500).json({ text: 'Error al actualizar la nota del alumno' });
+                }
+                else {
+                    res.status(200).json({ text: 'Nota actualizada' });
+                }
+            });
+        });
+    }
 }
 exports.alumnoController = new AlumnoController();
 //# sourceMappingURL=AlumnoController.js.map
