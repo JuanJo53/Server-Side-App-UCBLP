@@ -48,22 +48,24 @@ class CursoController {
 
     }
 
-    public async obtenerCursosDocentePrueba(req: Request, res: Response) {
-        const id = req.docenteId;
-        console.log("ID: " + id);
-        const query = `select curso.id_curso as 'idCurso',dia_semana.dia_semana as 'diaSemana', curso_dia.hora_inicio as 'horaInicio', curso_dia.hora_conclusion as 'horaConclusion'
-        from curso_dia inner join dia_semana on
-        curso_dia.id_dia_semana= dia_semana.id_dia_semana
-        inner join curso on 
-        curso.id_curso = curso_dia.id_curso
-        inner join docente on
-        docente.id_docente = curso.id_docente
-        where docente.id_docente= 19 and curso.estado_curso=true
-        group by curso.id_curso, dia_semana.id_dia_semana, curso_dia.id_curso_dia`;
-        await Db.query(query, [id], function (err, result, fields) {
-            if (err) throw err;
-            res.json(result);
-            console.log(result.length);
+    public async obtenerCursosDocentePestania(req: Request, res: Response) {
+        const {id} = req.params;
+        const query = `SELECT cu.id_curso, cu.nombre_curso
+        FROM curso cu
+        JOIN docente do ON
+        cu.id_docente = do.id_docente
+        AND do.estado_docente =true
+        AND cu.estado_curso = true
+        AND do.id_docente = ?;`;
+        Db.query(query, [id], function (err, result, fields) {
+            if (err) {
+                res.json({text: 'Error al obtener los cursos'}).status(500);
+                throw err;
+            }
+            else{
+                res.json(result).status(200);
+            }
+            
         });
 
 
