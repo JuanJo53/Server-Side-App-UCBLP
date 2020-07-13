@@ -67,10 +67,37 @@ class ModuleController{
         imagen.id_imagen=modulo.id_imagen
         WHERE curso.id_curso = ?
         AND modulo.estado_modulo = 1
-        AND modulo.id_tipo_modulo = 1`;
+        AND modulo.id_tipo_modulo = 1
+        AND color.estado_color=true
+        AND imagen.estado_imagen=true
+        AND curso.estado_curso=true`;
+        Db.query(query,[id],function(err,result,fields){
+            if(err){
+                res.status(500).json({text:'No se pudo listar los módulos predeterminados'});
+            }
+            else{
+                res.status(200).json(result);
+            }
+        });
+    }
+    public async listarModulosPersonalizados(req: Request, res:Response){
+        const {id} = req.params;
+        const query =`SELECT modu.id_modulo,modu.nombre_modulo, modu.rubrica 
+        FROM modulo modu 
+        JOIN curso cur 
+        ON cur.id_curso =modu.id_curso
+        JOIN tipo_modulo tm ON
+        modu.id_tipo_modulo = tm.id_tipo_modulo
+        WHERE tm.id_tipo_modulo = 2
+        AND cur.id_curso = ?
+        AND modu.estado_modulo = true
+        AND cur.estado_curso=true
+        AND tm.estado_tipo_modulo = true
+      `;
         Db.query(query,[id],function(err,result,fields){
             if(err){
                 res.status(500).json({text:'No se pudo listar los módulos personalizados'});
+                throw err;
             }
             else{
                 res.status(200).json(result);

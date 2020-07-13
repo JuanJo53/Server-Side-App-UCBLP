@@ -11,7 +11,7 @@ class CursoRoutes{
     //configurar respuesta routas
     config():void{
         this.router.get('/teacher/class-room',TokenValidation,cursoController.obtenerCursosDocente);
-        this.router.get('/teacher/class-room/prueba',TokenValidation,cursoController.obtenerCursosDocentePrueba);
+        this.router.get('/teacher/class-room/navigation-tab',TokenValidation,cursoController.obtenerCursosDocentePestania);
         this.router.post('/teacher/class-room',cursoController.agregarCurso);
     }
 }

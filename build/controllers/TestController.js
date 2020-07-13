@@ -26,12 +26,13 @@ class TestController {
     agregarExamen(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const idTema = req.body.idTema;
+            const numeroExamen = req.body.numeroExamen;
             const inicioExamen = req.body.inicioExamen;
             const finExamen = req.body.finExamen;
             const preguntasExamen = req.body.preguntasExamen;
-            const query = `INSERT INTO examen_tema (id_tema,estado_examen,inicio_examen,fin_examen,tx_id,tx_username,tx_host,tx_date)
-    VALUES (?,true,?,?,1,'root','192.168.0.10',CURRENT_TIMESTAMP())`;
-            Database_1.default.query(query, [idTema, inicioExamen, finExamen], function (err, result, fields) {
+            const query = `INSERT INTO examen_tema (id_tema,numero_examen,estado_examen,inicio_examen,fin_examen,tx_id,tx_username,tx_host,tx_date)
+    VALUES (?,?,true,?,?,1,'root','192.168.0.10',CURRENT_TIMESTAMP())`;
+            Database_1.default.query(query, [idTema, numeroExamen, inicioExamen, finExamen], function (err, result, fields) {
                 if (err) {
                     res.status(500).json({ text: 'Error al crear el examen ' });
                     throw err;
@@ -69,11 +70,12 @@ class TestController {
     modificarExamen(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const idExamen = req.body.idExamen;
+            const numeroExamen = req.body.numeroExamen;
             const inicioExamen = req.body.inicioExamen;
             const finExamen = req.body.finExamen;
-            const query = `UPDATE examen_tema SET inicio_examen = ?,fin_examen =? , tx_date = CURRENT_TIMESTAMP()
+            const query = `UPDATE examen_tema SET numero_examen=? ,inicio_examen = ?,fin_examen =? , tx_date = CURRENT_TIMESTAMP()
         WHERE id_examen =?`;
-            Database_1.default.query(query, [inicioExamen, finExamen, idExamen], function (err, result, fields) {
+            Database_1.default.query(query, [numeroExamen, inicioExamen, finExamen, idExamen], function (err, result, fields) {
                 if (err) {
                     res.status(500).json({ text: 'Error al modificar el examen' });
                     throw err;
