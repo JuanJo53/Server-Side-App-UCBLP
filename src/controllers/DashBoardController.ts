@@ -189,7 +189,7 @@ class DashBoardController {
     }
     public async asistencia(req: Request, res: Response) {
         const idCurso = req.body.idCurso;
-        const query = `select count(DISTINCT asn.id_clase_alumno)
+        const query = `select count(DISTINCT asn.id_clase_alumno) as asistencias
         FROM asistencia asn
         JOIN clase cls ON
         cls.id_clase = asn.id_clase
@@ -218,7 +218,7 @@ class DashBoardController {
     }
     public async faltas(req: Request, res: Response) {
         const idCurso = req.body.idCurso;
-        const query = `select count(DISTINCT asn.id_clase_alumno)
+        const query = `select count(DISTINCT asn.id_clase_alumno) as faltas
         FROM asistencia asn
         JOIN clase cls ON
         cls.id_clase = asn.id_clase
