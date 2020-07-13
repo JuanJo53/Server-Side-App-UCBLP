@@ -12,6 +12,7 @@ class ModuleRoutes{
     config():void{
         this.router.post('/teacher/evaluation',TokenValidation,moduleController.agregarModuloPersonalizado);
         this.router.get('/teacher/evaluation/:id',TokenValidation,moduleController.listarModulos);
+        this.router.get('/teacher/evaluation/simple/:id',TokenValidation,moduleController.listarModulosSimple);
         this.router.get('/teacher/evaluation/get/color',TokenValidation,moduleController.listarColores);
         this.router.put('/teacher/evaluation/personalized',TokenValidation,moduleController.editarModuloPersonalizado );
         this.router.put('/teacher/evaluation/predeterminated',TokenValidation,moduleController.editarModuloPredeterminado);

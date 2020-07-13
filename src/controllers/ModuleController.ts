@@ -175,6 +175,21 @@ class ModuleController{
             }
         });
     }
+    public async listarModulosSimple(req: Request, res:Response){
+        const {id} = req.params;
+        const query =`SELECT modulo.id_modulo,modulo.nombre_modulo 
+        FROM modulo WHERE modulo.id_curso = ?
+        AND modulo.estado_modulo = 1
+        AND modulo.id_tipo_modulo = 2`;
+        Db.query(query,[id],function(err,result,fields){
+            if(err){
+                res.status(500).json({text:'No se pudo listar los módulos personalizados'});
+            }
+            else{
+                res.status(200).json(result);
+            }
+        });
+    }
 
 
 }
