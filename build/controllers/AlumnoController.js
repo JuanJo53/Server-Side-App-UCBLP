@@ -86,8 +86,8 @@ class AlumnoController {
         AND alu.estado_alumno = true
         AND ca.estado_curso_alumno = true
         AND cur.estado_curso=true
-        AND alu.id_alumno = 1
-        AND cur.id_curso = 1;`;
+        AND alu.id_alumno = ?
+        AND cur.id_curso = ?;`;
             Database_1.default.query(query, [idAlumno, idCurso], function (err, result, fields) {
                 if (err) {
                     res.status(500).json({ text: 'Error al obtener el perfil del alumno' });
