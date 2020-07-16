@@ -81,7 +81,7 @@ class AlumnoController {
         ca.id_alumno=alu.id_alumno
         JOIN curso cur ON
         cur.id_curso = ca.id_curso
-        WHERE modu.estado_modulo = true
+        WHERE modu.estado_modulo = 1
         AND nmod.estado_nota_modulo=true
         AND alu.estado_alumno = true
         AND ca.estado_curso_alumno = true
@@ -112,7 +112,7 @@ class AlumnoController {
         ca.id_alumno=alu.id_alumno
         JOIN curso cur ON
         cur.id_curso = ca.id_curso
-        WHERE modu.estado_modulo = true
+        WHERE modu.estado_modulo = 1 OR modu.estado_modulo = 2
         AND nmod.estado_nota_modulo=true
         AND alu.estado_alumno = true
         AND ca.estado_curso_alumno = true
