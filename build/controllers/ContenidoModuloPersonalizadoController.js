@@ -19,9 +19,10 @@ class ContenidoModuloPersonalizadoController {
             const idModulo = req.body.idModulo;
             const numeroContenido = req.body.numeroContenido;
             const nombreContenido = req.body.nombreContenido;
-            const query = `INSERT INTO contenido_mod_per (id_modulo,numero_contenido,nombre_contenido,estado_contenido_mod_per,tx_id,tx_username,tx_host)
-        VALUES (?,?,?,1,1,'root','192.168.0.10')`;
-            Database_1.default.query(query, [idModulo, numeroContenido, nombreContenido], function (err, result, fields) {
+            const rubricaContenido = req.body.rubricaContenido;
+            const query = `INSERT INTO contenido_mod_per (id_modulo,numero_contenido,nombre_contenido,rubrica_contenido,estado_contenido_mod_per,tx_id,tx_username,tx_host)
+        VALUES (?,?,?,?,1,1,'root','192.168.0.10')`;
+            Database_1.default.query(query, [idModulo, numeroContenido, nombreContenido, rubricaContenido], function (err, result, fields) {
                 if (err) {
                     res.status(500).json({ text: 'Error al agregar contenido' });
                 }
@@ -33,9 +34,9 @@ class ContenidoModuloPersonalizadoController {
     }
     desactivarContenido(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const idContenidoModPer = req.body.idContenidoModPer;
+            const { id } = req.params;
             const query = `UPDATE contenido_mod_per SET estado_contenido_mod_per = 2 WHERE id_contenido_mod_per =? `;
-            Database_1.default.query(query, [idContenidoModPer], function (err, result, fields) {
+            Database_1.default.query(query, [id], function (err, result, fields) {
                 if (err) {
                     res.status(500).json({ text: 'Error al desactivar contenido' });
                 }
@@ -45,11 +46,25 @@ class ContenidoModuloPersonalizadoController {
             });
         });
     }
+    activarContenido(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { id } = req.params;
+            const query = `UPDATE contenido_mod_per SET estado_contenido_mod_per = 1 WHERE id_contenido_mod_per =? `;
+            Database_1.default.query(query, [id], function (err, result, fields) {
+                if (err) {
+                    res.status(500).json({ text: 'Error al activar contenido' });
+                }
+                else {
+                    res.status(200).json({ text: 'Contenido activado correctamente' });
+                }
+            });
+        });
+    }
     eliminarContenido(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const idContenidoModPer = req.body.idContenidoModPer;
+            const { id } = req.params;
             const query = `UPDATE contenido_mod_per SET estado_contenido_mod_per = 0 WHERE id_contenido_mod_per =? `;
-            Database_1.default.query(query, [idContenidoModPer], function (err, result, fields) {
+            Database_1.default.query(query, [id], function (err, result, fields) {
                 if (err) {
                     res.status(500).json({ text: 'Error al eliminar contenido' });
                 }
@@ -78,7 +93,8 @@ class ContenidoModuloPersonalizadoController {
     listarContenido(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const idCurso = req.body.idCurso;
-            const query = `SELECT cont.id_contenido_mod_per, cont.numero_contenido,cont.nombre_contenido
+            const idModulo = req.body.idModulo;
+            const query = `SELECT cont.id_contenido_mod_per, cont.numero_contenido,cont.nombre_contenido,cont.rubrica_contenido
         FROM contenido_mod_per cont
         JOIN modulo modu ON
         cont.id_modulo=modu.id_modulo
@@ -87,8 +103,9 @@ class ContenidoModuloPersonalizadoController {
         WHERE cur.estado_curso=true
         AND modu.estado_modulo=1 OR modu.estado_modulo=2
         AND cont.estado_contenido_mod_per=1 OR cont.estado_contenido_mod_per=2
-        AND cur.id_curso = 1`;
-            Database_1.default.query(query, [idCurso], function (err, result, fields) {
+        AND cur.id_curso = ?
+        AND modu.id_modulo=?`;
+            Database_1.default.query(query, [idCurso, idModulo], function (err, result, fields) {
                 if (err) {
                     res.status(500).json({ text: 'Error al eliminar contenido' });
                 }
@@ -103,8 +120,8 @@ class ContenidoModuloPersonalizadoController {
             const idContenidoModPer = req.body.idContenidoModPer;
             const idAlumno = req.body.idAlumno;
             const notaContenido = req.body.notaContenido;
-            const query = `INSERT INTO nota_contenido (id_contenido_mod_per,id_alumno,nota_contenido,tx_id,tx_username,tx_host)
-        VALUES (?,?,?,1,'root','192.168.0.10')`;
+            const query = `INSERT INTO nota_contenido (id_contenido_mod_per,id_alumno,nota_contenido,estado_nota_contenido,tx_id,tx_username,tx_host)
+        VALUES (?,?,?,true,1,'root','192.168.0.10')`;
             Database_1.default.query(query, [idContenidoModPer, idAlumno, notaContenido], function (err, result, fields) {
                 if (err) {
                     res.status(500).json({ text: 'Error al agregar la nota' });
@@ -148,7 +165,8 @@ class ContenidoModuloPersonalizadoController {
     obtenerPromedioNotasContenido(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const idCurso = req.body.idCurso;
-            const query = `SELECT alu.id_alumno,alu.nombre_alumno,alu.ap_paterno_alumno,alu.ap_materno_alumno,AVG(nc.nota_contenido) as promedio
+            const idModulo = req.body.idModulo;
+            const query = `SELECT alu.id_alumno,alu.nombre_alumno,alu.ap_paterno_alumno,alu.ap_materno_alumno,sum(nc.nota_contenido*cmp.rubrica_contenido/100) as nota
         FROM nota_contenido nc 
         JOIN alumno alu ON
         alu.id_alumno =nc.id_alumno
@@ -169,10 +187,11 @@ class ContenidoModuloPersonalizadoController {
         AND modu.estado_modulo=1
         AND tm.estado_tipo_modulo = true
         AND cmp.estado_contenido_mod_per=1
-        AND cur.id_curso = ?
-        AND tm.id_tipo_modulo = ?
-        GROUP BY alu.id_alumno`;
-            Database_1.default.query(query, [idCurso], function (err, result, fields) {
+        AND cur.id_curso = 1
+        AND modu.id_modulo = 28
+        AND tm.id_tipo_modulo = 2
+        GROUP BY alu.id_alumno,alu.nombre_alumno,alu.ap_paterno_alumno,alu.ap_materno_alumno`;
+            Database_1.default.query(query, [idCurso, idModulo], function (err, result, fields) {
                 if (err) {
                     res.status(500).json({ text: 'Error al obtaner la nota' });
                 }
@@ -186,7 +205,8 @@ class ContenidoModuloPersonalizadoController {
         return __awaiter(this, void 0, void 0, function* () {
             const idAlumno = req.body.idAlumno;
             const idCurso = req.body.idCurso;
-            const query = `SELECT  cmp.numero_contenido,cmp.nombre_contenido,AVG(nc.nota_contenido) as promedio
+            const idModulo = req.body.idModulo;
+            const query = `SELECT  cmp.numero_contenido,cmp.nombre_contenido,SUM(nc.nota_contenido*cmp.rubrica_contenido/100) as promedio
         FROM nota_contenido nc 
         JOIN alumno alu ON
         alu.id_alumno =nc.id_alumno
@@ -208,10 +228,12 @@ class ContenidoModuloPersonalizadoController {
         AND tm.estado_tipo_modulo = true
         AND cmp.estado_contenido_mod_per=1
         AND cur.id_curso = ?
+        AND cmp.id_contenido_mod_per = 1
         AND alu.id_alumno = ?
         AND tm.id_tipo_modulo = 2
+        AND modu.id_modulo =?
         GROUP BY cmp.numero_contenido,cmp.nombre_contenido;`;
-            Database_1.default.query(query, [idCurso, idAlumno], function (err, result, fields) {
+            Database_1.default.query(query, [idCurso, idAlumno, idModulo], function (err, result, fields) {
                 if (err) {
                     res.status(500).json({ text: 'Error al obtener las notas' });
                 }
