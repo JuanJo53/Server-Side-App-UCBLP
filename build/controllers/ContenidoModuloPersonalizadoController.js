@@ -110,7 +110,7 @@ class ContenidoModuloPersonalizadoController {
                     res.status(500).json({ text: 'Error al eliminar contenido' });
                 }
                 else {
-                    res.status(200).json({ text: 'Contenido eliminado correctamente' });
+                    res.status(200).json(result);
                 }
             });
         });
