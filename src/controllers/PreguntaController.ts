@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
 import Db from '../Database';
 
+import * as firebase from 'firebase-admin';
+import {Pregunta} from '../model/Pregunta';
 class PreguntaController {
     public async listarTipoPregunta(req: Request, res: Response) {
         const query = 'SELECT id_tipo_pregunta,tipo_pregunta FROM tipo_pregunta WHERE estado_tipo_pregunta = true';
@@ -58,6 +60,36 @@ class PreguntaController {
                 res.status(200).json(result);
             }
         });
+
+    }
+    public async listarPreguntas2(req:Request,res:Response){
+        const query =`SELECT pregunta.id_pregunta,pregunta.codigo_pregunta,pregunta.id_tipo_pregunta,pregunta.id_tipo_respuesta
+        FROM pregunta
+        WHERE pregunta.estado_pregunta=true`;
+        Db.query(query,async function(err,result:any[],fields){
+            if(err){
+                res.status(500).json({text:'No se pudo listar las preguntas'});
+            }
+            else{
+                try{
+                    var listaPreg=[];
+                const db=firebase.firestore()
+                var datos=await db.collection('Preguntas').get();
+                for(let doc of datos.docs){
+                    var ind=result.findIndex(element=>element.codigo_pregunta===doc.id);
+                    result[ind].pregunta=doc.data();
+                    listaPreg.push(result[ind]);
+                    result.splice(ind,1);   
+                }
+                res.status(200).json(listaPreg);
+                }
+                catch(e){
+                    res.status(500).json({text:'No se pudo listar las preguntas'});
+
+                }
+            }
+        
+        });   
 
     }
 }

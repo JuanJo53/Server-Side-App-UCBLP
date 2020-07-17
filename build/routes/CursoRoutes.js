@@ -12,8 +12,10 @@ class CursoRoutes {
     //configurar respuesta routas
     config() {
         this.router.get('/teacher/class-room', VerifyToken_1.TokenValidation, CursoController_1.cursoController.obtenerCursosDocente);
+        this.router.get('/teacher/class-room/semester', VerifyToken_1.TokenValidation, CursoController_1.cursoController.obtenerSemestres);
+        this.router.get('/teacher/class-room/level', VerifyToken_1.TokenValidation, CursoController_1.cursoController.obtenerNiveles);
         this.router.get('/teacher/class-room/navigation-tab', VerifyToken_1.TokenValidation, CursoController_1.cursoController.obtenerCursosDocentePestania);
-        this.router.post('/teacher/class-room', CursoController_1.cursoController.agregarCurso);
+        this.router.post('/teacher/class-room', VerifyToken_1.TokenValidation, CursoController_1.cursoController.agregarCurso);
     }
 }
 const cursoRoutes = new CursoRoutes();

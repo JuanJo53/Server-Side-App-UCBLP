@@ -1,5 +1,6 @@
 import{Request,Response, query} from 'express';
 import Db from '../Database'; 
+import util from 'util'
 
 class ModuleController{
     public async listarColores(req:Request,res:Response){
@@ -16,6 +17,17 @@ class ModuleController{
         });                
         
     }
+    async agregarNotasAlumno(idModulo:number,idCurso:number){
+        const query =`insert into nota_modulo (id_alumno,id_modulo,nota_modulo,estado_nota_modulo,tx_id,tx_username,tx_host,tx_date)
+        SELECT alumno.id_alumno,?,0,true,1,'root',' 192.168.0.10',CURRENT_TIMESTAMP()
+        FROM alumno INNER
+        JOIN curso_alumno ON
+        alumno.id_alumno=curso_alumno.id_alumno
+        where curso_alumno.id_curso=?`;
+        const result:(arg1:string,arg2?:any[])=>Promise<unknown> = util.promisify(Db.query).bind(Db);
+        await result(query,[idModulo,idCurso]) as any[]; 
+        
+    }
     public async agregarModuloPersonalizado(req:Request,res:Response){
         const nombreModulo=req.body.nombreModulo;
         const rubrica = req.body.rubrica;
@@ -25,12 +37,13 @@ class ModuleController{
         console.log(req.body);
         const query =`insert into modulo (nombre_modulo,rubrica,id_curso,id_color,estado_modulo,id_tipo_modulo,id_imagen,tx_id,tx_username,tx_host,tx_date) values 
         (?,?,?,?,true,2,?,1,'root',' 192.168.0.10',CURRENT_TIMESTAMP()) `;
-        Db.query(query,[nombreModulo,rubrica,idCurso,idColor,idImagen],function(err,result,fields){
+        Db.query(query,[nombreModulo,rubrica,idCurso,idColor,idImagen],async function(err,result,fields){
             if(err){
                 console.log(err);
                 res.status(500).json({text:'Error al crear el módulo'});
             }
             else{
+                await moduleController.agregarNotasAlumno(result.insertId,idCurso);
                 res.status(200).json({text:'Módulo creado correctamente'});
             }
         });

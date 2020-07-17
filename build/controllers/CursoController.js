@@ -8,27 +8,53 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __asyncValues = (this && this.__asyncValues) || function (o) {
+    if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
+    var m = o[Symbol.asyncIterator], i;
+    return m ? m.call(o) : (o = typeof __values === "function" ? __values(o) : o[Symbol.iterator](), i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function () { return this; }, i);
+    function verb(n) { i[n] = o[n] && function (v) { return new Promise(function (resolve, reject) { v = o[n](v), settle(resolve, reject, v.done, v.value); }); }; }
+    function settle(resolve, reject, d, v) { Promise.resolve(v).then(function(v) { resolve({ value: v, done: d }); }, reject); }
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const Database_1 = __importDefault(require("../Database"));
+const util_1 = __importDefault(require("util"));
 class CursoController {
+    sacarCantidadAlumnos(id_curso) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const alumnosq = `select count(curso_alumno.id_alumno) as est
+        FROM curso
+        inner join curso_alumno on 
+        curso.id_curso=curso_alumno.id_curso 
+        inner join alumno 
+        on curso_alumno.id_alumno = alumno.id_alumno
+        WHERE
+        curso.id_curso=?`;
+            try {
+                const result2 = util_1.default.promisify(Database_1.default.query).bind(Database_1.default);
+                var row = yield result2(alumnosq, [id_curso]);
+                return row;
+            }
+            catch (e) {
+                console.log(e);
+                return false;
+            }
+        });
+    }
     obtenerCursosDocente(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const id = req.docenteId;
             console.log("ID: " + id);
             //Regresa la informacion basica de un curso
-            const query = `select curso.id_curso  ,curso.nombre_curso, semestre.semestre, count(curso_alumno.id_alumno) as estudiantes  
+            const query = `select curso.id_curso  ,curso.nombre_curso, semestre.id_semestre  
         from curso inner join semestre on 
         curso.id_semestre = semestre.id_semestre 
-        inner join curso_alumno on 
-        curso.id_curso=curso_alumno.id_curso 
-        inner join alumno 
-        on curso_alumno.id_alumno = alumno.id_alumno 
         inner join docente 
         on curso.id_docente=docente.id_docente 
-        where curso.estado_curso=true and docente.id_docente= ?
+        where curso.estado_curso=true 
+        and docente.id_docente= ?
         group by curso.id_curso`;
             //Regresa la informacion de los dias y horarios del curso
             const query3 = `select dia_semana.dia_semana as 'diaSemana', curso_dia.hora_inicio as 'horaInicio', curso_dia.hora_conclusion as 'horaConclusion'
@@ -42,20 +68,78 @@ class CursoController {
             //Arreglo que almacena los resultados de las consultas
             let resultData = [];
             yield Database_1.default.query(query, [id], function (err, result, fields) {
-                if (err)
-                    throw err;
-                //retorna la informacion basica del curso agregando los dias y horarios de cada uno
-                var c = 1;
-                for (let i in result) {
-                    Database_1.default.query(query3, [result[i].id_curso], function (err2, result3, fields2) {
-                        if (err2)
-                            throw err2;
-                        result[i].dias = result3;
-                        if (c == result.length) {
-                            res.json(result);
+                var result_1, result_1_1;
+                var e_1, _a;
+                return __awaiter(this, void 0, void 0, function* () {
+                    if (err) {
+                        console.log(err);
+                        res.json({ text: 'Error al obtener los semestres' }).status(500);
+                    }
+                    //retorna la informacion basica del curso agregando los dias y horarios de cada uno
+                    else {
+                        var c = 1;
+                        console.log(result);
+                        try {
+                            for (result_1 = __asyncValues(result); result_1_1 = yield result_1.next(), !result_1_1.done;) {
+                                let i = result_1_1.value;
+                                var cant_est = yield exports.cursoController.sacarCantidadAlumnos(i.id_curso);
+                                if (!cant_est) {
+                                    res.json({ text: 'Error al obtener los semestres' }).status(500);
+                                }
+                                else {
+                                    i.estudiantes = cant_est[0].est || 0;
+                                    Database_1.default.query(query3, [i.id_curso], function (err2, result3, fields2) {
+                                        if (err2)
+                                            throw err2;
+                                        i.dias = result3;
+                                        if (c == result.length) {
+                                            res.json(result);
+                                        }
+                                        c++;
+                                    });
+                                }
+                            }
                         }
-                        c++;
-                    });
+                        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+                        finally {
+                            try {
+                                if (result_1_1 && !result_1_1.done && (_a = result_1.return)) yield _a.call(result_1);
+                            }
+                            finally { if (e_1) throw e_1.error; }
+                        }
+                    }
+                });
+            });
+        });
+    }
+    obtenerSemestres(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const query = `SELECT sem.id_semestre, sem.semestre
+        FROM semestre sem
+        WHERE sem.estado_semestre =true;`;
+            Database_1.default.query(query, function (err, result, fields) {
+                if (err) {
+                    res.json({ text: 'Error al obtener los semestres' }).status(500);
+                    console.log(err);
+                }
+                else {
+                    res.json(result).status(200);
+                }
+            });
+        });
+    }
+    obtenerNiveles(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const query = `SELECT niv.id_nivel, niv.nivel
+        FROM nivel niv
+        WHERE niv.estado_nivel =true;`;
+            Database_1.default.query(query, function (err, result, fields) {
+                if (err) {
+                    res.json({ text: 'Error al obtener los niveles' }).status(500);
+                    console.log(err);
+                }
+                else {
+                    res.json(result).status(200);
                 }
             });
         });
@@ -81,23 +165,66 @@ class CursoController {
             });
         });
     }
+    agregarHorarioCurso(dias, idCurso) {
+        return __awaiter(this, void 0, void 0, function* () {
+            console.log(dias);
+            var valores = [];
+            var query = `INSERT INTO curso_dia (id_dia_semana,id_curso,hora_inicio,hora_conclusion,estado_curso_dia,tx_id,tx_username,tx_host)
+        VALUES (?,?,?,?,?,?,?,?)`;
+            var prim = false;
+            for (let dia of dias) {
+                if (!prim) {
+                    prim = true;
+                }
+                else if (prim) {
+                    query += ",\n(?,?,?,?,?,?,?,?)";
+                }
+                valores.push(dia.dia);
+                valores.push(idCurso);
+                valores.push(dia.horaInicio);
+                valores.push(dia.horaFin);
+                valores.push(true);
+                valores.push(1);
+                valores.push('root');
+                valores.push('192.168.0.10');
+            }
+            try {
+                const result = util_1.default.promisify(Database_1.default.query).bind(Database_1.default);
+                yield result(query, valores);
+                return true;
+            }
+            catch (e) {
+                console.log(e);
+                return false;
+            }
+        });
+    }
     agregarCurso(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const id = req.body.idDocente;
-            const nombreCurso = req.body.nombreCurso;
+            const id = req.docenteId;
+            const nombreCurso = req.body.curso;
             const idSemestre = req.body.idSemestre;
             const idNivel = req.body.idNivel;
+            const dias = req.body.dias;
             const query = `insert into curso (nombre_curso,estado_curso,id_docente,id_semestre,id_nivel,tx_id,tx_username,tx_host,tx_date) 
         values(?,true,?,?,?,1,'root','192.168.0.10',CURRENT_TIMESTAMP());`;
             Database_1.default.query(query, [nombreCurso, id, idSemestre, idNivel], function (err, result, fields) {
-                if (err) {
-                    res.status(500).json({ text: 'Error al crear el curso ' });
-                    throw err;
-                }
-                else {
-                    console.log("Last ID " + result.insertId);
-                    exports.cursoController.agregarModulosPredeterminados(req, res, result.insertId);
-                }
+                return __awaiter(this, void 0, void 0, function* () {
+                    if (err) {
+                        res.status(500).json({ text: 'Error al crear el curso ' });
+                        console.log(err);
+                    }
+                    else {
+                        console.log("Last ID " + result.insertId);
+                        var crear = yield exports.cursoController.agregarHorarioCurso(dias, result.insertId);
+                        if (crear) {
+                            exports.cursoController.agregarModulosPredeterminados(req, res, result.insertId);
+                        }
+                        else {
+                            res.status(500).json({ text: 'Error al crear el curso ' });
+                        }
+                    }
+                });
             });
         });
     }

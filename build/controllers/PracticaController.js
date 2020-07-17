@@ -97,7 +97,8 @@ class PreacticaController {
                 var c = 0;
                 for (let i = 0; i < preguntasPractica.length; i++) {
                     var tipo_req = req.body.preguntas[i].tipo;
-                    if (tipo_req == true) {
+                    console.log(tipo_req);
+                    if (tipo_req) {
                         Database_1.default.query(query, [req.body.preguntas[i].id, idPractica, preguntasPractica[i].puntuacion], function (err, result, fields) {
                             if (err) {
                                 res.status(500).json({ text: 'Error al agregar preguntas al examen' });
@@ -264,12 +265,14 @@ class PreacticaController {
         WHERE practica_pregunta.estado_pregunta_practica   = true
         AND practica.id_practica=?`;
             Database_1.default.query(query, [id], function (err, result, fields) {
-                if (err) {
-                    res.status(500).json({ text: 'No se pudo listar los exámenes' });
-                }
-                else {
-                    res.status(200).json(result);
-                }
+                return __awaiter(this, void 0, void 0, function* () {
+                    if (err) {
+                        res.status(500).json({ text: 'No se pudo listar los exámenes' });
+                    }
+                    else {
+                        res.status(200).json(result);
+                    }
+                });
             });
         });
     }

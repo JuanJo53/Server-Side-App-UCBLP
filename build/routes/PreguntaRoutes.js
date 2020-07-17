@@ -13,7 +13,7 @@ class PreguntaRoutes {
         this.router.get('/teacher/question/type_of_question', PreguntaController_1.preguntaController.listarTipoPregunta);
         this.router.get('/teacher/question/type_of_answer', PreguntaController_1.preguntaController.listarTipoRespuesta);
         this.router.post('/teacher/question', PreguntaController_1.preguntaController.agregarPregunta);
-        this.router.get('/teacher/question', PreguntaController_1.preguntaController.listarPreguntas);
+        this.router.get('/teacher/question', PreguntaController_1.preguntaController.listarPreguntas2);
     }
 }
 const preguntaRoutes = new PreguntaRoutes();

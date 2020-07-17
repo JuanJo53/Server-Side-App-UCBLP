@@ -81,7 +81,8 @@ public async agregarPractica(req:Request,res:Response){
             var c=0;
             for(let i=0;i<preguntasPractica.length;i++){                  
                 var tipo_req=req.body.preguntas[i].tipo;
-                if(tipo_req==true){     
+                console.log(tipo_req);
+                if(tipo_req){     
                     Db.query(query,[req.body.preguntas[i].id,idPractica,preguntasPractica[i].puntuacion],function(err,result,fields){
                         if(err){                            
                             res.status(500).json({text:'Error al agregar preguntas al examen'});
@@ -239,7 +240,7 @@ public async agregarPractica(req:Request,res:Response){
         pregunta.id_pregunta = practica_pregunta.id_pregunta
         WHERE practica_pregunta.estado_pregunta_practica   = true
         AND practica.id_practica=?`;
-        Db.query(query,[id],function(err,result,fields){
+        Db.query(query,[id],async function(err,result,fields){
             if(err){
                 res.status(500).json({text:'No se pudo listar los exámenes'});
             }
@@ -249,6 +250,7 @@ public async agregarPractica(req:Request,res:Response){
         });   
 
     }
+    
 }
 
 export const practicaController=new PreacticaController();

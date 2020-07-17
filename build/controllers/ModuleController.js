@@ -13,6 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const Database_1 = __importDefault(require("../Database"));
+const util_1 = __importDefault(require("util"));
 class ModuleController {
     listarColores(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -29,6 +30,18 @@ class ModuleController {
             });
         });
     }
+    agregarNotasAlumno(idModulo, idCurso) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const query = `insert into nota_modulo (id_alumno,id_modulo,nota_modulo,estado_nota_modulo,tx_id,tx_username,tx_host,tx_date)
+        SELECT alumno.id_alumno,?,0,true,1,'root',' 192.168.0.10',CURRENT_TIMESTAMP()
+        FROM alumno INNER
+        JOIN curso_alumno ON
+        alumno.id_alumno=curso_alumno.id_alumno
+        where curso_alumno.id_curso=?`;
+            const result = util_1.default.promisify(Database_1.default.query).bind(Database_1.default);
+            yield result(query, [idModulo, idCurso]);
+        });
+    }
     agregarModuloPersonalizado(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const nombreModulo = req.body.nombreModulo;
@@ -40,13 +53,16 @@ class ModuleController {
             const query = `insert into modulo (nombre_modulo,rubrica,id_curso,id_color,estado_modulo,id_tipo_modulo,id_imagen,tx_id,tx_username,tx_host,tx_date) values 
         (?,?,?,?,true,2,?,1,'root',' 192.168.0.10',CURRENT_TIMESTAMP()) `;
             Database_1.default.query(query, [nombreModulo, rubrica, idCurso, idColor, idImagen], function (err, result, fields) {
-                if (err) {
-                    console.log(err);
-                    res.status(500).json({ text: 'Error al crear el módulo' });
-                }
-                else {
-                    res.status(200).json({ text: 'Módulo creado correctamente' });
-                }
+                return __awaiter(this, void 0, void 0, function* () {
+                    if (err) {
+                        console.log(err);
+                        res.status(500).json({ text: 'Error al crear el módulo' });
+                    }
+                    else {
+                        yield exports.moduleController.agregarNotasAlumno(result.insertId, idCurso);
+                        res.status(200).json({ text: 'Módulo creado correctamente' });
+                    }
+                });
             });
         });
     }

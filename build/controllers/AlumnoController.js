@@ -17,7 +17,7 @@ const util_1 = __importDefault(require("util"));
 class AlumnoController {
     listarModulos(idCurso, idAlumno, resultq) {
         return __awaiter(this, void 0, void 0, function* () {
-            const query = `SELECT modulo.id_modulo,modulo.nombre_modulo, imagen.id_imagen,color.id_color ,modulo.id_tipo_modulo,nota_modulo.nota_modulo
+            const query = `SELECT modulo.id_modulo,modulo.nombre_modulo,modulo.rubrica, imagen.id_imagen,color.id_color ,modulo.id_tipo_modulo,nota_modulo.nota_modulo
         FROM  modulo 
         INNER JOIN nota_modulo ON 
         nota_modulo.id_modulo=modulo.id_modulo
@@ -32,11 +32,34 @@ class AlumnoController {
         AND nota_modulo.id_alumno = ?`;
             try {
                 const result2 = util_1.default.promisify(Database_1.default.query).bind(Database_1.default);
-                var row = yield result2(query, [idAlumno, idCurso]);
+                var row = yield result2(query, [idCurso, idAlumno]);
                 return row;
             }
             catch (e) {
-                console.log(e);
+                return false;
+            }
+        });
+    }
+    listarModulosSimple(idCurso, idAlumno) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const query = `SELECT modulo.id_modulo,modulo.nombre_modulo,modulo.rubrica,nota_modulo.nota_modulo
+        FROM  modulo 
+        INNER JOIN nota_modulo ON 
+        nota_modulo.id_modulo=modulo.id_modulo
+        INNER JOIN curso ON
+        curso.id_curso= modulo.id_curso
+        WHERE curso.id_curso = ?
+        AND  curso.estado_curso!= 0
+        AND nota_modulo.id_alumno = ?`;
+            try {
+                const result2 = util_1.default.promisify(Database_1.default.query).bind(Database_1.default);
+                var row = yield result2(query, [idCurso, idAlumno]);
+                console.log(row);
+                console.log(idAlumno);
+                console.log(idCurso);
+                return row;
+            }
+            catch (e) {
                 return false;
             }
         });
@@ -59,11 +82,60 @@ class AlumnoController {
                 const result = util_1.default.promisify(Database_1.default.query).bind(Database_1.default);
                 var row = yield result(query, idEstudianteCurso);
                 var modulos = yield exports.alumnoController.listarModulos(idCurso, row[0].id_alumno, result);
-                row[0].modulos = modulos;
-                res.status(200).json(row[0]);
+                if (!modulos) {
+                    res.status(500).json({ text: 'Error al obtener el perfil del alumno' });
+                }
+                else {
+                    row[0].modulos = modulos;
+                    res.status(200).json(row[0]);
+                }
             }
             catch (e) {
                 console.log(e);
+                res.status(500).json({ text: 'Error al obtener el perfil del alumno' });
+            }
+        });
+    }
+    ponerModulo(idCurso, alumno) {
+        return __awaiter(this, void 0, void 0, function* () {
+            var modulos = yield exports.alumnoController.listarModulosSimple(idCurso, alumno.id_alumno);
+            alumno.modulos = modulos;
+            return true;
+        });
+    }
+    listarNotasAlumno(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const idCurso = Number(req.params["id"]);
+            const query = `SELECT ca.id_curso_alumno,alu.id_alumno,alu.nombre_alumno,alu.ap_paterno_alumno ,alu.ap_materno_alumno ,alu.correo_alumno 
+            FROM alumno alu
+            JOIN curso_alumno ca ON
+            ca.id_alumno=alu.id_alumno
+            JOIN curso cur ON
+            ca.id_curso=cur.id_curso
+            WHERE alu.estado_alumno = true
+            AND ca.estado_curso_alumno = true
+            AND cur.estado_curso=true
+            AND ca.id_curso= ? 
+            ORDER BY alu.ap_paterno_alumno`;
+            try {
+                const result = util_1.default.promisify(Database_1.default.query).bind(Database_1.default);
+                var row = yield result(query, idCurso);
+                var error = false;
+                const promises = [];
+                for (let alumno of row) {
+                    promises.push(exports.alumnoController.ponerModulo(idCurso, alumno));
+                }
+                const responses = yield Promise.all(promises);
+                if (responses.includes(false)) {
+                    res.status(500).json({ text: 'Error al obtener la lista de alumnos' });
+                }
+                else {
+                    res.status(200).json(row);
+                }
+            }
+            catch (e) {
+                console.log(e);
+                res.status(500).json({ text: 'Error al obtener la lista de alumnos' });
             }
         });
     }

@@ -5,7 +5,7 @@ import util from 'util'
 
 class AlumnoController{
     public async listarModulos(idCurso:number,idAlumno:number,resultq:any):Promise<any>{
-        const query =`SELECT modulo.id_modulo,modulo.nombre_modulo, imagen.id_imagen,color.id_color ,modulo.id_tipo_modulo,nota_modulo.nota_modulo
+        const query =`SELECT modulo.id_modulo,modulo.nombre_modulo,modulo.rubrica, imagen.id_imagen,color.id_color ,modulo.id_tipo_modulo,nota_modulo.nota_modulo
         FROM  modulo 
         INNER JOIN nota_modulo ON 
         nota_modulo.id_modulo=modulo.id_modulo
@@ -20,11 +20,32 @@ class AlumnoController{
         AND nota_modulo.id_alumno = ?`;
         try{
             const result2:(arg1:string,arg2?:any[])=>Promise<unknown> = util.promisify(Db.query).bind(Db);
-            var row =await result2(query,[idAlumno,idCurso]);
+            var row =await result2(query,[idCurso,idAlumno]);
             return row;
         }
         catch(e){
-            console.log(e);
+            return false;
+        }
+    }
+    public async listarModulosSimple(idCurso:number,idAlumno:number):Promise<any>{
+        const query =`SELECT modulo.id_modulo,modulo.nombre_modulo,modulo.rubrica,nota_modulo.nota_modulo
+        FROM  modulo 
+        INNER JOIN nota_modulo ON 
+        nota_modulo.id_modulo=modulo.id_modulo
+        INNER JOIN curso ON
+        curso.id_curso= modulo.id_curso
+        WHERE curso.id_curso = ?
+        AND  curso.estado_curso!= 0
+        AND nota_modulo.id_alumno = ?`;
+        try{
+            const result2:(arg1:string,arg2?:any[])=>Promise<unknown> = util.promisify(Db.query).bind(Db);
+            var row =await result2(query,[idCurso,idAlumno]);
+            console.log(row);
+            console.log(idAlumno);
+            console.log(idCurso);
+            return row;
+        }
+        catch(e){
             return false;
         }
     }
@@ -46,11 +67,61 @@ class AlumnoController{
                 const result:(arg1:string,arg2?:number)=>Promise<unknown> = util.promisify(Db.query).bind(Db);
                 var row =await result(query,idEstudianteCurso) as any[];                
                 var modulos=await alumnoController.listarModulos(idCurso,row[0].id_alumno,result);
+                if(!modulos){
+                    res.status(500).json({text:'Error al obtener el perfil del alumno'});
+
+                }  
+                else{
                     row[0].modulos=modulos;
-                res.status(200).json(row[0]);                
+                    res.status(200).json(row[0]);                        
+                }          
             }
             catch(e){
                console.log(e); 
+               res.status(500).json({text:'Error al obtener el perfil del alumno'});
+
+            }
+
+    }
+   async  ponerModulo(idCurso:number,alumno:any){
+        var modulos= await alumnoController.listarModulosSimple(idCurso,alumno.id_alumno);
+        alumno.modulos=modulos;   
+        return true;
+    }
+    public async listarNotasAlumno(req:Request,res:Response){
+        
+        const idCurso=Number(req.params["id"]); 
+            const query =`SELECT ca.id_curso_alumno,alu.id_alumno,alu.nombre_alumno,alu.ap_paterno_alumno ,alu.ap_materno_alumno ,alu.correo_alumno 
+            FROM alumno alu
+            JOIN curso_alumno ca ON
+            ca.id_alumno=alu.id_alumno
+            JOIN curso cur ON
+            ca.id_curso=cur.id_curso
+            WHERE alu.estado_alumno = true
+            AND ca.estado_curso_alumno = true
+            AND cur.estado_curso=true
+            AND ca.id_curso= ? 
+            ORDER BY alu.ap_paterno_alumno`; 
+            try{
+                const result:(arg1:string,arg2?:number)=>Promise<unknown> = util.promisify(Db.query).bind(Db);
+                var row =await result(query,idCurso) as any[];     
+                var error=false;     
+                const promises = [];
+                for (let alumno of row){
+                    promises.push(alumnoController.ponerModulo(idCurso,alumno))
+                }  
+                const responses = await Promise.all(promises);
+                if(responses.includes(false)){
+                    res.status(500).json({text:'Error al obtener la lista de alumnos'});
+                    
+                } else{
+                    res.status(200).json(row);
+                }
+            }
+            catch(e){
+               console.log(e); 
+               res.status(500).json({text:'Error al obtener la lista de alumnos'});
+
             }
 
     }

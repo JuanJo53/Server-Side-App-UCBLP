@@ -11,8 +11,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const Database_1 = __importDefault(require("../Database"));
+const firebase = __importStar(require("firebase-admin"));
 class PreguntaController {
     listarTipoPregunta(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -73,6 +81,37 @@ class PreguntaController {
                 else {
                     res.status(200).json(result);
                 }
+            });
+        });
+    }
+    listarPreguntas2(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const query = `SELECT pregunta.id_pregunta,pregunta.codigo_pregunta,pregunta.id_tipo_pregunta,pregunta.id_tipo_respuesta
+        FROM pregunta
+        WHERE pregunta.estado_pregunta=true`;
+            Database_1.default.query(query, function (err, result, fields) {
+                return __awaiter(this, void 0, void 0, function* () {
+                    if (err) {
+                        res.status(500).json({ text: 'No se pudo listar las preguntas' });
+                    }
+                    else {
+                        try {
+                            var listaPreg = [];
+                            const db = firebase.firestore();
+                            var datos = yield db.collection('Preguntas').get();
+                            for (let doc of datos.docs) {
+                                var ind = result.findIndex(element => element.codigo_pregunta === doc.id);
+                                result[ind].pregunta = doc.data();
+                                listaPreg.push(result[ind]);
+                                result.splice(ind, 1);
+                            }
+                            res.status(200).json(listaPreg);
+                        }
+                        catch (e) {
+                            res.status(500).json({ text: 'No se pudo listar las preguntas' });
+                        }
+                    }
+                });
             });
         });
     }
