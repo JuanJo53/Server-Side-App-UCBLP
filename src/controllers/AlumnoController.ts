@@ -16,6 +16,7 @@ class AlumnoController{
         INNER JOIN imagen ON 
         imagen.id_imagen=modulo.id_imagen 
         WHERE curso.id_curso = ?
+        AND  modulo.estado_modulo=1
         AND  curso.estado_curso!= 0
         AND nota_modulo.id_alumno = ?`;
         try{
@@ -36,6 +37,7 @@ class AlumnoController{
         curso.id_curso= modulo.id_curso
         WHERE curso.id_curso = ?
         AND  curso.estado_curso!= 0
+        AND  modulo.estado_modulo=1
         AND nota_modulo.id_alumno = ?`;
         try{
             const result2:(arg1:string,arg2?:any[])=>Promise<unknown> = util.promisify(Db.query).bind(Db);
