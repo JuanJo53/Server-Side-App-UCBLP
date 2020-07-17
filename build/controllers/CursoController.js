@@ -54,6 +54,10 @@ class CursoController {
         inner join docente 
         on curso.id_docente=docente.id_docente 
         where curso.estado_curso=true 
+        and semestre.estado_semestre=true
+        and curso_alumno.estado_curso_alumno = true
+        and alumno.estado_alumno = true
+        and docente.estado_docente = true
         and docente.id_docente= ?
         group by curso.id_curso`;
             //Regresa la informacion de los dias y horarios del curso
@@ -64,7 +68,10 @@ class CursoController {
         curso.id_curso = curso_dia.id_curso
         inner join docente on
         docente.id_docente = curso.id_docente
-        where curso.id_curso=?`;
+        where curso.id_curso=?
+        AND curso.estado_curso = true
+        AND curso_dia.estado_curso_dia = true
+        AND dia_semana.estado_dia_semana=true`;
             //Arreglo que almacena los resultados de las consultas
             let resultData = [];
             yield Database_1.default.query(query, [id], function (err, result, fields) {
@@ -243,6 +250,83 @@ class CursoController {
                 }
                 else {
                     res.status(200).json({ text: 'Curso creado con éxito' });
+                }
+            });
+        });
+    }
+    agregarHorarioACurso(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const idCurso = req.body.idCurso;
+            const horario = req.body.horario;
+            const valores = [];
+            for (var i = 0; i < horario.length; i++) {
+                valores.push([horario[i].idDiaSemana, idCurso, horario[i].horaInicio, horario[i].horaConclusion, true, 1, 'root', '192.168.0.10']);
+            }
+            const query = `INSERT INTO curso_dia(id_dia_semana,id_curso,hora_inicio,hora_conclusion,estado_curso_dia,tx_id,tx_username,tx_host)
+        VALUES ?`;
+            Database_1.default.query(query, [valores], function (err, result, fields) {
+                if (err) {
+                    res.status(500).json({ text: 'Error al agregar horario' });
+                    throw err;
+                }
+                else {
+                    res.status(200).json({ text: 'Horario agregado correctamente' });
+                }
+            });
+        });
+    }
+    modificarDiaDeHorario(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const idCursoDia = req.body.idCursoDia;
+            const idDiaSemana = req.body.idDiaSemana;
+            const horaInicio = req.body.horaInicio;
+            const horaConclusion = req.body.horaConclusion;
+            const query = `UPDATE curso_dia SET id_dia_semana = ?,hora_inicio=?,hora_conclusion=? WHERE id_curso_dia =?`;
+            Database_1.default.query(query, [idDiaSemana, horaInicio, horaConclusion, idCursoDia], function (err, result, fields) {
+                if (err) {
+                    res.status(500).json({ text: 'Error al modificar el horario' });
+                    throw err;
+                }
+                else {
+                    res.status(200).json({ text: 'Horario modificado correctamente' });
+                }
+            });
+        });
+    }
+    eliminarDiaDeHorario(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { id } = req.params;
+            const query = `UPDATE curso_dia SET estado_curso_dia = false WHERE id_curso_dia =?`;
+            Database_1.default.query(query, [id], function (err, result, fields) {
+                if (err) {
+                    res.status(500).json({ text: 'Error al eliminar el día del horario' });
+                    throw err;
+                }
+                else {
+                    res.status(200).json({ text: 'Día eliminado correctamente' });
+                }
+            });
+        });
+    }
+    obtenerHorariodeCurso(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const idCurso = req.body.idCurso;
+            const query = `select curso_dia.id_curso_dia as 'id_curso_dia',dia_semana.dia_semana as 'dia_semana', curso_dia.hora_inicio as 'hora_inicio', curso_dia.hora_conclusion as 'hora_conclusion'
+        from curso_dia inner join dia_semana on
+        curso_dia.id_dia_semana= dia_semana.id_dia_semana
+        inner join curso on 
+        curso.id_curso = curso_dia.id_curso
+        WHERE curso.id_curso=?
+        AND curso.estado_curso = true
+        AND curso_dia.estado_curso_dia = true
+        AND dia_semana.estado_dia_semana=true`;
+            Database_1.default.query(query, [idCurso], function (err, result, fields) {
+                if (err) {
+                    res.status(500).json({ text: 'Error al listar los días del curso' });
+                    throw err;
+                }
+                else {
+                    res.status(200).json(result);
                 }
             });
         });

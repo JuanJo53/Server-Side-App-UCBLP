@@ -14,6 +14,7 @@ class AlumnoRoutes {
         this.router.get('/student/qualification/:id', VerifyToken_1.TokenValidation, AlumnoController_1.alumnoController.listarNotasAlumno);
         this.router.post('/student/profile', VerifyToken_1.TokenValidation, AlumnoController_1.alumnoController.obtenerPerfilAlumno);
         this.router.get('/student/qualifications/modules', VerifyToken_1.TokenValidation, AlumnoController_1.alumnoController.obtenerCalificacionesAlumnoModulo);
+        this.router.get('/student/qualifications/avg/modules', AlumnoController_1.alumnoController.obtenerPromedioAlumnoModulos);
         this.router.get('/student/qualification/avg/practices', VerifyToken_1.TokenValidation, AlumnoController_1.alumnoController.obtenerPromedioAlumnoPracticas);
         this.router.put('/student/qualification/practices/uptade', VerifyToken_1.TokenValidation, AlumnoController_1.alumnoController.actualizarNotaModuloPracticas);
     }
