@@ -55,8 +55,6 @@ class CursoController {
         on curso.id_docente=docente.id_docente 
         where curso.estado_curso=true 
         and semestre.estado_semestre=true
-        and curso_alumno.estado_curso_alumno = true
-        and alumno.estado_alumno = true
         and docente.estado_docente = true
         and docente.id_docente= ?
         group by curso.id_curso`;

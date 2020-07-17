@@ -13,6 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const Database_1 = __importDefault(require("../Database"));
+const util_1 = __importDefault(require("util"));
 class ClassController {
     listaAlumnos(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -25,7 +26,9 @@ class ClassController {
         inner join modulo on 
         nota_modulo.id_modulo=modulo.id_modulo
         inner join curso on
-        curso.id_curso=modulo.id_curso
+        curso.id_curso=modulo.id_curso and 
+        curso_alumno.id_curso=modulo.id_curso
+        
         where curso_alumno.id_curso=?
         and curso.estado_curso = true 
         and alumno.estado_alumno=true
@@ -77,6 +80,24 @@ class ClassController {
             });
         });
     }
+    insertarNotasAlumno(idAlumno, idCurso) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const query = `insert into nota_modulo (id_modulo,id_alumno,nota_modulo,estado_nota_modulo,tx_id,tx_username,tx_host,tx_date)
+        SELECT modulo.id_modulo,?,0,true,1,'root',' 192.168.0.10',CURRENT_TIMESTAMP()
+        FROM modulo 
+        WHERE modulo.id_curso=?
+        AND modulo.estado_modulo=1`;
+                const result = util_1.default.promisify(Database_1.default.query).bind(Database_1.default);
+                yield result(query, [idAlumno, idCurso]);
+                return true;
+            }
+            catch (e) {
+                console.log(e);
+                return false;
+            }
+        });
+    }
     altaAlumnoCurso(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const idAlumno = req.body.idAlumno;
@@ -93,7 +114,7 @@ class ClassController {
                 else {
                     if (result0.length > 0) {
                         res.statusMessage = "found";
-                        res.status(212).json({ text: 'Ya esta isncrito el estudiante' });
+                        res.status(212).json({ text: 'Ya esta inscrito el estudiante' });
                     }
                     else {
                         const query = `INSERT INTO curso_alumno (id_alumno,id_curso,estado_curso_alumno,tx_id,tx_username,tx_host,tx_date)
@@ -107,12 +128,18 @@ class ClassController {
                             else {
                                 const query2 = `SELECT id_curso_alumno  from curso_alumno where curso_alumno.id_curso=? and curso_alumno.id_alumno=?  and curso_alumno.estado_curso_alumno=true`;
                                 Database_1.default.query(query2, [idCurso, idAlumno], function (err, result2, fields) {
-                                    if (err) {
-                                        res.status(403).json({ text: 'Error' });
-                                    }
-                                    else {
-                                        res.status(200).json(result2);
-                                    }
+                                    return __awaiter(this, void 0, void 0, function* () {
+                                        if (err) {
+                                            res.status(403).json({ text: 'Error' });
+                                        }
+                                        else {
+                                            var resultNotaAlumno = yield exports.classController.insertarNotasAlumno(idAlumno, idCurso);
+                                            if (resultNotaAlumno)
+                                                res.status(200).json(result2);
+                                            else
+                                                res.status(500).json({ text: 'No se pudo agregar al estudiante' });
+                                        }
+                                    });
                                 });
                             }
                         });

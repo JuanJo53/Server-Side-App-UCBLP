@@ -10,8 +10,9 @@ class ContenidoModuloPersonalizadoRoutes{
     }
     //configurar respuesta routas
     config():void{
-        this.router.get('/teacher/cutson/module/content',contenidoModuloPersonalizadoController.listarContenido);
+        this.router.post('/teacher/cutson/module/content/get',contenidoModuloPersonalizadoController.listarContenido);
         this.router.post('/teacher/cutson/module/content',contenidoModuloPersonalizadoController.agregarContenido);
+        this.router.post('/teacher/cutson/module/content/rubric',contenidoModuloPersonalizadoController.actualizarRubricas);
         this.router.put('/teacher/cutson/module/content',contenidoModuloPersonalizadoController.modificarContenido);
         this.router.delete('/teacher/cutson/module/content/:id',contenidoModuloPersonalizadoController.eliminarContenido);
         this.router.put('/teacher/cutson/module/content/enable/:id',contenidoModuloPersonalizadoController.activarContenido);

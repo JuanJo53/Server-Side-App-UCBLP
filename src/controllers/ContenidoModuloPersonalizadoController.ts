@@ -1,14 +1,15 @@
 import { Request, Response } from 'express';
 import Db from '../Database';
+import util from 'util'
 
 class ContenidoModuloPersonalizadoController {
 
 
     public async agregarContenido(req: Request, res: Response) {
         const idModulo = req.body.idModulo;
-        const numeroContenido = req.body.numeroContenido;
+        const numeroContenido = 0;
         const nombreContenido = req.body.nombreContenido;
-        const rubricaContenido = req.body.rubricaContenido;
+        const rubricaContenido = 0;
         const query = `INSERT INTO contenido_mod_per (id_modulo,numero_contenido,nombre_contenido,rubrica_contenido,estado_contenido_mod_per,tx_id,tx_username,tx_host)
         VALUES (?,?,?,?,1,1,'root','192.168.0.10')`;
         Db.query(query,[idModulo,numeroContenido,nombreContenido,rubricaContenido], function (err, result, fields) {
@@ -21,7 +22,44 @@ class ContenidoModuloPersonalizadoController {
         });
 
     }
+    public async cambiarRubrica(id:number,rubricaContenido:number){
+        try{
+            const query =`UPDATE contenido_mod_per SET rubrica_contenido = ? WHERE id_contenido_mod_per = ?`; 
+            const result:(arg1:string,arg2?:any[])=>Promise<unknown> = util.promisify(Db.query).bind(Db);
+            var row =await result(query,[rubricaContenido,id]) as any[];  
+            return true;
+        }
+        catch(e){
+            console.log(e);
+            return false;
+        }  
+    }
 
+
+    public async actualizarRubricas(req:Request,res:Response){
+        console.log(req.body);
+        const rubricas = req.body;
+            try{ 
+                var error=false;     
+                const promises = [];
+                for (let rubrica of rubricas){
+                    promises.push(contenidoModuloPersonalizadoController.cambiarRubrica(rubrica.id_contenido_mod_per,rubrica.rubrica_contenido))
+                }  
+                const responses = await Promise.all(promises);
+                if(responses.includes(false)){
+                    res.status(500).json({text:'Error al obtener la lista de alumnos'});
+                    
+                } else{
+                    res.status(200).json({text:'se modficaron correctamente las rubricas'});
+                }
+            }
+            catch(e){
+               console.log(e); 
+               res.status(500).json({text:'Error al obtener la lista de alumnos'});
+
+            }
+
+    }
     public async desactivarContenido(req: Request, res: Response) {
         const {id} = req.params;
         const query = `UPDATE contenido_mod_per SET estado_contenido_mod_per = 2 WHERE id_contenido_mod_per =? `;
@@ -62,11 +100,12 @@ class ContenidoModuloPersonalizadoController {
 
     }
     public async modificarContenido(req: Request, res: Response) {
-        const idContenidoModPer = req.body.idContenidoModPer;
-        const numeroContenido = req.body.numeroContenido;
+        console.log(req.body);
+        const idContenidoModPer = req.body.id;
+        const numeroContenido = 0;
         const nombreContenido = req.body.nombreContenido;
         const query = `UPDATE contenido_mod_per SET nombre_contenido = ? , numero_contenido = ? WHERE id_contenido_mod_per =? `;
-        Db.query(query,[idContenidoModPer,nombreContenido,numeroContenido], function (err, result, fields) {
+        Db.query(query,[nombreContenido,numeroContenido,idContenidoModPer], function (err, result, fields) {
             if (err) {
                 res.status(500).json({ text: 'Error al eliminar contenido'});
             }
@@ -86,8 +125,8 @@ class ContenidoModuloPersonalizadoController {
         JOIN curso cur ON
         cur.id_curso = modu.id_curso
         WHERE cur.estado_curso=true
-        AND modu.estado_modulo=1 OR modu.estado_modulo=2
-        AND cont.estado_contenido_mod_per=1 OR cont.estado_contenido_mod_per=2
+        AND modu.estado_modulo!=0
+        AND cont.estado_contenido_mod_per!=0
         AND cur.id_curso = ?
         AND modu.id_modulo=?`;
         Db.query(query,[idCurso,idModulo], function (err, result, fields) {
