@@ -20,7 +20,6 @@ export const TokenValidation =(req:Request,res:Response, next:NextFunction)=>{
         console.log("ID doc:"+payload);
     }
     else{
-        console.log("no definido");
         return res.status(401).json('Acceso denegado');}
 
     next();}

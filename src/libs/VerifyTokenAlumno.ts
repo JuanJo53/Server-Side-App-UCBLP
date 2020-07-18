@@ -7,7 +7,7 @@ interface IPayload{
     expiresIn:number;
 }
 
-export const TokenValidation =(req:Request,res:Response, next:NextFunction)=>{
+export const TokenValidationAlumno =(req:Request,res:Response, next:NextFunction)=>{
     const token = req.header('authorization');
     console.log("Token: "+token);
     if(token==null) {

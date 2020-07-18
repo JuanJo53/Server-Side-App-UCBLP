@@ -2,6 +2,7 @@ import {Router} from 'express';
 import{loginAlumnoController} from '../../controllers/Alumno_Controllers/LoginAlumnoController';
 import { TokenValidation } from '../../libs/VerifyToken';
 import { practicaController } from '../../controllers/Alumno_Controllers/PracticaController';
+import { TokenValidationAlumno } from '../../libs/VerifyTokenAlumno';
 
 class PracticaAlumnoRoutes{
     public router:Router=Router();;
@@ -10,7 +11,7 @@ class PracticaAlumnoRoutes{
 
     }
     config():void{
-      this.router.get('/students/practica/:id',practicaController.obtenerPractica);
+      this.router.get('/students/practica/:id',TokenValidationAlumno,practicaController.obtenerPractica);
     }
     
     

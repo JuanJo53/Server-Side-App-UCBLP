@@ -18,7 +18,6 @@ exports.TokenValidation = (req, res, next) => {
             console.log("ID doc:" + payload);
         }
         else {
-            console.log("no definido");
             return res.status(401).json('Acceso denegado');
         }
         next();

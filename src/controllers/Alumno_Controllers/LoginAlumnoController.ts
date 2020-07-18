@@ -32,6 +32,45 @@ class LoginAlumnoController{
         });
 
     }
+    public async validarAlumno (req:Request,res:Response){ 
+        //Guardamos el correo y la contraseña en variables
+        const tokenService=new TokenService();
+        console.log(req.headers);
+        const correoEstudiante:string = req.body.correoEstudainte; 
+        const contraseniaEstudiante:string = req.body.contraseniaEstudiante;
+        console.log("Correo: "+correoEstudiante);
+        console.log("Contra: "+contraseniaEstudiante);
+        const query =`SELECT  id_alumno, correo_alumno,contrasenia_alumno FROM alumno WHERE  estado_alumno= true 
+                      AND correo_alumno = ?`;
+        await Db.query(query,[correoEstudiante],function(err, result, fields) {
+            if (err) throw err;
+            //Si el resultado retorna un docente con esos datos se valida el ingreso
+            
+            if(result.length>0){
+                if(tokenService.valPass(contraseniaEstudiante,result[0].contrasenia_alumno))
+                {
+                    
+                    const token=tokenService.getToken(result[0].id_docente,"alumno");
+                    console.log("Token: "+token);
+                    res.json(
+                        {
+                            token:token
+                        }
+                        );   
+                        console.log("Entra"); 
+                }   
+                else{
+                    res.json({text: "Usuario no validado"});
+                    console.log("No entra por contrasenia");
+                }
+            }
+            else{
+                res.json({text: "Usuario no validado"});
+                console.log("No entra por correo");
+            }
+           
+        });
+    }
 }
 
 export const loginAlumnoController=new LoginAlumnoController();
