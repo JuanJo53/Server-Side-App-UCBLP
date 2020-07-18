@@ -86,7 +86,7 @@ class ContenidoModuloPersonalizadoController {
         });
 
     }
-    public async eliminarContenido(req: Request, res: Response) {
+    public async eliminarContenido(req: Request, res: Response) { 
         const {id} = req.params; 
         const query = `UPDATE contenido_mod_per SET estado_contenido_mod_per = 0 WHERE id_contenido_mod_per =? `;
         Db.query(query,[id], function (err, result, fields) {

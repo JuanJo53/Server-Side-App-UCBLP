@@ -4,23 +4,14 @@ import{Request,Response} from 'express';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import Db from '../Database'; 
+import { TokenService } from '../libs/tokenService';
 class LoginController{ 
-    private criptPass(password:string):string{
-        const salt= bcrypt.genSaltSync(10);
-        return bcrypt.hashSync(password,salt);
-    }
-    private  valPass(password:string,passwordBd:string,):boolean{
-        const ver=bcrypt.compareSync(password,passwordBd);
-        return ver; 
-    }
-    private getToken(login_id:string):string{
-        return jwt.sign({id:login_id},process.env.TOKEN_SESION_PLAT||"TOKEN_PRUEBA",{expiresIn:60*60*24});
-    }
+    
     //Validar inicio de sesión 
     //Para probarlo utiliza este json : {"correo_docente":"m.ticona@acad.ucb.edu.bo","contrasenia_docente":"1234abc"}
     public async validarDocente (req:Request,res:Response){ 
         //Guardamos el correo y la contraseña en variables
-      
+        const tokenService=new TokenService();
         console.log(req.headers);
         const correoDocente:string = req.body.correoDocente; 
         const contraseniaDocente:string = req.body.contraseniaDocente;
@@ -33,10 +24,10 @@ class LoginController{
             //Si el resultado retorna un docente con esos datos se valida el ingreso
             
             if(result.length>0){
-                if(loginController.valPass(contraseniaDocente,result[0].contrasenia_docente))
+                if(tokenService.valPass(contraseniaDocente,result[0].contrasenia_docente))
                 {
                     
-                    const token=loginController.getToken(result[0].id_docente);
+                    const token=tokenService.getToken(result[0].id_docente);
                     console.log("Token: "+token);
                     res.json(
                         {
@@ -80,10 +71,11 @@ class LoginController{
     }
     //Registrar un nuevo docente
     public async registrarDocente (req:Request,res:Response){ 
-        req.body.contraseniaDocente=loginController.criptPass(req.body.contraseniaDocente);
+        const tokenService=new TokenService();
+        req.body.contraseniaDocente=tokenService.criptPass(req.body.contraseniaDocente);
          Db.query('INSERT INTO docente set ?', [req.body],function(err, result, fields) {
             if (err) throw err;
-            const token=loginController.getToken(req.body.correoDocente)
+            const token=tokenService.getToken(req.body.correoDocente)
             res.json(token);  
         });
     }
