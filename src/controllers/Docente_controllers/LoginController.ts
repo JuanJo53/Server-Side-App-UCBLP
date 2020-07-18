@@ -27,7 +27,7 @@ class LoginController{
                 if(tokenService.valPass(contraseniaDocente,result[0].contrasenia_docente))
                 {
                     
-                    const token=tokenService.getToken(result[0].id_docente);
+                    const token=tokenService.getToken(result[0].id_docente,"docente");
                     console.log("Token: "+token);
                     res.json(
                         {
@@ -75,7 +75,7 @@ class LoginController{
         req.body.contraseniaDocente=tokenService.criptPass(req.body.contraseniaDocente);
          Db.query('INSERT INTO docente set ?', [req.body],function(err, result, fields) {
             if (err) throw err;
-            const token=tokenService.getToken(req.body.correoDocente)
+            const token=tokenService.getToken(req.body.correoDocente,"docente")
             res.json(token);  
         });
     }

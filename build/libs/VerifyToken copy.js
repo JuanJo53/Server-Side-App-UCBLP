@@ -13,15 +13,9 @@ exports.TokenValidation = (req, res, next) => {
     }
     else {
         const payload = jsonwebtoken_1.default.verify(token, process.env.TOKEN_SESION_PLAT || 'tokentest');
-        if (payload.tipo == "docente") {
-            req.docenteId = payload.id;
-            console.log("ID doc:" + payload);
-        }
-        else {
-            console.log("no definido");
-            return res.status(401).json('Acceso denegado');
-        }
+        req.docenteId = payload.id;
+        console.log("ID doc:" + payload);
         next();
     }
 };
-//# sourceMappingURL=VerifyToken.js.map
+//# sourceMappingURL=VerifyToken copy.js.map

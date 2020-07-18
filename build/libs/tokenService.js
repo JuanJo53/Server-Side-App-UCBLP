@@ -14,11 +14,8 @@ class TokenService {
         const ver = bcryptjs_1.default.compareSync(password, passwordBd);
         return ver;
     }
-    getToken(login_id) {
-        return jsonwebtoken_1.default.sign({ id: login_id }, process.env.TOKEN_SESION_PLAT || "TOKEN_PRUEBA", { expiresIn: 60 * 60 * 24 });
-    }
-    getTokenAlumno(login_id) {
-        return jsonwebtoken_1.default.sign({ id: login_id }, process.env.TOKEN_SESION_PLAT || "TOKEN_PRUEBA", { expiresIn: 60 * 60 * 24 });
+    getToken(login_id, tipo) {
+        return jsonwebtoken_1.default.sign({ id: login_id, tipo: tipo }, process.env.TOKEN_SESION_PLAT || "TOKEN_PRUEBA", { expiresIn: 60 * 60 * 24 });
     }
 }
 exports.TokenService = TokenService;

@@ -22,7 +22,7 @@ class LoginAlumnoController {
             Database_1.default.query('INSERT INTO alumno set ?', [req.body], function (err, result, fields) {
                 if (err)
                     throw err;
-                const token = tokenService.getToken(req.body.correoDocente);
+                const token = tokenService.getToken(req.body.correoDocente, "alumno");
                 res.json(token);
             });
         });

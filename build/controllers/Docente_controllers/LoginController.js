@@ -34,7 +34,7 @@ class LoginController {
                 //Si el resultado retorna un docente con esos datos se valida el ingreso
                 if (result.length > 0) {
                     if (tokenService.valPass(contraseniaDocente, result[0].contrasenia_docente)) {
-                        const token = tokenService.getToken(result[0].id_docente);
+                        const token = tokenService.getToken(result[0].id_docente, "docente");
                         console.log("Token: " + token);
                         res.json({
                             //  user:correoDocente,
@@ -88,7 +88,7 @@ class LoginController {
             Database_1.default.query('INSERT INTO docente set ?', [req.body], function (err, result, fields) {
                 if (err)
                     throw err;
-                const token = tokenService.getToken(req.body.correoDocente);
+                const token = tokenService.getToken(req.body.correoDocente, "docente");
                 res.json(token);
             });
         });

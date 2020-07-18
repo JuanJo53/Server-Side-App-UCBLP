@@ -10,10 +10,7 @@ export class TokenService{
         const ver=bcrypt.compareSync(password,passwordBd);
         return ver; 
     }
-    getToken(login_id:string):string{
-        return jwt.sign({id:login_id},process.env.TOKEN_SESION_PLAT||"TOKEN_PRUEBA",{expiresIn:60*60*24});
-    }
-    getTokenAlumno(login_id:string):string{
-        return jwt.sign({id:login_id},process.env.TOKEN_SESION_PLAT||"TOKEN_PRUEBA",{expiresIn:60*60*24});
+    getToken(login_id:string,tipo:string):string{
+        return jwt.sign({id:login_id,tipo:tipo},process.env.TOKEN_SESION_PLAT||"TOKEN_PRUEBA",{expiresIn:60*60*24});
     }
 }

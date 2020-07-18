@@ -13,7 +13,7 @@ exports.TokenValidation = (req, res, next) => {
     }
     else {
         const payload = jsonwebtoken_1.default.verify(token, process.env.TOKEN_SESION_PLAT || 'tokentest');
-        if (payload.tipo == "docente") {
+        if (payload.tipo == "alumno") {
             req.docenteId = payload.id;
             console.log("ID doc:" + payload);
         }
@@ -24,4 +24,4 @@ exports.TokenValidation = (req, res, next) => {
         next();
     }
 };
-//# sourceMappingURL=VerifyToken.js.map
+//# sourceMappingURL=VerifyTokenAlumno.js.map
