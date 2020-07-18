@@ -1,6 +1,6 @@
 import {Router} from 'express';
-import{alumnoController} from '../controllers/AlumnoController';
-import { TokenValidation } from '../libs/VerifyToken';
+import{alumnoController} from '../../controllers/Docente_controllers/AlumnoController';
+import { TokenValidation } from '../../libs/VerifyToken';
 
 class AlumnoRoutes{
     public router:Router=Router();;
