@@ -1,5 +1,5 @@
 import{Request,Response, query} from 'express';
-import Db from '../Database'; 
+import Db from '../../Database'; 
 
 class LessonController{
     public async agregarLeccion(req: Request, res: Response){

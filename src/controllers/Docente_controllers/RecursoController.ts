@@ -1,8 +1,8 @@
 import{Request,Response, query} from 'express';
-import Db from '../Database'; 
+import Db from '../../Database'; 
 import * as firebase from 'firebase-admin';
-import {Pregunta} from '../model/Pregunta';
-import storage from '../Storage'
+import {Pregunta} from '../../model/Pregunta';
+import storage from '../../Storage'
 
 class RecursoController{
     private generateId():string{

@@ -1,5 +1,5 @@
 import{Request,Response} from 'express';
-import Db from '../Database'; 
+import Db from '../../Database'; 
 
 class ThemeController{
     public async agregarTema(req:Request,res:Response){

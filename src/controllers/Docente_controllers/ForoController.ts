@@ -1,5 +1,5 @@
 import{Request,Response, query, text} from 'express';
-import Db from '../Database'; 
+import Db from '../../Database'; 
 
 class ForoController{
     public async crearForo(req:Request,res:Response){

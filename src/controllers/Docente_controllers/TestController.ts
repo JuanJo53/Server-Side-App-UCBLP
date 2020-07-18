@@ -1,9 +1,9 @@
 import{Request,Response} from 'express';
-import Db from '../Database'; 
-import {ConFirebase} from '../FIrebase';
+import Db from '../../Database'; 
+import {ConFirebase} from '../../FIrebase';
 import * as firebase from 'firebase-admin';
-import {Pregunta} from '../model/Pregunta';
-import storage from '../Storage'
+import {Pregunta} from '../../model/Pregunta';
+import storage from '../../Storage'
 
 class TestController{
 

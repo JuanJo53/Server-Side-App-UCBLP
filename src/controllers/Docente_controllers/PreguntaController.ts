@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
-import Db from '../Database';
+import Db from '../../Database';
 
 import * as firebase from 'firebase-admin';
-import {Pregunta} from '../model/Pregunta';
+import {Pregunta} from '../../model/Pregunta';
 class PreguntaController {
     public async listarTipoPregunta(req: Request, res: Response) {
         const query = 'SELECT id_tipo_pregunta,tipo_pregunta FROM tipo_pregunta WHERE estado_tipo_pregunta = true';

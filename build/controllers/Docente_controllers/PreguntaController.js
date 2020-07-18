@@ -19,7 +19,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const Database_1 = __importDefault(require("../Database"));
+const Database_1 = __importDefault(require("../../Database"));
 const firebase = __importStar(require("firebase-admin"));
 class PreguntaController {
     listarTipoPregunta(req, res) {

@@ -19,9 +19,9 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const Database_1 = __importDefault(require("../Database"));
+const Database_1 = __importDefault(require("../../Database"));
 const firebase = __importStar(require("firebase-admin"));
-const Pregunta_1 = require("../model/Pregunta");
+const Pregunta_1 = require("../../model/Pregunta");
 class PreacticaController {
     agregarPractica(req, res) {
         return __awaiter(this, void 0, void 0, function* () {

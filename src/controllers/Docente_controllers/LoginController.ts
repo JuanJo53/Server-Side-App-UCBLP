@@ -3,8 +3,8 @@ import{Request,Response} from 'express';
 //Para instalarlo utiliza el comando: npm i @types/jsonwebtoken -D
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
-import Db from '../Database'; 
-import { TokenService } from '../libs/tokenService';
+import Db from '../../Database'; 
+import { TokenService } from '../../libs/tokenService';
 class LoginController{ 
     
     //Validar inicio de sesión 
