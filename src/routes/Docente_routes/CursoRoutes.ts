@@ -1,5 +1,5 @@
 import {Router} from 'express';
-import{cursoController} from '../controllers/CursoController';
+import{cursoController} from '../controllers/Docente_controllers/CursoController';
 import { TokenValidation } from '../libs/VerifyToken';
 
 class CursoRoutes{

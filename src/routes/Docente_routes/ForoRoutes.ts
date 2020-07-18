@@ -1,6 +1,6 @@
 import {Router} from 'express';
-import { TokenValidation } from '../libs/VerifyToken';
-import { foroController } from '../controllers/ForoController';
+import { TokenValidation } from '../../libs/VerifyToken';
+import { foroController } from '../../controllers/Docente_controllers/ForoController';
 
 class ForoRoutes{
     public router:Router=Router();;

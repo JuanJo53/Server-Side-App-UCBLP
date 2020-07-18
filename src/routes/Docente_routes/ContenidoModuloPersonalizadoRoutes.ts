@@ -1,6 +1,6 @@
 import {Router} from 'express';
 import { TokenValidation } from '../libs/VerifyToken';
-import { contenidoModuloPersonalizadoController } from '../controllers/ContenidoModuloPersonalizadoController';
+import { contenidoModuloPersonalizadoController } from '../controllers/Docente_controllers/ContenidoModuloPersonalizadoController';
 
 class ContenidoModuloPersonalizadoRoutes{
     public router:Router=Router();;

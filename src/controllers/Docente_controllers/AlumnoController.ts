@@ -1,5 +1,5 @@
 import{Request,Response} from 'express';
-import Db from '../Database'; 
+import Db from '../../Database'; 
 import { firestore } from 'firebase-admin';
 import util from 'util'
 
