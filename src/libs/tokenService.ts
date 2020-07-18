@@ -13,4 +13,7 @@ export class TokenService{
     getToken(login_id:string):string{
         return jwt.sign({id:login_id},process.env.TOKEN_SESION_PLAT||"TOKEN_PRUEBA",{expiresIn:60*60*24});
     }
+    getTokenAlumno(login_id:string):string{
+        return jwt.sign({id:login_id},process.env.TOKEN_SESION_PLAT||"TOKEN_PRUEBA",{expiresIn:60*60*24});
+    }
 }

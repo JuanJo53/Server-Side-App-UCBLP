@@ -15,6 +15,7 @@ import PracticaRoutes from './routes/Docente_routes/PracticaRoutes';
 import AlumnoRoutes from './routes/Docente_routes/AlumnoRoutes';
 import DashBoardRoutes from './routes/Docente_routes/DashBoardRoutes';
 import ContenidoModuloPersonalizadoRoutes from './routes/Docente_routes/ContenidoModuloPersonalizadoRoutes';
+import LoginAlumnoRoutes from './routes/Alumno_routes/LoginAlumnoRoutes';
 import morgan from 'morgan';
 import cors from 'cors';
 import { ConFirebase } from './FIrebase';
@@ -60,7 +61,7 @@ class Server{
         this.app.use(ContenidoModuloPersonalizadoRoutes);
     }
     alumnoRoutes():void{
-
+        this.app.use(LoginAlumnoRoutes);
     }
     start():void{
         this.app.listen(this.app.get('port'));
