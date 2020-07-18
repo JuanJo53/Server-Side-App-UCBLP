@@ -1,7 +1,6 @@
 import {Router} from 'express';
-import{themeController} from '../controllers/ThemeController';
-import { TokenValidation } from '../libs/VerifyToken';
-import { imageController } from '../controllers/ImageController';
+import { TokenValidation } from '../../libs/VerifyToken';
+import { imageController } from '../../controllers/Docente_controllers/ImageController';
 
 class ImageRoutes{
     public router:Router=Router();;

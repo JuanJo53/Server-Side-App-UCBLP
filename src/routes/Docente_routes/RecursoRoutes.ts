@@ -1,6 +1,6 @@
 import {Router} from 'express';
-import { TokenValidation } from '../libs/VerifyToken';
-import { recursoController } from '../controllers/RecursoController';
+import { TokenValidation } from '../../libs/VerifyToken';
+import { recursoController } from '../../controllers/Docente_controllers/RecursoController';
 
 class RecursoRoutes{
     public router:Router=Router();;

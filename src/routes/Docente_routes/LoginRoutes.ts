@@ -1,6 +1,6 @@
 import {Router} from 'express';
-import{loginController} from '../controllers/LoginController';
-import { TokenValidation } from '../libs/VerifyToken';
+import{loginController} from '../../controllers/Docente_controllers/LoginController';
+import { TokenValidation } from '../../libs/VerifyToken';
 
 class LoginRoutes{
     public router:Router=Router();;

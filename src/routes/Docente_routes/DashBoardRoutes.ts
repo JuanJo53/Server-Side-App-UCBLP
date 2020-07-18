@@ -1,6 +1,6 @@
 import {Router} from 'express';
-import { TokenValidation } from '../libs/VerifyToken';
-import { dashBoardController } from '../controllers/DashBoardController';
+import { TokenValidation } from '../../libs/VerifyToken';
+import { dashBoardController } from '../../controllers/Docente_controllers/DashBoardController';
 
 class DashBoardRoutes{
     public router:Router=Router();;

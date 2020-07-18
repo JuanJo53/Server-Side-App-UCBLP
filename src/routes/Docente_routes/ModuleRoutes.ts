@@ -1,6 +1,6 @@
 import {Router} from 'express';
-import { TokenValidation } from '../libs/VerifyToken';
-import { moduleController } from '../controllers/ModuleController';
+import { TokenValidation } from '../../libs/VerifyToken';
+import { moduleController } from '../../controllers/Docente_controllers/ModuleController';
 
 class ModuleRoutes{
     public router:Router=Router();;

@@ -1,6 +1,6 @@
 import {Router} from 'express';
-import{themeController} from '../controllers/ThemeController';
-import { TokenValidation } from '../libs/VerifyToken';
+import{themeController} from '../../controllers/Docente_controllers/ThemeController';
+import { TokenValidation } from '../../libs/VerifyToken';
 
 class ThemeRoutes{
     public router:Router=Router();;

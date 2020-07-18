@@ -1,6 +1,6 @@
 import {Router} from 'express';
-import{classController} from '../controllers/ClassController';
-import { TokenValidation } from '../libs/VerifyToken';
+import{classController} from '../../controllers/Docente_controllers/ClassController';
+import { TokenValidation } from '../../libs/VerifyToken';
 
 
 class ClassRoutes{

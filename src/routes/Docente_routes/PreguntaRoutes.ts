@@ -1,6 +1,6 @@
 import {Router} from 'express';
-import { TokenValidation } from '../libs/VerifyToken';
-import { preguntaController } from '../controllers/PreguntaController';
+import { TokenValidation } from '../../libs/VerifyToken';
+import { preguntaController } from '../../controllers/Docente_controllers/PreguntaController';
 
 class PreguntaRoutes{
     public router:Router=Router();;

@@ -1,6 +1,6 @@
 import {Router} from 'express';
-import { TokenValidation } from '../libs/VerifyToken';
-import { practicaController } from '../controllers/PracticaController';
+import { TokenValidation } from '../../libs/VerifyToken';
+import { practicaController } from '../../controllers/Docente_controllers/PracticaController';
 
 class PracticaRoutes{
     public router:Router=Router();;
