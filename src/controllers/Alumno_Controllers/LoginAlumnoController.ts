@@ -36,7 +36,7 @@ class LoginAlumnoController{
         //Guardamos el correo y la contraseña en variables
         const tokenService=new TokenService();
         console.log(req.headers);
-        const correoEstudiante:string = req.body.correoEstudainte; 
+        const correoEstudiante:string = req.body.correoEstudiante; 
         const contraseniaEstudiante:string = req.body.contraseniaEstudiante;
         console.log("Correo: "+correoEstudiante);
         console.log("Contra: "+contraseniaEstudiante);
@@ -50,7 +50,7 @@ class LoginAlumnoController{
                 if(tokenService.valPass(contraseniaEstudiante,result[0].contrasenia_alumno))
                 {
                     
-                    const token=tokenService.getToken(result[0].id_docente,"alumno");
+                    const token=tokenService.getToken(result[0].id_alumno,"alumno");
                     console.log("Token: "+token);
                     res.json(
                         {
