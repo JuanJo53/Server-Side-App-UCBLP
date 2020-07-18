@@ -21,6 +21,7 @@ const AlumnoRoutes_1 = __importDefault(require("./routes/Docente_routes/AlumnoRo
 const DashBoardRoutes_1 = __importDefault(require("./routes/Docente_routes/DashBoardRoutes"));
 const ContenidoModuloPersonalizadoRoutes_1 = __importDefault(require("./routes/Docente_routes/ContenidoModuloPersonalizadoRoutes"));
 const LoginAlumnoRoutes_1 = __importDefault(require("./routes/Alumno_routes/LoginAlumnoRoutes"));
+const PracticaRoutes_2 = __importDefault(require("./routes/Alumno_routes/PracticaRoutes"));
 const morgan_1 = __importDefault(require("morgan"));
 const cors_1 = __importDefault(require("cors"));
 const FIrebase_1 = require("./FIrebase");
@@ -62,6 +63,7 @@ class Server {
     }
     alumnoRoutes() {
         this.app.use(LoginAlumnoRoutes_1.default);
+        this.app.use(PracticaRoutes_2.default);
     }
     start() {
         this.app.listen(this.app.get('port'));
