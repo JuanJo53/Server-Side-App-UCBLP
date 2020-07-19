@@ -17,7 +17,7 @@ class LeccionAlumnoController {
     listarLecciones(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { id } = req.params;
-            const idAlumno = req.estaudianteId;
+            const idAlumno = req.estudianteId;
             const query = `SELECT leccion.estado_leccion,leccion.id_leccion, leccion.numero_leccion, leccion.nombre_leccion,tipo_leccion.id_tipo_leccion,leccion.id_imagen
         FROM leccion INNER JOIN tema ON
         leccion.id_tema=tema.id_tema

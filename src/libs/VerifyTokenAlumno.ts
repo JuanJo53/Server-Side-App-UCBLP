@@ -16,7 +16,7 @@ export const TokenValidationAlumno =(req:Request,res:Response, next:NextFunction
     else{
         const payload= jwt.verify(token, process.env.TOKEN_SESION_PLAT || 'tokentest') as IPayload;
     if(payload.tipo=="alumno"){
-        req.docenteId=payload.id; 
+        req.estudianteId=payload.id; 
         console.log("ID doc:"+payload);
     }
     else{

@@ -14,7 +14,7 @@ exports.TokenValidationAlumno = (req, res, next) => {
     else {
         const payload = jsonwebtoken_1.default.verify(token, process.env.TOKEN_SESION_PLAT || 'tokentest');
         if (payload.tipo == "alumno") {
-            req.docenteId = payload.id;
+            req.estudianteId = payload.id;
             console.log("ID doc:" + payload);
         }
         else {

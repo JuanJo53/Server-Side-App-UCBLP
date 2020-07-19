@@ -17,7 +17,7 @@ class TemaAlumnoController {
     listarTemas(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { id } = req.params;
-            const idAlumno = req.estaudianteId;
+            const idAlumno = req.estudianteId;
             const query = `SELECT tm.id_tema,tm.numero_tema,tm.nombre_tema,tm.id_imagen,tm.estado_tema 
         FROM tema tm 
         INNER JOIN curso cur ON

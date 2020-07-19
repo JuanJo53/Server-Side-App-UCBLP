@@ -4,7 +4,7 @@ import Db from '../../Database';
 class TemaAlumnoController{
 public async listarTemas(req:Request,res:Response){
         const {id} = req.params;
-        const idAlumno = req.estaudianteId;
+        const idAlumno = req.estudianteId;
         const query =`SELECT tm.id_tema,tm.numero_tema,tm.nombre_tema,tm.id_imagen,tm.estado_tema 
         FROM tema tm 
         INNER JOIN curso cur ON
