@@ -11,7 +11,7 @@ class LoginAlumnoRoutes {
     config() {
         //  this.router.post('/students/login',loginController.validarDocente);
         this.router.put('/students/change/password/:id', LoginAlumnoController_1.loginAlumnoController.actucalizarContraseniaAlumno);
-        this.router.post('/student/login', LoginAlumnoController_1.loginAlumnoController.validarAlumno);
+        this.router.post('/students/login', LoginAlumnoController_1.loginAlumnoController.validarAlumno);
     }
 }
 const loginAlumnoRoutes = new LoginAlumnoRoutes();

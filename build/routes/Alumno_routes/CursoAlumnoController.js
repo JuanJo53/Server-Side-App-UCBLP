@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const LeccionAlumnoController_1 = require("../../controllers/Alumno_Controllers/LeccionAlumnoController");
-const VerifyTokenAlumno_1 = require("../../libs/VerifyTokenAlumno");
+const VerifyToken_1 = require("../../libs/VerifyToken");
 class TemaAlumnoRoutes {
     constructor() {
         this.router = express_1.Router();
@@ -11,9 +11,9 @@ class TemaAlumnoRoutes {
     ;
     //configurar respuesta routas
     config() {
-        this.router.get('/students/lessons/:id', VerifyTokenAlumno_1.TokenValidationAlumno, LeccionAlumnoController_1.leccionAlumnoController.listarLecciones);
+        this.router.get('/student/themes/lessons/:id', VerifyToken_1.TokenValidation, LeccionAlumnoController_1.leccionAlumnoController.listarLecciones);
     }
 }
 const temaAlumnoRoutes = new TemaAlumnoRoutes();
 exports.default = temaAlumnoRoutes.router;
-//# sourceMappingURL=LeccionAlumnoRoutes.js.map
+//# sourceMappingURL=CursoAlumnoController.js.map

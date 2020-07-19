@@ -11,7 +11,7 @@ class LoginAlumnoRoutes{
     config():void{
       //  this.router.post('/students/login',loginController.validarDocente);
         this.router.put('/students/change/password/:id',loginAlumnoController.actucalizarContraseniaAlumno);
-        this.router.post('/student/login',loginAlumnoController.validarAlumno);
+        this.router.post('/students/login',loginAlumnoController.validarAlumno);
     }
     
     

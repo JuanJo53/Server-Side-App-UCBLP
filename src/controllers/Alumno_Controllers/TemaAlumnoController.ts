@@ -8,7 +8,7 @@ public async listarTemas(req:Request,res:Response){
         const query =`SELECT tm.id_tema,tm.numero_tema,tm.nombre_tema,tm.id_imagen,tm.estado_tema 
         FROM tema tm 
         INNER JOIN curso cur ON
-        cur.id_curso=cur.id_curso
+        cur.id_curso=tm.id_curso
         INNER JOIN curso_alumno ca ON
         ca.id_curso = cur.id_curso
         INNER JOIN alumno alu ON

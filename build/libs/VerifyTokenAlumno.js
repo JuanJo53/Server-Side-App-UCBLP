@@ -12,16 +12,23 @@ exports.TokenValidationAlumno = (req, res, next) => {
         return res.status(401).json('Acceso denegado');
     }
     else {
-        const payload = jsonwebtoken_1.default.verify(token, process.env.TOKEN_SESION_PLAT || 'tokentest');
-        if (payload.tipo == "alumno") {
-            req.estudianteId = payload.id;
-            console.log("ID doc:" + payload);
+        var payload;
+        try {
+            payload = jsonwebtoken_1.default.verify(token, process.env.TOKEN_SESION_PLAT || 'tokentest');
         }
-        else {
-            console.log("no definido");
+        catch (e) {
+            console.log("errortoken");
             return res.status(401).json('Acceso denegado');
         }
-        next();
     }
+    if (payload.tipo == "alumno") {
+        req.estudianteId = payload.id;
+        console.log("ID doc:" + payload);
+    }
+    else {
+        console.log("no definido");
+        return res.status(401).json('Acceso denegado');
+    }
+    next();
 };
 //# sourceMappingURL=VerifyTokenAlumno.js.map

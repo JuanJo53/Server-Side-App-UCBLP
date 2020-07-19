@@ -11,7 +11,7 @@ class PracticaAlumnoRoutes{
 
     }
     config():void{
-      this.router.get('/students/practica/:id',TokenValidationAlumno,practicaController.obtenerPractica);
+      this.router.get('/students/practices/:id',TokenValidationAlumno,practicaController.obtenerPractica);
     }
     
     

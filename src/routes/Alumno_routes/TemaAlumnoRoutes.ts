@@ -1,6 +1,6 @@
 import {Router} from 'express';
 import{temaAlumnoController} from '../../controllers/Alumno_Controllers/TemaAlumnoController';
-import { TokenValidation } from '../../libs/VerifyToken';
+import { TokenValidationAlumno } from '../../libs/VerifyTokenAlumno';
 
 class TemaAlumnoRoutes{
     public router:Router=Router();;
@@ -10,7 +10,7 @@ class TemaAlumnoRoutes{
     }
     //configurar respuesta routas
     config():void{
-        this.router.get('/student/themes/:id',TokenValidation,temaAlumnoController.listarTemas);
+        this.router.get('/students/themes/:id',TokenValidationAlumno,temaAlumnoController.listarTemas);
       
     }
 }

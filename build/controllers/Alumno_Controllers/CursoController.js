@@ -13,29 +13,24 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const Database_1 = __importDefault(require("../../Database"));
-class TemaAlumnoController {
-    listarTemas(req, res) {
+class CursoAlumnoController {
+    listarCursos(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { id } = req.params;
             const idAlumno = req.estudianteId;
-            const query = `SELECT tm.id_tema,tm.numero_tema,tm.nombre_tema,tm.id_imagen,tm.estado_tema 
-        FROM tema tm 
-        INNER JOIN curso cur ON
-        cur.id_curso=tm.id_curso
-        INNER JOIN curso_alumno ca ON
-        ca.id_curso = cur.id_curso
-        INNER JOIN alumno alu ON
-        ca.id_alumno = alu.id_alumno  
-        WHERE cur.id_curso = ?
-        AND (tm.estado_tema=true OR tm.estado_tema=2)
-        AND cur.estado_curso = true
-        AND ca.estado_curso_alumno = true
-        AND alu.estado_alumno = true
-        AND alu.id_alumno = ?`;
-            Database_1.default.query(query, [id, idAlumno], function (err, result, fields) {
+            const query = `SELECT curso.nombre_curso,curso.id_curso
+        FROM curso
+        INNER JOIN curso_alumno ON
+        curso_alumno.id_curso = curso.id_curso
+        INNER JOIN alumno ON
+        alumno.id_alumno = curso_alumno.id_alumno
+        AND curso.estado_curso = true
+        AND curso_alumno.estado_curso_alumno = true
+        AND alumno.estado_alumno = true
+        AND alumno.id_alumno = ?`;
+            Database_1.default.query(query, [idAlumno], function (err, result, fields) {
                 if (err) {
-                    res.status(500).json({ text: 'Error al cargar los temas' });
-                    throw err;
+                    console.log(err);
+                    res.status(500).json({ text: 'Error al cargar las lecciones' });
                 }
                 else {
                     res.status(200).json(result);
@@ -44,5 +39,5 @@ class TemaAlumnoController {
         });
     }
 }
-exports.temaAlumnoController = new TemaAlumnoController();
-//# sourceMappingURL=TemaAlumnoController.js.map
+exports.cursoAlumnoController = new CursoAlumnoController();
+//# sourceMappingURL=CursoController.js.map

@@ -71,6 +71,7 @@ class LoginAlumnoController{
            
         });
     }
+    
 }
 
 export const loginAlumnoController=new LoginAlumnoController();

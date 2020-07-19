@@ -19,6 +19,7 @@ import LoginAlumnoRoutes from './routes/Alumno_routes/LoginAlumnoRoutes';
 import PracticaAlumnoRoutes from './routes/Alumno_routes/PracticaRoutes';
 import TemaAlumnoRoutes from './routes/Alumno_routes/TemaAlumnoRoutes';
 import LeccionAlumnoRoutes from './routes/Alumno_routes/LeccionAlumnoRoutes';
+import CursoAlumnoRoutes from './routes/Alumno_routes/CursoAlumnoRoutes';
 import morgan from 'morgan';
 import cors from 'cors';
 import { ConFirebase } from './FIrebase';
@@ -68,6 +69,7 @@ class Server{
         this.app.use(PracticaAlumnoRoutes);
         this.app.use(TemaAlumnoRoutes);
         this.app.use(LeccionAlumnoRoutes);
+        this.app.use(CursoAlumnoRoutes);
     }
     start():void{
         this.app.listen(this.app.get('port'));
