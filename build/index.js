@@ -5,21 +5,26 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const dotenv_1 = __importDefault(require("dotenv"));
-const LoginRoutes_1 = __importDefault(require("./routes/LoginRoutes"));
-const CursoRoutes_1 = __importDefault(require("./routes/CursoRoutes"));
-const ClassRoutes_1 = __importDefault(require("./routes/ClassRoutes"));
-const ThemeRoutes_1 = __importDefault(require("./routes/ThemeRoutes"));
-const ImageRoutes_1 = __importDefault(require("./routes/ImageRoutes"));
-const LessonRoutes_1 = __importDefault(require("./routes/LessonRoutes"));
-const ModuleRoutes_1 = __importDefault(require("./routes/ModuleRoutes"));
-const ForoRoutes_1 = __importDefault(require("./routes/ForoRoutes"));
-const RecursoRoutes_1 = __importDefault(require("./routes/RecursoRoutes"));
-const PreguntaRoutes_1 = __importDefault(require("./routes/PreguntaRoutes"));
-const TestRoutes_1 = __importDefault(require("./routes/TestRoutes"));
-const PracticaRoutes_1 = __importDefault(require("./routes/PracticaRoutes"));
-const AlumnoRoutes_1 = __importDefault(require("./routes/AlumnoRoutes"));
-const DashBoardRoutes_1 = __importDefault(require("./routes/DashBoardRoutes"));
-const ContenidoModuloPersonalizadoRoutes_1 = __importDefault(require("./routes/ContenidoModuloPersonalizadoRoutes"));
+const LoginRoutes_1 = __importDefault(require("./routes/Docente_routes/LoginRoutes"));
+const CursoRoutes_1 = __importDefault(require("./routes/Docente_routes/CursoRoutes"));
+const ClassRoutes_1 = __importDefault(require("./routes/Docente_routes/ClassRoutes"));
+const ThemeRoutes_1 = __importDefault(require("./routes/Docente_routes/ThemeRoutes"));
+const ImageRoutes_1 = __importDefault(require("./routes/Docente_routes/ImageRoutes"));
+const LessonRoutes_1 = __importDefault(require("./routes/Docente_routes/LessonRoutes"));
+const ModuleRoutes_1 = __importDefault(require("./routes/Docente_routes/ModuleRoutes"));
+const ForoRoutes_1 = __importDefault(require("./routes/Docente_routes/ForoRoutes"));
+const RecursoRoutes_1 = __importDefault(require("./routes/Docente_routes/RecursoRoutes"));
+const PreguntaRoutes_1 = __importDefault(require("./routes/Docente_routes/PreguntaRoutes"));
+const TestRoutes_1 = __importDefault(require("./routes/Docente_routes/TestRoutes"));
+const PracticaRoutes_1 = __importDefault(require("./routes/Docente_routes/PracticaRoutes"));
+const AlumnoRoutes_1 = __importDefault(require("./routes/Docente_routes/AlumnoRoutes"));
+const DashBoardRoutes_1 = __importDefault(require("./routes/Docente_routes/DashBoardRoutes"));
+const ContenidoModuloPersonalizadoRoutes_1 = __importDefault(require("./routes/Docente_routes/ContenidoModuloPersonalizadoRoutes"));
+const LoginAlumnoRoutes_1 = __importDefault(require("./routes/Alumno_routes/LoginAlumnoRoutes"));
+const PracticaRoutes_2 = __importDefault(require("./routes/Alumno_routes/PracticaRoutes"));
+const TemaAlumnoRoutes_1 = __importDefault(require("./routes/Alumno_routes/TemaAlumnoRoutes"));
+const LeccionAlumnoRoutes_1 = __importDefault(require("./routes/Alumno_routes/LeccionAlumnoRoutes"));
+const CursoAlumnoRoutes_1 = __importDefault(require("./routes/Alumno_routes/CursoAlumnoRoutes"));
 const morgan_1 = __importDefault(require("morgan"));
 const cors_1 = __importDefault(require("cors"));
 const FIrebase_1 = require("./FIrebase");
@@ -28,7 +33,8 @@ class Server {
     constructor() {
         this.app = express_1.default();
         this.config();
-        this.routes();
+        this.docenteRoutes();
+        this.alumnoRoutes();
     }
     //configurar modulos
     config() {
@@ -41,7 +47,7 @@ class Server {
         this.app.use(express_1.default.urlencoded({ extended: false }));
     }
     //configurar rutas
-    routes() {
+    docenteRoutes() {
         this.app.use(LoginRoutes_1.default);
         this.app.use(CursoRoutes_1.default);
         this.app.use(ClassRoutes_1.default);
@@ -57,6 +63,13 @@ class Server {
         this.app.use(AlumnoRoutes_1.default);
         this.app.use(DashBoardRoutes_1.default);
         this.app.use(ContenidoModuloPersonalizadoRoutes_1.default);
+    }
+    alumnoRoutes() {
+        this.app.use(LoginAlumnoRoutes_1.default);
+        this.app.use(PracticaRoutes_2.default);
+        this.app.use(TemaAlumnoRoutes_1.default);
+        this.app.use(LeccionAlumnoRoutes_1.default);
+        this.app.use(CursoAlumnoRoutes_1.default);
     }
     start() {
         this.app.listen(this.app.get('port'));

@@ -1,20 +1,25 @@
 import express, { Application } from 'express';
 import dotenv from 'dotenv';
-import LoginRoutes from './routes/LoginRoutes';
-import CursoRoutes from './routes/CursoRoutes';
-import ClassRoutes from './routes/ClassRoutes';
-import ThemeRoutes from './routes/ThemeRoutes';
-import ImageRoutes from './routes/ImageRoutes';
-import LessonRoutes from './routes/LessonRoutes';
-import ModuleRoutes from './routes/ModuleRoutes';
-import ForoRoutes from './routes/ForoRoutes';
-import RecursoRoutes from './routes/RecursoRoutes';
-import PreguntaRoutes from './routes/PreguntaRoutes';
-import TestRoutes from './routes/TestRoutes';
-import PracticaRoutes from './routes/PracticaRoutes';
-import AlumnoRoutes from './routes/AlumnoRoutes';
-import DashBoardRoutes from './routes/DashBoardRoutes';
-import ContenidoModuloPersonalizadoRoutes from './routes/ContenidoModuloPersonalizadoRoutes';
+import LoginRoutes from './routes/Docente_routes/LoginRoutes';
+import CursoRoutes from './routes/Docente_routes/CursoRoutes';
+import ClassRoutes from './routes/Docente_routes/ClassRoutes';
+import ThemeRoutes from './routes/Docente_routes/ThemeRoutes';
+import ImageRoutes from './routes/Docente_routes/ImageRoutes';
+import LessonRoutes from './routes/Docente_routes/LessonRoutes';
+import ModuleRoutes from './routes/Docente_routes/ModuleRoutes';
+import ForoRoutes from './routes/Docente_routes/ForoRoutes';
+import RecursoRoutes from './routes/Docente_routes/RecursoRoutes';
+import PreguntaRoutes from './routes/Docente_routes/PreguntaRoutes';
+import TestRoutes from './routes/Docente_routes/TestRoutes';
+import PracticaRoutes from './routes/Docente_routes/PracticaRoutes';
+import AlumnoRoutes from './routes/Docente_routes/AlumnoRoutes';
+import DashBoardRoutes from './routes/Docente_routes/DashBoardRoutes';
+import ContenidoModuloPersonalizadoRoutes from './routes/Docente_routes/ContenidoModuloPersonalizadoRoutes';
+import LoginAlumnoRoutes from './routes/Alumno_routes/LoginAlumnoRoutes';
+import PracticaAlumnoRoutes from './routes/Alumno_routes/PracticaRoutes';
+import TemaAlumnoRoutes from './routes/Alumno_routes/TemaAlumnoRoutes';
+import LeccionAlumnoRoutes from './routes/Alumno_routes/LeccionAlumnoRoutes';
+import CursoAlumnoRoutes from './routes/Alumno_routes/CursoAlumnoRoutes';
 import morgan from 'morgan';
 import cors from 'cors';
 import { ConFirebase } from './FIrebase';
@@ -27,7 +32,8 @@ class Server{
     constructor(){
         this.app=express();
         this.config();
-        this.routes();
+        this.docenteRoutes();
+        this.alumnoRoutes();
     }
     //configurar modulos
     config():void{
@@ -41,7 +47,7 @@ class Server{
 
     }
     //configurar rutas
-    routes():void{
+    docenteRoutes():void{
         this.app.use(LoginRoutes);
         this.app.use(CursoRoutes);
         this.app.use(ClassRoutes);
@@ -58,11 +64,20 @@ class Server{
         this.app.use(DashBoardRoutes);
         this.app.use(ContenidoModuloPersonalizadoRoutes);
     }
+    alumnoRoutes():void{
+        this.app.use(LoginAlumnoRoutes);
+        this.app.use(PracticaAlumnoRoutes);
+        this.app.use(TemaAlumnoRoutes);
+        this.app.use(LeccionAlumnoRoutes);
+        this.app.use(CursoAlumnoRoutes);
+    }
     start():void{
         this.app.listen(this.app.get('port'));
         console.log("Server o port",this.app.get('port'));
 
     }
+
+
     
     
 }

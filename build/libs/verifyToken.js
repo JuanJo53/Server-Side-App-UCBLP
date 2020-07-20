@@ -13,8 +13,13 @@ exports.TokenValidation = (req, res, next) => {
     }
     else {
         const payload = jsonwebtoken_1.default.verify(token, process.env.TOKEN_SESION_PLAT || 'tokentest');
-        req.docenteId = payload.id;
-        console.log("ID doc:" + payload);
+        if (payload.tipo == "docente") {
+            req.docenteId = payload.id;
+            console.log("ID doc:" + payload);
+        }
+        else {
+            return res.status(401).json('Acceso denegado');
+        }
         next();
     }
 };

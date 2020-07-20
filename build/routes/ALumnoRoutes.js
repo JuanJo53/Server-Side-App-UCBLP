@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
-const AlumnoController_1 = require("../controllers/AlumnoController");
+const AlumnoController_1 = require("../controllers/Docente_controllers/AlumnoController");
 const VerifyToken_1 = require("../libs/VerifyToken");
 class AlumnoRoutes {
     constructor() {
