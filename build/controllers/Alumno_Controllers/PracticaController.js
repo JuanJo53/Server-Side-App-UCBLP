@@ -94,7 +94,7 @@ class PracticaController {
     obtenerPractica(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { id } = req.params;
-            const query = `SELECT practica_pregunta.id_pregunta_practica ,practica_pregunta.id_pregunta,pregunta.codigo_pregunta,
+            const query = `SELECT practica_pregunta.puntuacion_practica_pregunta,pregunta.id_tipo_pregunta,pregunta.id_tipo_respuesta,practica_pregunta.id_pregunta_practica ,practica_pregunta.id_pregunta,pregunta.codigo_pregunta,
         practica_pregunta.puntuacion_practica_pregunta 
         FROM practica INNER JOIN practica_pregunta ON
         practica.id_practica = practica_pregunta.id_practica
@@ -118,9 +118,80 @@ class PracticaController {
                     const db = firebase.firestore();
                     var datos = yield db.collection('Preguntas').where(firebase.firestore.FieldPath.documentId(), "in", listaPreg).get();
                     for (let preg in row) {
-                        row[preg].pregunta = datos.docs[preg].data();
+                        var preguntaaux = datos.docs[preg].data();
+                        preguntaaux.respuestas = [];
+                        row[preg].pregunta = preguntaaux;
                     }
                     res.status(200).json(row);
+                }
+            }
+            catch (e) {
+                console.log(e);
+                res.status(500).json({ text: 'No se pudo listar la practica' });
+            }
+        });
+    }
+    compararRespuestas(re1, re2) {
+        var ver = true;
+        if (re1.length != re2.length) {
+            ver = false;
+        }
+        else {
+            for (let i in re1) {
+                if (re1[i] != re2[i]) {
+                    ver = false;
+                    break;
+                }
+            }
+        }
+        return ver;
+    }
+    revisarPractica(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const id = req.body.id;
+            const idEstudiante = req.estudianteId;
+            const preguntasR = req.body.preguntas;
+            const query = `SELECT practica_pregunta.puntuacion_practica_pregunta,pregunta.id_tipo_pregunta,pregunta.id_tipo_respuesta,practica_pregunta.id_pregunta_practica ,practica_pregunta.id_pregunta,pregunta.codigo_pregunta,
+        practica_pregunta.puntuacion_practica_pregunta 
+        FROM practica INNER JOIN practica_pregunta ON
+        practica.id_practica = practica_pregunta.id_practica
+        INNER JOIN pregunta ON
+        pregunta.id_pregunta = practica_pregunta.id_pregunta
+        WHERE practica_pregunta.estado_pregunta_practica   = true
+        AND CAST(CONCAT(DATE(practica.inicio_fecha),' ',practica.inicio_hora-INTERVAL 4 HOUR) AS DATETIME)<=NOW()
+        AND CAST(CONCAT(DATE(practica.fin_fecha),' ',practica.fin_hora-INTERVAL 4 HOUR) AS DATETIME)>=NOW()
+        AND practica.id_practica=?`;
+            const agregarNota = `
+            INSERT INTO nota_practica(id_practica,id_alumno,nota_practica,estado_nota_practica,tx_id,tx_username,tx_host,tx_date)
+            VALUES (?,?,?,true,1,'root','192.168.0.10',CURRENT_TIMESTAMP())`;
+            try {
+                const result2 = util_1.default.promisify(Database_1.default.query).bind(Database_1.default);
+                var row = yield result2(query, [id]);
+                if (row.length == 0) {
+                    res.status(500).json({ text: 'No esta habilitado para ver esta practica' });
+                }
+                else {
+                    if (row.length != preguntasR.length) {
+                        res.status(500).json({ text: 'Error en los datos Enviados' });
+                    }
+                    else {
+                        var listaPreg = [];
+                        for (let preg of row) {
+                            listaPreg.push(preg.codigo_pregunta);
+                        }
+                        const db = firebase.firestore();
+                        var datos = yield db.collection('Preguntas').where(firebase.firestore.FieldPath.documentId(), "in", listaPreg).get();
+                        var puntuacion = 0;
+                        for (let preg in row) {
+                            var preguntaaux = datos.docs[preg].data();
+                            if (exports.practicaController.compararRespuestas(preguntaaux.respuestas, preguntasR[preg].respuesta)) {
+                                puntuacion += row[preg].puntuacion_practica_pregunta;
+                            }
+                            row[preg].pregunta = preguntaaux;
+                        }
+                        yield result2(agregarNota, [id, idEstudiante, puntuacion, id, idEstudiante,]);
+                        res.status(200).json("Se califico el examen correctamente");
+                    }
                 }
             }
             catch (e) {
