@@ -10,7 +10,8 @@ class PracticaAlumnoRoutes {
     }
     ;
     config() {
-        this.router.get('/students/practices/:id', VerifyTokenAlumno_1.TokenValidationAlumno, PracticaController_1.practicaController.obtenerPractica);
+        this.router.get('/students/practices/:id', VerifyTokenAlumno_1.TokenValidationAlumno, PracticaController_1.practicaController.listarPracticas);
+        this.router.get('/students/info/practices/:id', VerifyTokenAlumno_1.TokenValidationAlumno, PracticaController_1.practicaController.infoPractica);
     }
 }
 const practicaAlumnoRoutes = new PracticaAlumnoRoutes();
