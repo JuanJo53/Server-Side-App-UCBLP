@@ -86,19 +86,25 @@ class PreguntaController {
     }
     listarPreguntas2(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const query = `SELECT pregunta.id_pregunta,pregunta.codigo_pregunta,pregunta.id_tipo_pregunta,pregunta.id_tipo_respuesta
+            const query = `SELECT 'vacio' as pregunta,pregunta.id_pregunta,pregunta.codigo_pregunta,pregunta.id_tipo_pregunta,pregunta.id_tipo_respuesta
         FROM pregunta
         WHERE pregunta.estado_pregunta=true`;
             Database_1.default.query(query, function (err, result, fields) {
                 return __awaiter(this, void 0, void 0, function* () {
                     if (err) {
+                        console.log("1" + err);
                         res.status(500).json({ text: 'No se pudo listar las preguntas' });
                     }
                     else {
+                        console.log(result);
                         try {
                             var listaPreg = [];
+                            var listaCod = [];
+                            for (let preg of result) {
+                                listaCod.push(preg.codigo_pregunta);
+                            }
                             const db = firebase.firestore();
-                            var datos = yield db.collection('Preguntas').get();
+                            var datos = yield db.collection('Preguntas').where(firebase.firestore.FieldPath.documentId(), "in", listaCod).get();
                             for (let doc of datos.docs) {
                                 var ind = result.findIndex(element => element.codigo_pregunta === doc.id);
                                 result[ind].pregunta = doc.data();
@@ -108,6 +114,7 @@ class PreguntaController {
                             res.status(200).json(listaPreg);
                         }
                         catch (e) {
+                            console.log(e);
                             res.status(500).json({ text: 'No se pudo listar las preguntas' });
                         }
                     }
