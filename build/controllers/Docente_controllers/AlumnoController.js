@@ -56,9 +56,6 @@ class AlumnoController {
             try {
                 const result2 = util_1.default.promisify(Database_1.default.query).bind(Database_1.default);
                 var row = yield result2(query, [idCurso, idAlumno]);
-                console.log(row);
-                console.log(idAlumno);
-                console.log(idCurso);
                 return row;
             }
             catch (e) {

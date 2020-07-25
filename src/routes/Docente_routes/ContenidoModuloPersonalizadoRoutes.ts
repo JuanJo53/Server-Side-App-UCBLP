@@ -17,6 +17,8 @@ class ContenidoModuloPersonalizadoRoutes{
         this.router.delete('/teacher/cutson/module/content/:id',contenidoModuloPersonalizadoController.eliminarContenido);
         this.router.put('/teacher/cutson/module/content/enable/:id',contenidoModuloPersonalizadoController.activarContenido);
         this.router.put('/teacher/cutson/module/content/disable/:id',contenidoModuloPersonalizadoController.desactivarContenido);
+        this.router.get('/teacher/cutson/module/content/score/get/:id',contenidoModuloPersonalizadoController.listarNotasContenido);
+        this.router.put('/teacher/cutson/module/content/score/',TokenValidation,contenidoModuloPersonalizadoController.modificarNotaContenido);
     }
 }
 const contenidoModuloPersonalizadoRoutes=new ContenidoModuloPersonalizadoRoutes();
