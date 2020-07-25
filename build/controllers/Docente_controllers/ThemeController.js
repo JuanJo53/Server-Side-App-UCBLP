@@ -36,9 +36,19 @@ class ThemeController {
     listarTemas(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { id } = req.params;
-            const query = `SELECT id_tema,numero_tema,nombre_tema,id_imagen,estado_tema FROM tema INNER JOIN curso ON
-        curso.id_curso=tema.id_curso WHERE curso.id_curso = ? AND (tema.estado_tema=true OR tema.estado_tema=2)`;
-            Database_1.default.query(query, [id], function (err, result, fields) {
+            const idDocente = req.docenteId;
+            const query = `SELECT tema.id_tema,tema.numero_tema,tema.nombre_tema,tema.id_imagen,tema.estado_tema 
+        FROM tema 
+        INNER JOIN curso ON
+        curso.id_curso=tema.id_curso 
+        INNER JOIN docente ON
+        curso.id_docente = docente.id_docente
+        WHERE curso.id_curso = ? 
+        AND docente.id_docente = ?
+        AND (tema.estado_tema=true OR tema.estado_tema=2)
+        AND curso.estado_curso = true
+        AND docente.estado_docente = true`;
+            Database_1.default.query(query, [id, idDocente], function (err, result, fields) {
                 if (err) {
                     res.status(500).json({ text: 'No se pudo cargar la lista de temas' });
                     throw err;

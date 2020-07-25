@@ -228,12 +228,21 @@ class TestController {
     listarExamenes(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { id } = req.params;
+            const idDocente = req.docenteId;
             const query = `SELECT examen_tema.id_examen,examen_tema.inicio_examen,examen_tema.fin_examen
         FROM examen_tema INNER JOIN tema ON
         examen_tema.id_tema = tema.id_tema
+        INNER JOIN curso ON 
+        curso.id_curso = tema.id_curso
+        INNER JOIN docente ON
+        docente.id_docente = curso.id_docente
         WHERE tema.id_tema = ?
-        AND examen_tema.estado_examen=true`;
-            Database_1.default.query(query, [id], function (err, result, fields) {
+        AND docente.id_docente = ?
+        AND examen_tema.estado_examen=true
+        AND tema.estado_tema !=false
+        AND curso.estado_curso=true
+        AND docente.estado_docente = true;`;
+            Database_1.default.query(query, [id, idDocente], function (err, result, fields) {
                 if (err) {
                     res.status(500).json({ text: 'No se pudo listar los exámenes' });
                 }
@@ -261,15 +270,27 @@ class TestController {
     listarPreguntasExamen(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { id } = req.params;
+            const idDocente = req.docenteId;
             const query = `SELECT examen_pregunta.id_examen_pregunta,examen_pregunta.id_pregunta,pregunta.codigo_pregunta,
         examen_pregunta.puntuacion_examen_pregunta
         FROM examen_tema INNER JOIN examen_pregunta ON
         examen_tema.id_examen = examen_pregunta.id_examen
         INNER JOIN pregunta ON
         pregunta.id_pregunta = examen_pregunta.id_pregunta
+        INNER JOIN tema ON
+        examen_tema.id_tema = tema.id_tema
+        INNER JOIN curso ON
+        curso.id_curso =tema.id_curso
+        INNER JOIN docente ON
+        docente.id_docente = curso.id_docente
         WHERE examen_pregunta.estado_examen_pregunta  = true
-        AND examen_tema.id_examen=?`;
-            Database_1.default.query(query, [id], function (err, result, fields) {
+        AND examen_tema.estado_examen = true
+        AND tema.estado_tema !=false
+        AND curso.estado_curso = true
+        AND docente.estado_docente=true
+        AND examen_tema.id_examen= ?
+        AND docente.id_docente=?;`;
+            Database_1.default.query(query, [id, idDocente], function (err, result, fields) {
                 if (err) {
                     res.status(500).json({ text: 'No se pudo listar los exámenes' });
                 }

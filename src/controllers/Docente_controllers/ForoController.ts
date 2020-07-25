@@ -22,12 +22,19 @@ class ForoController{
     }
     public async listarForos(req:Request,res:Response){
         const {id} = req.params;
+        const idDocente = req.docenteId;
         const query =`SELECT foro.id_foro, foro.nombre_foro, foro.descripcion_foro, foro.fecha_creacion,foro.fecha_fin
-                      FROM foro INNER JOIN curso ON
+                      FROM foro 
+                      INNER JOIN curso ON
                       foro.id_curso=curso.id_curso
+                      INNER JOIN docente ON
+                      docente.id_docente = curso.id_docente
                       WHERE curso.id_curso = ?
-                      AND foro.estado_foro=true`;
-        Db.query(query,[id],function(err,result,fields){
+                      AND docente.id_docente = ?
+                      AND foro.estado_foro=true
+                      AND curso.estado_curso = true
+                      AND docente.estado_docente = true`;
+        Db.query(query,[id,idDocente],function(err,result,fields){
             if(err){
                 res.status(500).json({text:'Error al listar los foros'});
                 throw err;
