@@ -70,14 +70,24 @@ class LessonController{
     }
     public async listarLecciones(req:Request,res:Response){
         const {id} = req.params;
+        const idDocente = req.docenteId
         const query = `SELECT leccion.estado_leccion,leccion.id_leccion, leccion.numero_leccion, leccion.nombre_leccion,tipo_leccion.id_tipo_leccion,leccion.id_imagen
                         FROM leccion INNER JOIN tema ON
                         leccion.id_tema=tema.id_tema
                         INNER JOIN tipo_leccion ON
                         tipo_leccion.id_tipo_leccion = leccion.id_tipo_leccion
+                        INNER JOIN curso ON
+                        curso.id_curso = tema.id_curso 
+                        INNER JOIN docente ON 
+                        docente.id_docente = curso.id_docente
                         WHERE tema.id_tema = ? AND
-                        estado_leccion != false`;
-        Db.query(query,[id],function(err,result,fields){
+                        leccion.estado_leccion != false
+                        AND tema.estado_tema != false
+                        AND curso.estado_curso =true
+                        AND  tipo_leccion.estado_tipo_leccion=true
+                        AND docente.estado_docente = true
+                        AND docente.id_docente = ?`;
+        Db.query(query,[id,idDocente],function(err,result,fields){
             if(err){
                 res.status(500).json({text:'No se pudo listar las lecciones'});
                 throw err;

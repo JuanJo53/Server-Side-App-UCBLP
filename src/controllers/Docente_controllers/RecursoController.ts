@@ -130,18 +130,36 @@ public async subirVideo(req:Request,res:Response){
     }
     public async listarSecciones(req:Request,res:Response){    
       const {id}=req.params;
+      const idDocente = req.docenteId;
       const query=`SELECT seccion.id_seccion,seccion.nombre_seccion
-      FROM seccion WHERE
-      seccion.id_curso = ? AND
-      seccion.estado_seccion !=false`      
+      FROM seccion 
+      JOIN curso ON  
+      curso.id_curso = seccion.id_curso 
+      JOIN docente ON
+      docente.id_docente = curso.id_docente;
+      WHERE curso.id_curso = ?
+      AND docente.id_docente = ?
+      AND seccion.estado_seccion !=false
+      AND curso.estado_curso = true
+      AND docente.estado_docente = true`      
       const query2=`SELECT recurso.nombre_recurso,recurso.ruta_recurso,tipo_recurso.id_tipo_recurso,recurso.id_recurso
-      FROM recurso INNER JOIN tipo_recurso
-      ON recurso.id_tipo_recurso=tipo_recurso.id_tipo_recurso
-      WHERE
-      recurso.id_seccion = ? AND
-      recurso.estado_recurso !=false AND
-      tipo_recurso.estado_tipo_recurso !=false`  
-      Db.query(query,[id],async function (err,result,fields){
+      FROM recurso 
+      INNER JOIN tipo_recurso ON
+      recurso.id_tipo_recurso=tipo_recurso.id_tipo_recurso
+      INNER JOIN seccion ON
+      recurso.id_seccion = seccion.id_seccion
+      INNER JOIN curso ON
+      curso.id_curso = seccion.id_curso
+      INNER JOIN docente ON
+      docente.id_docente = curso.id_docente
+      WHERE seccion.id_seccion = ? 
+      AND docente.id_docente =?
+      AND seccion.estado_seccion !=false
+      AND curso.estado_curso = true
+      AND docente.estado_docente = true
+      AND recurso.estado_recurso !=false 
+      AND tipo_recurso.estado_tipo_recurso !=false`  
+      Db.query(query,[id,idDocente],async function (err,result,fields){
         if(err){
             console.log(err);
             res.status(500).json({text:'No se pudo listar los recursos'});
@@ -153,7 +171,7 @@ public async subirVideo(req:Request,res:Response){
                 res.status(200).json(result);
             }
             for(let sec of result){
-                Db.query(query2,sec.id_seccion,async function (err2,result2,fields){
+                Db.query(query2,[sec.id_seccion,idDocente],async function (err2,result2,fields){
                     if(err2){
                         console.log(err2);
                         res.status(500).json({text:'No se pudo listar los recursos'});                        

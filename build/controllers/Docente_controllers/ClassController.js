@@ -18,6 +18,7 @@ class ClassController {
     listaAlumnos(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { id } = req.params;
+            const idDocente = req.docenteId;
             const query = `select curso_alumno.id_curso_alumno ,alumno.id_alumno, alumno.nombre_alumno, alumno.ap_paterno_alumno,alumno.ap_materno_alumno, sum(nota_modulo.nota_modulo*modulo.rubrica/100) as 'nota'
         from curso_alumno inner join alumno on 
         curso_alumno.id_alumno = alumno.id_alumno
@@ -26,18 +27,21 @@ class ClassController {
         inner join modulo on 
         nota_modulo.id_modulo=modulo.id_modulo
         inner join curso on
-        curso.id_curso=modulo.id_curso and 
-        curso_alumno.id_curso=modulo.id_curso
-        
-        where curso_alumno.id_curso=?
+        curso.id_curso=modulo.id_curso 
+        inner join docente ON 
+        docente.id_docente=curso.id_docente
+        and curso_alumno.id_curso=modulo.id_curso
+        where curso.id_curso=1
+        AND docente.id_docente = 14
         and curso.estado_curso = true 
         and alumno.estado_alumno=true
         and modulo.estado_modulo=1
         and nota_modulo.estado_nota_modulo=true
         and curso_alumno.estado_curso_alumno=true
+        AND docente.estado_docente = true
         group by curso_alumno.id_alumno , curso_alumno.id_curso_alumno
         order by alumno.ap_paterno_alumno;`;
-            yield Database_1.default.query(query, [id], function (err, result, fields) {
+            yield Database_1.default.query(query, [id, idDocente], function (err, result, fields) {
                 if (err)
                     throw err;
                 res.json(result);
