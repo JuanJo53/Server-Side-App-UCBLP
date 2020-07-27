@@ -137,18 +137,36 @@ class RecursoController {
     listarSecciones(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { id } = req.params;
+            const idDocente = req.docenteId;
             const query = `SELECT seccion.id_seccion,seccion.nombre_seccion
-      FROM seccion WHERE
-      seccion.id_curso = ? AND
-      seccion.estado_seccion !=false`;
+      FROM seccion 
+      JOIN curso ON  
+      curso.id_curso = seccion.id_curso 
+      JOIN docente ON
+      docente.id_docente = curso.id_docente
+      WHERE curso.id_curso = ?
+      AND docente.id_docente = ?
+      AND seccion.estado_seccion !=false
+      AND curso.estado_curso = true
+      AND docente.estado_docente = true`;
             const query2 = `SELECT recurso.nombre_recurso,recurso.ruta_recurso,tipo_recurso.id_tipo_recurso,recurso.id_recurso
-      FROM recurso INNER JOIN tipo_recurso
-      ON recurso.id_tipo_recurso=tipo_recurso.id_tipo_recurso
-      WHERE
-      recurso.id_seccion = ? AND
-      recurso.estado_recurso !=false AND
-      tipo_recurso.estado_tipo_recurso !=false`;
-            Database_1.default.query(query, [id], function (err, result, fields) {
+      FROM recurso 
+      INNER JOIN tipo_recurso ON
+      recurso.id_tipo_recurso=tipo_recurso.id_tipo_recurso
+      INNER JOIN seccion ON
+      recurso.id_seccion = seccion.id_seccion
+      INNER JOIN curso ON
+      curso.id_curso = seccion.id_curso
+      INNER JOIN docente ON
+      docente.id_docente = curso.id_docente
+      WHERE seccion.id_seccion = ? 
+      AND docente.id_docente =?
+      AND seccion.estado_seccion !=false
+      AND curso.estado_curso = true
+      AND docente.estado_docente = true
+      AND recurso.estado_recurso !=false 
+      AND tipo_recurso.estado_tipo_recurso !=false`;
+            Database_1.default.query(query, [id, idDocente], function (err, result, fields) {
                 return __awaiter(this, void 0, void 0, function* () {
                     if (err) {
                         console.log(err);
@@ -160,7 +178,7 @@ class RecursoController {
                             res.status(200).json(result);
                         }
                         for (let sec of result) {
-                            Database_1.default.query(query2, sec.id_seccion, function (err2, result2, fields) {
+                            Database_1.default.query(query2, [sec.id_seccion, idDocente], function (err2, result2, fields) {
                                 return __awaiter(this, void 0, void 0, function* () {
                                     if (err2) {
                                         console.log(err2);

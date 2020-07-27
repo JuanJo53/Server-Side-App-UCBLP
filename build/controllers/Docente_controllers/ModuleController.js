@@ -69,6 +69,7 @@ class ModuleController {
     listarModulos(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { id } = req.params;
+            const idDocente = req.docenteId;
             const query = `SELECT modulo.id_modulo,modulo.nombre_modulo, modulo.rubrica, imagen.id_imagen,color.id_color ,modulo.id_tipo_modulo, modulo.estado_modulo FROM 
         modulo INNER JOIN curso ON
         curso.id_curso= modulo.id_curso
@@ -76,9 +77,14 @@ class ModuleController {
         modulo.id_color= color.id_color
         INNER JOIN imagen ON 
         imagen.id_imagen=modulo.id_imagen
+        INNER JOIN docente ON
+        docente.id_docente = curso.id_docente
         WHERE curso.id_curso = ?
+        AND docente.id_docente =? 
+        AND curso.estado_curso = true
+        AND docente.estado_docente = true
         AND modulo.estado_modulo !=0`;
-            Database_1.default.query(query, [id], function (err, result, fields) {
+            Database_1.default.query(query, [id, idDocente], function (err, result, fields) {
                 if (err) {
                     res.status(500).json({ text: 'No se pudo listar los módulos personalizados' });
                 }
@@ -91,6 +97,7 @@ class ModuleController {
     listarModulosPredeterminados(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { id } = req.params;
+            const idDocente = req.docenteId;
             const query = `SELECT modulo.id_modulo,modulo.nombre_modulo, modulo.rubrica, imagen.imagen,color.valor FROM 
         modulo INNER JOIN curso ON
         curso.id_curso= modulo.id_curso
@@ -98,13 +105,17 @@ class ModuleController {
         modulo.id_color= color.id_color
         INNER JOIN imagen ON 
         imagen.id_imagen=modulo.id_imagen
+        INNER JOIN docente on
+        docente.id_docente = curso.id_docente
         WHERE curso.id_curso = ?
-        AND modulo.estado_modulo = 1
+        AND docente.id_docente = ?
+        AND modulo.estado_modulo !=0
         AND modulo.id_tipo_modulo = 1
         AND color.estado_color=true
         AND imagen.estado_imagen=true
-        AND curso.estado_curso=true`;
-            Database_1.default.query(query, [id], function (err, result, fields) {
+        AND curso.estado_curso=true
+        AND docente.estado_docente = true`;
+            Database_1.default.query(query, [id, idDocente], function (err, result, fields) {
                 if (err) {
                     res.status(500).json({ text: 'No se pudo listar los módulos predeterminados' });
                 }
@@ -117,19 +128,24 @@ class ModuleController {
     listarModulosPersonalizados(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { id } = req.params;
+            const idDocente = req.docenteId;
             const query = `SELECT modu.id_modulo,modu.nombre_modulo, modu.rubrica 
         FROM modulo modu 
         JOIN curso cur 
         ON cur.id_curso =modu.id_curso
         JOIN tipo_modulo tm ON
         modu.id_tipo_modulo = tm.id_tipo_modulo
+        JOIN docente dc ON
+        dc.id_docente = cur.id_docente
         WHERE tm.id_tipo_modulo = 2
         AND cur.id_curso = ?
-        AND modu.estado_modulo = true
+        AND dc.id_docente = ?
+        AND modu.estado_modulo !=0
         AND cur.estado_curso=true
         AND tm.estado_tipo_modulo = true
+        AND dc.estado_docente = true;
       `;
-            Database_1.default.query(query, [id], function (err, result, fields) {
+            Database_1.default.query(query, [id, idDocente], function (err, result, fields) {
                 if (err) {
                     res.status(500).json({ text: 'No se pudo listar los módulos personalizados' });
                     throw err;

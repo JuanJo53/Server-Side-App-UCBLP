@@ -22,6 +22,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Database_1 = __importDefault(require("../../Database"));
 const firebase = __importStar(require("firebase-admin"));
 const Pregunta_1 = require("../../model/Pregunta");
+const util_1 = __importDefault(require("util"));
 class PreacticaController {
     agregarPractica(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -220,13 +221,26 @@ class PreacticaController {
     listarPracticas(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { id } = req.params;
+            const idDocente = req.docenteId;
             console.log(id);
             const query = `SELECT practica.id_practica,practica.numero_practica,practica.nombre_practica,practica.inicio_fecha,inicio_hora,practica.fin_fecha,practica.fin_hora
-        FROM practica INNER JOIN leccion ON
+        FROM practica 
+        INNER JOIN leccion ON
         leccion.id_leccion = practica.id_leccion
+        INNER JOIN tema ON
+        tema.id_tema = leccion.id_tema
+        INNER JOIN curso ON
+        tema.id_curso = curso.id_curso
+        INNER JOIN docente ON 
+        docente.id_docente = curso.id_docente
         WHERE leccion.id_leccion=?
-        AND practica.estado_practica=true`;
-            Database_1.default.query(query, [id], function (err, result, fields) {
+        AND docente.id_docente = ?
+        AND practica.estado_practica=true
+        AND leccion.estado_leccion=true
+        AND tema.estado_tema !=false
+        AND curso.estado_curso = true
+        AND docente.estado_docente = true`;
+            Database_1.default.query(query, [id, idDocente], function (err, result, fields) {
                 if (err) {
                     console.log(err);
                     res.status(500).json({ text: 'No se pudo listar las practicas' });
@@ -236,6 +250,43 @@ class PreacticaController {
                     res.status(200).json(result);
                 }
             });
+        });
+    }
+    listarNotasPractica(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const idDocente = req.docenteId;
+            const { id } = req.params;
+            const query = `SELECT ntp.id_nota_practica,ntp.nota_practica,alumno.nombre_alumno,alumno.ap_paterno_alumno,alumno.ap_materno_alumno
+        FROM nota_practica ntp
+        INNER JOIN practica ON
+        practica.id_practica=ntp.id_practica
+        INNER JOIN leccion ON
+        leccion.id_leccion=practica.id_leccion
+        INNER JOIN tema ON
+        leccion.id_tema=tema.id_tema
+        INNER JOIN curso ON
+        curso.id_curso=tema.id_curso
+        INNER JOIN curso_alumno ON
+        curso_alumno.id_curso=curso.id_curso
+        INNER JOIN alumno ON
+        alumno.id_alumno=curso_alumno.id_alumno
+        AND alumno.id_alumno=ntp.id_alumno
+        WHERE practica.estado_practica = true
+        AND leccion.estado_leccion=true
+        AND curso.estado_curso=true
+        AND curso.id_docente=?        
+        AND ntp.estado_nota_practica=true
+        AND ntp.id_practica=?
+        AND tema.estado_tema = true`;
+            try {
+                const result = util_1.default.promisify(Database_1.default.query).bind(Database_1.default);
+                var row = yield result(query, [idDocente, id]);
+                res.status(200).json(row);
+            }
+            catch (e) {
+                console.log(e);
+                res.status(500).json({ text: 'Error al listar las notas de la practica' });
+            }
         });
     }
     eliminarPreguntaPractica(req, res) {
@@ -256,15 +307,30 @@ class PreacticaController {
     listarPreguntasPractica(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { id } = req.params;
+            const idDocente = req.docenteId;
             const query = `SELECT practica_pregunta.id_pregunta_practica ,practica_pregunta.id_pregunta,pregunta.codigo_pregunta,
         practica_pregunta.puntuacion_practica_pregunta 
         FROM practica INNER JOIN practica_pregunta ON
         practica.id_practica = practica_pregunta.id_practica
         INNER JOIN pregunta ON
         pregunta.id_pregunta = practica_pregunta.id_pregunta
+        INNER JOIN leccion ON
+        leccion.id_leccion = practica.id_leccion
+        INNER JOIN tema ON
+        tema.id_tema = leccion.id_tema
+        INNER JOIN curso ON
+        tema.id_curso = curso.id_curso
+        INNER JOIN docente ON 
+        docente.id_docente = curso.id_docente
         WHERE practica_pregunta.estado_pregunta_practica   = true
-        AND practica.id_practica=?`;
-            Database_1.default.query(query, [id], function (err, result, fields) {
+        AND practica.estado_practica = true
+        AND leccion.estado_leccion=true
+        AND tema.estado_tema !=false
+        AND curso.estado_curso = true
+        AND docente.estado_docente = true
+        AND practica.id_practica=?
+        AND docente.id_docente = ?;`;
+            Database_1.default.query(query, [id, idDocente], function (err, result, fields) {
                 return __awaiter(this, void 0, void 0, function* () {
                     if (err) {
                         res.status(500).json({ text: 'No se pudo listar los exámenes' });

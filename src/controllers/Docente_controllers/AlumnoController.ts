@@ -42,9 +42,6 @@ class AlumnoController{
         try{
             const result2:(arg1:string,arg2?:any[])=>Promise<unknown> = util.promisify(Db.query).bind(Db);
             var row =await result2(query,[idCurso,idAlumno]);
-            console.log(row);
-            console.log(idAlumno);
-            console.log(idCurso);
             return row;
         }
         catch(e){

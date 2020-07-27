@@ -10,10 +10,10 @@ class PreguntaRoutes{
     }
     //configurar respuesta routas
     config():void{
-        this.router.get('/teacher/question/type_of_question',preguntaController.listarTipoPregunta);
-        this.router.get('/teacher/question/type_of_answer',preguntaController.listarTipoRespuesta);
-        this.router.post('/teacher/question',preguntaController.agregarPregunta);
-        this.router.get('/teacher/question',preguntaController.listarPreguntas2);
+        this.router.get('/teacher/question/type_of_question',TokenValidation,preguntaController.listarTipoPregunta);
+        this.router.get('/teacher/question/type_of_answer',TokenValidation,preguntaController.listarTipoRespuesta);
+        this.router.post('/teacher/question',TokenValidation,preguntaController.agregarPregunta);
+        this.router.get('/teacher/question',TokenValidation,preguntaController.listarPreguntas2);
     }
     
 }

@@ -12,9 +12,29 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+//Importamos la libreía para crear tokens
+//Para instalarlo utiliza el comando: npm i @types/jsonwebtoken -D
 const Database_1 = __importDefault(require("../../Database"));
 const tokenService_1 = require("../../libs/tokenService");
+const util_1 = __importDefault(require("util"));
 class LoginAlumnoController {
+    perfilAlumno(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const id = req.estudianteId;
+            const query = `SELECT nombre_alumno,ap_paterno_alumno, ap_materno_alumno, correo_alumno
+        FROM alumno where estado_alumno =true AND id_alumno = ?`;
+            try {
+                const result2 = util_1.default.promisify(Database_1.default.query).bind(Database_1.default);
+                var row = yield result2(query, [id]);
+                console.log(row);
+                res.status(200).json(row);
+            }
+            catch (e) {
+                console.log(e);
+                res.status(500).json({ text: 'Error al obtener perfil.' });
+            }
+        });
+    }
     registrarAlumno(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const tokenService = new tokenService_1.TokenService();
@@ -35,7 +55,6 @@ class LoginAlumnoController {
             Database_1.default.query(query, [tokenService.criptPass(req.body.conraseniaAlumno), id], function (err, result, fields) {
                 if (err) {
                     res.status(500).json({ text: 'Error' });
-                    throw err;
                 }
                 else {
                     res.status(200).json({ text: 'Contrasenia actualizada' });

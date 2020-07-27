@@ -1,13 +1,29 @@
 import{Request,Response} from 'express';
 //Importamos la libreía para crear tokens
 //Para instalarlo utiliza el comando: npm i @types/jsonwebtoken -D
-import jwt from 'jsonwebtoken';
-import bcrypt from 'bcryptjs';
 import Db from '../../Database'; 
 import { TokenService } from '../../libs/tokenService';
+import util from 'util'
 
 class LoginAlumnoController{
+    public async perfilAlumno (req:Request,res:Response){
+        const id=req.estudianteId;
+        const  query = `SELECT nombre_alumno,ap_paterno_alumno, ap_materno_alumno, correo_alumno
+        FROM alumno where estado_alumno =true AND id_alumno = ?`;
+        try{
+            const result2:(arg1:string,arg2?:any[])=>Promise<unknown> = util.promisify(Db.query).bind(Db);
+            var row =await result2(query,[id]) as any[];
+            console.log(row);
+            res.status(200).json(row);
+            
+        }
+        catch(e){
+            console.log(e);
+            res.status(500).json({text:'Error al obtener perfil.'});
 
+        }
+
+    }
     public async registrarAlumno (req:Request,res:Response){ 
         const tokenService=new TokenService();
         req.body.contraseniaDocente=tokenService.criptPass(req.body.contraseniaDocente);
@@ -24,7 +40,6 @@ class LoginAlumnoController{
         Db.query(query,[tokenService.criptPass(req.body.conraseniaAlumno),id],function(err,result,fields){
             if(err){
                 res.status(500).json({text:'Error'});
-                throw err;
             }
             else{
                 res.status(200).json({text:'Contrasenia actualizada'});
