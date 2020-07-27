@@ -15,10 +15,10 @@ class CursoRoutes{
         this.router.get('/teacher/class-room/level',TokenValidation,cursoController.obtenerNiveles);
         this.router.get('/teacher/class-room/navigation-tab',TokenValidation,cursoController.obtenerCursosDocentePestania);
         this.router.post('/teacher/class-room',TokenValidation,cursoController.agregarCurso);
-        this.router.get('/teacher/class-room/schedule',cursoController.obtenerHorariodeCurso);
-        this.router.post('/teacher/class-room/add/schedule',cursoController.agregarHorarioACurso);
-        this.router.delete('/teacher/class-room/delete/day/schedule/:id',cursoController.eliminarDiaDeHorario);
-        this.router.put('/teacher/class-room/modify/day/schedule',cursoController.modificarDiaDeHorario); 
+        this.router.get('/teacher/class-room/schedule',TokenValidation,cursoController.obtenerHorariodeCurso);
+        this.router.post('/teacher/class-room/add/schedule',TokenValidation,cursoController.agregarHorarioACurso);
+        this.router.delete('/teacher/class-room/delete/day/schedule/:id',TokenValidation,cursoController.eliminarDiaDeHorario);
+        this.router.put('/teacher/class-room/modify/day/schedule',TokenValidation,cursoController.modificarDiaDeHorario); 
 
 
     }

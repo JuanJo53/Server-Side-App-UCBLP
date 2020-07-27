@@ -143,7 +143,7 @@ class RecursoController {
       JOIN curso ON  
       curso.id_curso = seccion.id_curso 
       JOIN docente ON
-      docente.id_docente = curso.id_docente;
+      docente.id_docente = curso.id_docente
       WHERE curso.id_curso = ?
       AND docente.id_docente = ?
       AND seccion.estado_seccion !=false
