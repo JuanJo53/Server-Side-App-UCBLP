@@ -11,7 +11,7 @@ class DashBoardRoutes {
     ;
     //configurar respuesta routas
     config() {
-        this.router.get('/teacher/dash-board/practices/avg-qualifications', VerifyToken_1.TokenValidation, DashBoardController_1.dashBoardController.promedioPracticas);
+        this.router.get('/teacher/dash-board/practices/:id', VerifyToken_1.TokenValidation, DashBoardController_1.dashBoardController.dashPracticas);
         this.router.get('/teacher/dash-board/theme/practices/avg-qualification', VerifyToken_1.TokenValidation, DashBoardController_1.dashBoardController.promedioPracticasPorTema);
         this.router.get('/teacher/dash-board/theme/practices/qualification', VerifyToken_1.TokenValidation, DashBoardController_1.dashBoardController.notasPracticasPorTema);
         this.router.get('/teacher/dash-board/test/avg-qualifications', VerifyToken_1.TokenValidation, DashBoardController_1.dashBoardController.promedioExamenes);

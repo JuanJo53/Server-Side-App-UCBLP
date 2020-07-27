@@ -10,7 +10,7 @@ class DashBoardRoutes{
     }
     //configurar respuesta routas
     config():void{
-        this.router.get('/teacher/dash-board/practices/avg-qualifications',TokenValidation,dashBoardController.promedioPracticas);
+        this.router.get('/teacher/dash-board/practices/:id',TokenValidation,dashBoardController.dashPracticas);
         this.router.get('/teacher/dash-board/theme/practices/avg-qualification',TokenValidation,dashBoardController.promedioPracticasPorTema);
         this.router.get('/teacher/dash-board/theme/practices/qualification',TokenValidation,dashBoardController.notasPracticasPorTema);
         this.router.get('/teacher/dash-board/test/avg-qualifications',TokenValidation,dashBoardController.promedioExamenes);
