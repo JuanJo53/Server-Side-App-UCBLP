@@ -19,8 +19,8 @@ class ClassController {
         inner join docente ON 
         docente.id_docente=curso.id_docente
         and curso_alumno.id_curso=modulo.id_curso
-        where curso.id_curso=1
-        AND docente.id_docente = 14
+        where curso.id_curso=?
+        AND docente.id_docente = ?
         and curso.estado_curso = true 
         and alumno.estado_alumno=true
         and modulo.estado_modulo=1

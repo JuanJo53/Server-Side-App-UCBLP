@@ -10,14 +10,14 @@ class TestRoutes{
     }
     //configurar respuesta routas
     config():void{
-        this.router.get('/teacher/test/:id',testController.listarExamenes);
-        this.router.post('/teacher/test',testController.agregarExamen);
-        this.router.put('/teacher/test',testController.modificarExamen);
-        this.router.delete('/teacher/test/:id',testController.eliminarExamen);
-        this.router.get('/teacher/test/questions/:id',testController.listarPreguntasExamen);
-        this.router.post('/teacher/test/questions',testController.agregarPreguntasExamen);
-        this.router.put('/teacher/test/questions',testController.modificarPreguntaExamen);
-        this.router.delete('/teacher/test/questions/:id',testController.eliminarPreguntaExamen);
+        this.router.get('/teacher/test/:id',TokenValidation,testController.listarExamenes);
+        this.router.post('/teacher/test',TokenValidation,testController.agregarExamen);
+        this.router.put('/teacher/test',TokenValidation,testController.modificarExamen);
+        this.router.delete('/teacher/test/:id',TokenValidation,testController.eliminarExamen);
+        this.router.get('/teacher/test/questions/:id',TokenValidation,testController.listarPreguntasExamen);
+        this.router.post('/teacher/test/questions',TokenValidation,testController.agregarPreguntasExamen);
+        this.router.put('/teacher/test/questions',TokenValidation,testController.modificarPreguntaExamen);
+        this.router.delete('/teacher/test/questions/:id',TokenValidation,testController.eliminarPreguntaExamen);
     }
 }
 const testRoutes=new TestRoutes();

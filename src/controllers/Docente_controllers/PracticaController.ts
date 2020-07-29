@@ -3,6 +3,7 @@ import Db from '../../Database';
 import * as firebase from 'firebase-admin';
 import {Pregunta} from '../../model/Pregunta';
 import storage from '../../Storage'
+import util from 'util'
 
 
 class PreacticaController{
@@ -229,6 +230,43 @@ public async agregarPractica(req:Request,res:Response){
             }
         });   
 
+    }
+    public async listarNotasPractica(req:Request,res:Response){
+        
+        const idDocente=req.docenteId;
+        const {id}=req.params;
+        const query =`SELECT ntp.id_nota_practica,ntp.nota_practica,alumno.nombre_alumno,alumno.ap_paterno_alumno,alumno.ap_materno_alumno
+        FROM nota_practica ntp
+        INNER JOIN practica ON
+        practica.id_practica=ntp.id_practica
+        INNER JOIN leccion ON
+        leccion.id_leccion=practica.id_leccion
+        INNER JOIN tema ON
+        leccion.id_tema=tema.id_tema
+        INNER JOIN curso ON
+        curso.id_curso=tema.id_curso
+        INNER JOIN curso_alumno ON
+        curso_alumno.id_curso=curso.id_curso
+        INNER JOIN alumno ON
+        alumno.id_alumno=curso_alumno.id_alumno
+        AND alumno.id_alumno=ntp.id_alumno
+        WHERE practica.estado_practica = true
+        AND leccion.estado_leccion=true
+        AND curso.estado_curso=true
+        AND curso.id_docente=?        
+        AND ntp.estado_nota_practica=true
+        AND ntp.id_practica=?
+        AND tema.estado_tema = true`; 
+        try{
+            const result:(arg1:string,arg2:any[])=>Promise<unknown> = util.promisify(Db.query).bind(Db);
+            var row =await result(query,[idDocente,id]) as any[];    
+            res.status(200).json(row);        
+        }
+        catch(e){
+            console.log(e); 
+            res.status(500).json({text:'Error al listar las notas de la practica'});
+
+        }
     }
     public async eliminarPreguntaPractica(req:Request,res:Response){
         const {id} = req.params;

@@ -15,7 +15,7 @@ class ForoRoutes {
         this.router.get('/teacher/forums/:id', VerifyToken_1.TokenValidation, ForoController_1.foroController.listarForos);
         this.router.put('/teacher/forums/', VerifyToken_1.TokenValidation, ForoController_1.foroController.modificarForos);
         this.router.delete('/teacher/forums', VerifyToken_1.TokenValidation, ForoController_1.foroController.eliminarForo);
-        this.router.post('/teacher/forums/message', ForoController_1.foroController.agregarMensaje);
+        this.router.post('/teacher/forums/message', VerifyToken_1.TokenValidation, ForoController_1.foroController.agregarMensaje);
     }
 }
 const foroRoutes = new ForoRoutes();

@@ -3,21 +3,91 @@ import Db from '../../Database';
 import util from 'util'
 
 class ContenidoModuloPersonalizadoController {
+    public async listarNotasContenido(req: Request, res: Response){
+        const {id}=req.params;
+        const query =`SELECT alumno.id_alumno,alumno.nombre_alumno,alumno.ap_paterno_alumno,alumno.ap_materno_alumno,nota_contenido.nota_contenido,nota_contenido.id_nota_contenido
+        FROM alumno INNER
+        JOIN curso_alumno ON
+        alumno.id_alumno=curso_alumno.id_alumno INNER
+        JOIN curso ON
+        curso.id_curso=curso_alumno.id_curso
+        INNER JOIN modulo ON
+        modulo.id_curso=curso.id_curso
+        INNER JOIN contenido_mod_per ON
+        contenido_mod_per.id_modulo=modulo.id_modulo
+        INNER JOIN nota_contenido ON
+        nota_contenido.id_contenido_mod_per=contenido_mod_per.id_contenido_mod_per and
+        nota_contenido.id_alumno=alumno.id_alumno
+        WHERE curso_alumno.estado_curso_alumno=true
+        AND curso.estado_curso=true
+        AND modulo.estado_modulo=true
+        AND contenido_mod_per.estado_contenido_mod_per=true
+        AND contenido_mod_per.id_contenido_mod_per=?
+        AND nota_contenido.estado_nota_contenido=true
+        ORDER BY alumno.ap_paterno_alumno`;
+        
+        try{
+            const result:(arg1:string,arg2?:any[])=>Promise<unknown> = util.promisify(Db.query).bind(Db);
+            const resultado=await result(query,[id]) as any[];
+            res.status(200).json(resultado);
+        } 
+        catch(e){
+            console.log(e);
+            res.status(500).json({ text: 'Error al listar contenido' });
 
+        }
+        
+    }
+    public async agregarNotasContenidoNuevo(idContenidoModulo:number){
+            const query =`insert into nota_contenido (id_alumno,id_contenido_mod_per,nota_contenido,estado_nota_contenido,tx_id,tx_username,tx_host,tx_date)
+            SELECT alumno.id_alumno,?,0,true,1,'root',' 192.168.0.10',CURRENT_TIMESTAMP()
+            FROM alumno INNER
+            JOIN curso_alumno ON
+            alumno.id_alumno=curso_alumno.id_alumno INNER
+            JOIN curso ON
+            curso.id_curso=curso_alumno.id_curso
+            INNER JOIN modulo ON
+            modulo.id_curso=curso.id_curso
+            INNER JOIN contenido_mod_per ON
+            contenido_mod_per.id_modulo=modulo.id_modulo
+            WHERE curso_alumno.estado_curso_alumno=true
+            AND curso.estado_curso=true
+            AND modulo.estado_modulo=true
+            AND contenido_mod_per.estado_contenido_mod_per=true
+            AND contenido_mod_per.id_contenido_mod_per=?
+            GROUP BY alumno.id_alumno`;
+            
+            try{
+                const result:(arg1:string,arg2?:any[])=>Promise<unknown> = util.promisify(Db.query).bind(Db);
+                await result(query,[idContenidoModulo,idContenidoModulo]) as any[];
+                return true;
+            } 
+            catch(e){
+                console.log(e);
+                return false;
 
+            }
+            
+        }
     public async agregarContenido(req: Request, res: Response) {
-        const idModulo = req.body.idModulo;
+            const idModulo = req.body.idModulo;
         const numeroContenido = 0;
         const nombreContenido = req.body.nombreContenido;
         const rubricaContenido = 0;
         const query = `INSERT INTO contenido_mod_per (id_modulo,numero_contenido,nombre_contenido,rubrica_contenido,estado_contenido_mod_per,tx_id,tx_username,tx_host)
         VALUES (?,?,?,?,1,1,'root','192.168.0.10')`;
-        Db.query(query,[idModulo,numeroContenido,nombreContenido,rubricaContenido], function (err, result, fields) {
+        Db.query(query,[idModulo,numeroContenido,nombreContenido,rubricaContenido], async function (err, result, fields) {
             if (err) {
                 res.status(500).json({ text: 'Error al agregar contenido' });
             }
             else {
-                res.status(200).json({ text: 'Contenido agregado correctamente' });
+                var resAgregar=await contenidoModuloPersonalizadoController.agregarNotasContenidoNuevo(result.insertId);
+                if(resAgregar){
+                    res.status(200).json({id: result.insertId });
+                }
+                else{
+                    res.status(500).json({ text: 'Error al agregar contenido' });
+                }
             }
         });
 
@@ -43,7 +113,7 @@ class ContenidoModuloPersonalizadoController {
                 var error=false;     
                 const promises = [];
                 for (let rubrica of rubricas){
-                    promises.push(contenidoModuloPersonalizadoController.cambiarRubrica(rubrica.id_contenido_mod_per,rubrica.rubrica_contenido))
+                    promises.push(contenidoModuloPersonalizadoController.cambiarRubrica(rubrica.id,rubrica.rubrica))
                 }  
                 const responses = await Promise.all(promises);
                 if(responses.includes(false)){
@@ -153,15 +223,40 @@ class ContenidoModuloPersonalizadoController {
             }
         });
     }
+    public async anadirNotaModuloPersonalizado(idModulo:number,idAlumno:number){
+            const query =`UPDATE nota_modulo SET nota_modulo = 
+            (SELECT SUM(ntc.nota_contenido*cmp.rubrica_contenido/100) AS nota
+                FROM nota_contenido ntc
+                INNER JOIN contenido_mod_per cmp ON cmp.id_contenido_mod_per = ntc.id_contenido_mod_per
+                WHERE ntc.id_alumno = ?
+                AND cmp.estado_contenido_mod_per=true
+                AND cmp.id_modulo=?
+                )
+            WHERE id_alumno=?
+            AND id_modulo=?`;
+            const result:(arg1:string,arg2?:any[])=>Promise<unknown> = util.promisify(Db.query).bind(Db);
+            await result(query,[idAlumno,idModulo,idAlumno,idModulo]) as any[]; 
+    }
     public async modificarNotaContenido(req: Request, res: Response) {
-        const idNotaContenido = req.body.idNotaContenido;
-        const notaContenido= req.body.notaContenido;
+        const idNotaContenido = req.body.notaContenido.id;
+        const notaContenido= req.body.notaContenido.puntuacion;
+        console.log(idNotaContenido);
+        console.log(notaContenido);
+        const sacarDatos=`SELECT cmp.id_modulo ,nct.id_alumno
+        FROM contenido_mod_per cmp
+        INNER JOIN nota_contenido nct ON cmp.id_contenido_mod_per = nct.id_contenido_mod_per
+        WHERE nct.id_nota_contenido=?
+        AND cmp.estado_contenido_mod_per=true
+        GROUP BY cmp.id_modulo`
         const query = `UPDATE nota_contenido SET nota_contenido = ? WHERE id_nota_contenido=?`;
-        Db.query(query,[idNotaContenido,notaContenido], function (err, result, fields) {
+        Db.query(query,[notaContenido,idNotaContenido], async function (err, result, fields) {
             if (err) {
                 res.status(500).json({ text: 'Error al modificar la nota'});
             }
             else {
+                const result:(arg1:string,arg2?:any[])=>Promise<unknown> = util.promisify(Db.query).bind(Db);
+                var resIds=await result(sacarDatos,[idNotaContenido]) as any[]; 
+                await contenidoModuloPersonalizadoController.anadirNotaModuloPersonalizado(resIds[0].id_modulo,resIds[0].id_alumno);
                 res.status(200).json({text: 'Nota modificada correctamente'});
             }
         });

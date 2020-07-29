@@ -10,14 +10,15 @@ class PracticaRoutes{
     }
     //configurar respuesta routas
     config():void{
-        this.router.get('/teacher/practice/:id',practicaController.listarPracticas);
-        this.router.post('/teacher/practice',practicaController.agregarPractica);
-        this.router.put('/teacher/practice',practicaController.modificarPractica);
-        this.router.delete('/teacher/practice/:id',practicaController.eliminarPractica);
-        this.router.get('/teacher/practice/questions/:id',practicaController.listarPreguntasPractica);
-        this.router.post('/teacher/practice/questions',practicaController.agregarPreguntasPractica);
-        this.router.put('/teacher/practice/questions',practicaController.modificarPreguntaPractica);
-        this.router.delete('/teacher/practice/questions/:id',practicaController.eliminarPreguntaPractica);
+        this.router.get('/teacher/practice/:id',TokenValidation,practicaController.listarPracticas);
+        this.router.post('/teacher/practice',TokenValidation,practicaController.agregarPractica);
+        this.router.put('/teacher/practice',TokenValidation,practicaController.modificarPractica);
+        this.router.delete('/teacher/practice/:id',TokenValidation,practicaController.eliminarPractica);
+        this.router.get('/teacher/practice/questions/:id',TokenValidation,practicaController.listarPreguntasPractica);
+        this.router.post('/teacher/practice/questions',TokenValidation,practicaController.agregarPreguntasPractica);
+        this.router.put('/teacher/practice/questions',TokenValidation,practicaController.modificarPreguntaPractica);
+        this.router.delete('/teacher/practice/questions/:id',TokenValidation,practicaController.eliminarPreguntaPractica);
+        this.router.get('/teacher/practice/scores/:id',TokenValidation,practicaController.listarNotasPractica);
     }
 }
 const practicaRoutes=new PracticaRoutes();

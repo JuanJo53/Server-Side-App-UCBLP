@@ -2,10 +2,10 @@ import { Request, Response } from 'express';
 import Db from '../../Database';
 
 class DashBoardController {
-    public async promedioPracticas(req: Request, res: Response) {
-        const idCurso = req.body.idCurso;
+    public async dashPracticas(req: Request, res: Response) {
+        const {id} = req.params;
         const idDocente = req.docenteId;
-        const query = `SELECT pr.id_practica ,pr.numero_practica,AVG (np.nota_practica)
+        const query = `SELECT COUNT(IF(np.nota_practica >=51,1,null)) aprobados,COUNT(IF(np.nota_practica <51,1,null)) reprobados,pr.id_practica,pr.nombre_practica
         FROM nota_practica np
         JOIN practica pr ON
         np.id_practica=pr.id_practica
@@ -15,25 +15,30 @@ class DashBoardController {
         tm.id_tema = lcc.id_tema
         JOIN curso cr ON
         cr.id_curso = tm.id_curso
-        JOIN curso_alumno ca ON
-        ca.id_curso = cr.id_curso
         JOIN docente dc ON
         dc.id_docente = cr.id_docente
+        and cr.id_docente = dc.id_docente
         WHERE np.estado_nota_practica=true
-        AND lcc.estado_leccion = 2 OR lcc.estado_leccion = 1
+        AND lcc.estado_leccion = true
         AND pr.estado_practica = true
         AND tm.estado_tema = true
         AND cr.estado_curso = true
-        AND ca.estado_curso_alumno = true
         AND dc.estado_docente = true
         AND cr.id_curso = ?
         AND dc.id_docente = ?
-        GROUP by np.id_practica;`;
-        Db.query(query, [idCurso,idDocente], function (err, result, fields) {
+        group by pr.id_practica
+        order by pr.fin_fecha desc`;
+        Db.query(query, [id,idDocente], function (err, result, fields) {
             if (err) {
                 res.status(500).json({ text: 'Error al cargar el promedio de prácticas' });
             }
             else {
+                //codigo para hacerlo por porcentaje
+                // for(let practica of result){
+                //     var total=Number(practica.aprobados)+Number(practica.reprobados);
+                //     practica.aprobados=100/total*practica.aprobados;
+                //     practica.reprobados=100/total*practica.reprobados;
+                // }
                 res.status(200).json(result);
             }
         });

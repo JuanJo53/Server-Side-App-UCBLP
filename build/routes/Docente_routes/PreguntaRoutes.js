@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
+const VerifyToken_1 = require("../../libs/VerifyToken");
 const PreguntaController_1 = require("../../controllers/Docente_controllers/PreguntaController");
 class PreguntaRoutes {
     constructor() {
@@ -10,10 +11,10 @@ class PreguntaRoutes {
     ;
     //configurar respuesta routas
     config() {
-        this.router.get('/teacher/question/type_of_question', PreguntaController_1.preguntaController.listarTipoPregunta);
-        this.router.get('/teacher/question/type_of_answer', PreguntaController_1.preguntaController.listarTipoRespuesta);
-        this.router.post('/teacher/question', PreguntaController_1.preguntaController.agregarPregunta);
-        this.router.get('/teacher/question', PreguntaController_1.preguntaController.listarPreguntas2);
+        this.router.get('/teacher/question/type_of_question', VerifyToken_1.TokenValidation, PreguntaController_1.preguntaController.listarTipoPregunta);
+        this.router.get('/teacher/question/type_of_answer', VerifyToken_1.TokenValidation, PreguntaController_1.preguntaController.listarTipoRespuesta);
+        this.router.post('/teacher/question', VerifyToken_1.TokenValidation, PreguntaController_1.preguntaController.agregarPregunta);
+        this.router.get('/teacher/question', VerifyToken_1.TokenValidation, PreguntaController_1.preguntaController.listarPreguntas2);
     }
 }
 const preguntaRoutes = new PreguntaRoutes();
