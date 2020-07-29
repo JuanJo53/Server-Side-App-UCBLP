@@ -88,6 +88,86 @@ class PreacticaController {
         }
         return preg;
     }
+    agregarPreguntaRepo(preguntas) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const query = `INSERT INTO practica_pregunta (id_pregunta,id_practica,puntuacion_practica_pregunta,estado_pregunta_practica,tx_id,tx_username,tx_host)
+            VALUES ?;`;
+                const result = util_1.default.promisify(Database_1.default.query).bind(Database_1.default);
+                var row = yield result(query, [preguntas]);
+                return true;
+            }
+            catch (e) {
+                console.log(e);
+                return false;
+            }
+        });
+    }
+    agregarPreguntaNueva(preguntas) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const query = `insert into pregunta (codigo_pregunta,pregunta,opciones,respuesta,recurso,id_tipo_pregunta,id_tipo_respuesta,estado_pregunta,tx_id,tx_username,tx_host)
+            values ?;`;
+                const result = util_1.default.promisify(Database_1.default.query).bind(Database_1.default);
+                var row = yield result(query, [preguntas]);
+                var insId = row.insertId;
+                console.log(insId);
+                return insId;
+            }
+            catch (e) {
+                console.log(e);
+                return false;
+            }
+        });
+    }
+    agregarPreguntasPracticaSQL(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const idPractica = req.body.idPractica;
+            const preguntasPractica = req.body.preguntas;
+            var correcto = true;
+            try {
+                const preguntasRepo = [];
+                const preguntasRepoNuevas = [];
+                for (let i = 0; i < preguntasPractica.length; i++) {
+                    var tipo_req = req.body.preguntas[i].tipo;
+                    if (tipo_req) {
+                        preguntasRepo.push([req.body.preguntas[i].id, idPractica, preguntasPractica[i].puntuacion, true, 1, 'root', '192.168.0.10']);
+                    }
+                    else {
+                        const preguntasNuevas = [];
+                        var data = preguntasPractica[i];
+                        const idTipoPregunta = data.idTipoPregunta;
+                        const idTipoRespuesta = data.idTipoRespuesta;
+                        const pregunta = data.pregunta;
+                        const respuesta = JSON.stringify(data.respuesta);
+                        const opciones = JSON.stringify(data.opciones);
+                        const recurso = data.recurso;
+                        preguntasNuevas.push([1, pregunta, opciones, respuesta, recurso, idTipoPregunta, idTipoRespuesta, true, 1, 'root', '192.168.0.10']);
+                        var resNuevo = yield exports.practicaController.agregarPreguntaNueva(preguntasNuevas);
+                        if (resNuevo) {
+                            preguntasRepoNuevas.push([resNuevo, idPractica, preguntasPractica[i].puntuacion, true, 1, 'root', '192.168.0.10']);
+                        }
+                        else {
+                            correcto = false;
+                        }
+                    }
+                }
+                if (correcto) {
+                    if (preguntasRepo.length != 0) {
+                        exports.practicaController.agregarPreguntaRepo(preguntasRepo);
+                    }
+                    if (preguntasRepoNuevas.length != 0) {
+                        exports.practicaController.agregarPreguntaRepo(preguntasRepoNuevas);
+                    }
+                    res.status(200).json({ text: 'Preguntas agregadas correctamente' });
+                }
+            }
+            catch (e) {
+                console.log(e);
+                res.status(500).json({ text: 'Error al obtener la lista de alumnos' });
+            }
+        });
+    }
     agregarPreguntasPractica(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
