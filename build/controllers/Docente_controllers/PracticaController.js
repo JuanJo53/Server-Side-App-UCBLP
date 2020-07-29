@@ -174,7 +174,7 @@ class PreacticaController {
             const inicioFecha = req.body.inicioFecha;
             const finFecha = req.body.finFecha;
             const inicioHora = req.body.inicioHora;
-            const finHora = req.body.finhora;
+            const finHora = req.body.finHora;
             const query = `UPDATE practica SET nombre_practica = ?,numero_practica=?,inicio_fecha =?,
         inicio_hora=?,fin_fecha =?,fin_hora=? WHERE id_practica =?`;
             Database_1.default.query(query, [nombrePractica, numeroPractica, inicioFecha, inicioHora, finFecha, finHora, idPractica], function (err, result, fields) {
