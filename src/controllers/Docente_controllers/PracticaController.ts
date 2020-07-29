@@ -215,7 +215,8 @@ public async agregarPractica(req:Request,res:Response){
         AND leccion.estado_leccion=true
         AND tema.estado_tema !=false
         AND curso.estado_curso = true
-        AND docente.estado_docente = true`;
+        AND docente.estado_docente = true
+        ORDER BY practica.numero_practica ASC`;
         Db.query(query,[id,idDocente],function(err,result,fields){
             if(err){
                 console.log(err);
