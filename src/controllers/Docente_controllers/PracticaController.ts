@@ -232,11 +232,13 @@ public async agregarPractica(req:Request,res:Response){
         const idPractica = req.body.idPractica;
         const nombrePractica = req.body.nombrePractica;
         const numeroPractica = req.body.numeroPractica;
-        const inicioPractica=req.body.inicioPractica;
-        const finPractica = req.body.finPractica;
-        const query = `UPDATE practica SET nombre_practica = ?,numero_practica=?,inicio_practica=?,fin_practica =? , tx_date = CURRENT_TIMESTAMP()
-        WHERE id_practica =?`;
-        Db.query(query,[nombrePractica,numeroPractica,inicioPractica,finPractica,idPractica],function(err,result,fields){
+        const inicioFecha=req.body.inicioFecha;
+        const finFecha=req.body.finFecha;
+        const inicioHora=req.body.inicioHora;
+        const finHora=req.body.finHora;
+        const query = `UPDATE practica SET nombre_practica = ?,numero_practica=?,inicio_fecha =?,
+        inicio_hora=?,fin_fecha =?,fin_hora=? WHERE id_practica =?`;
+        Db.query(query,[nombrePractica,numeroPractica,inicioFecha,inicioHora,finFecha,finHora,idPractica],function(err,result,fields){
             if(err){
                 res.status(500).json({text:'Error al modificar la práctica'});
                 throw err;
@@ -295,7 +297,8 @@ public async agregarPractica(req:Request,res:Response){
         AND leccion.estado_leccion=true
         AND tema.estado_tema !=false
         AND curso.estado_curso = true
-        AND docente.estado_docente = true`;
+        AND docente.estado_docente = true
+        ORDER BY practica.numero_practica ASC`;
         Db.query(query,[id,idDocente],function(err,result,fields){
             if(err){
                 console.log(err);
