@@ -47,7 +47,8 @@ class ThemeController {
         AND docente.id_docente = ?
         AND (tema.estado_tema=true OR tema.estado_tema=2)
         AND curso.estado_curso = true
-        AND docente.estado_docente = true`;
+        AND docente.estado_docente = true
+        ORDER BY tema.numero_tema ASC`;
             Database_1.default.query(query, [id, idDocente], function (err, result, fields) {
                 if (err) {
                     res.status(500).json({ text: 'No se pudo cargar la lista de temas' });
