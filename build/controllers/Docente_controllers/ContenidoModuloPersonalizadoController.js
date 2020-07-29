@@ -18,6 +18,7 @@ class ContenidoModuloPersonalizadoController {
     listarNotasContenido(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { id } = req.params;
+            const idDocente = req.docenteId;
             const query = `SELECT alumno.id_alumno,alumno.nombre_alumno,alumno.ap_paterno_alumno,alumno.ap_materno_alumno,nota_contenido.nota_contenido,nota_contenido.id_nota_contenido
         FROM alumno INNER
         JOIN curso_alumno ON
@@ -29,18 +30,22 @@ class ContenidoModuloPersonalizadoController {
         INNER JOIN contenido_mod_per ON
         contenido_mod_per.id_modulo=modulo.id_modulo
         INNER JOIN nota_contenido ON
-        nota_contenido.id_contenido_mod_per=contenido_mod_per.id_contenido_mod_per and
-        nota_contenido.id_alumno=alumno.id_alumno
+        nota_contenido.id_contenido_mod_per=contenido_mod_per.id_contenido_mod_per 
+        INNER JOIN docente ON
+        curso.id_docente = docente.id_docente
+        AND nota_contenido.id_alumno=alumno.id_alumno
         WHERE curso_alumno.estado_curso_alumno=true
         AND curso.estado_curso=true
         AND modulo.estado_modulo=true
         AND contenido_mod_per.estado_contenido_mod_per=true
-        AND contenido_mod_per.id_contenido_mod_per=?
+        AND contenido_mod_per.id_contenido_mod_per= ?
+        AND docente .id_docente = ?
         AND nota_contenido.estado_nota_contenido=true
+        AND docente.estado_docente = true
         ORDER BY alumno.ap_paterno_alumno`;
             try {
                 const result = util_1.default.promisify(Database_1.default.query).bind(Database_1.default);
-                const resultado = yield result(query, [id]);
+                const resultado = yield result(query, [id, idDocente]);
                 res.status(200).json(resultado);
             }
             catch (e) {
@@ -206,18 +211,22 @@ class ContenidoModuloPersonalizadoController {
         return __awaiter(this, void 0, void 0, function* () {
             const idCurso = req.body.idCurso;
             const idModulo = req.body.idModulo;
+            const idDocente = req.docenteId;
             const query = `SELECT cont.id_contenido_mod_per, cont.numero_contenido,cont.nombre_contenido,cont.rubrica_contenido
         FROM contenido_mod_per cont
         JOIN modulo modu ON
         cont.id_modulo=modu.id_modulo
         JOIN curso cur ON
         cur.id_curso = modu.id_curso
+        JOIN docente dc ON
+        dc.id_docente = cur.id_docente
         WHERE cur.estado_curso=true
         AND modu.estado_modulo!=0
         AND cont.estado_contenido_mod_per!=0
         AND cur.id_curso = ?
-        AND modu.id_modulo=?`;
-            Database_1.default.query(query, [idCurso, idModulo], function (err, result, fields) {
+        AND modu.id_modulo= ?
+        AND dc.id_docente = ?`;
+            Database_1.default.query(query, [idCurso, idModulo, idDocente], function (err, result, fields) {
                 if (err) {
                     res.status(500).json({ text: 'Error al eliminar contenido' });
                 }
@@ -307,6 +316,7 @@ class ContenidoModuloPersonalizadoController {
         return __awaiter(this, void 0, void 0, function* () {
             const idCurso = req.body.idCurso;
             const idModulo = req.body.idModulo;
+            const idDocente = req.docenteId;
             const query = `SELECT alu.id_alumno,alu.nombre_alumno,alu.ap_paterno_alumno,alu.ap_materno_alumno,sum(nc.nota_contenido*cmp.rubrica_contenido/100) as nota
         FROM nota_contenido nc 
         JOIN alumno alu ON
@@ -321,6 +331,9 @@ class ContenidoModuloPersonalizadoController {
         tm.id_tipo_modulo =modu.id_tipo_modulo
         JOIN contenido_mod_per cmp ON
         cmp.id_modulo = modu.id_modulo 
+        JOIN docente dc ON
+        dc.id_docente = cur.id_docente
+        AND nc.id_contenido_mod_per = cmp.id_contenido_mod_per
         WHERE nc.estado_nota_contenido =true
         AND alu.estado_alumno = true
         AND ca.estado_curso_alumno = true
@@ -328,11 +341,13 @@ class ContenidoModuloPersonalizadoController {
         AND modu.estado_modulo=1
         AND tm.estado_tipo_modulo = true
         AND cmp.estado_contenido_mod_per=1
-        AND cur.id_curso = 1
-        AND modu.id_modulo = 28
+        AND cur.id_curso = ?
+        AND modu.id_modulo = ?
+        AND dc.id_docente = ?
         AND tm.id_tipo_modulo = 2
+        AND dc.estado_docente = true
         GROUP BY alu.id_alumno,alu.nombre_alumno,alu.ap_paterno_alumno,alu.ap_materno_alumno`;
-            Database_1.default.query(query, [idCurso, idModulo], function (err, result, fields) {
+            Database_1.default.query(query, [idCurso, idModulo, idDocente], function (err, result, fields) {
                 if (err) {
                     res.status(500).json({ text: 'Error al obtaner la nota' });
                 }
