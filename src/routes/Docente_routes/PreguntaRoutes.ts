@@ -14,6 +14,7 @@ class PreguntaRoutes{
         this.router.get('/teacher/question/type_of_answer',TokenValidation,preguntaController.listarTipoRespuesta);
         this.router.post('/teacher/question',TokenValidation,preguntaController.agregarPregunta);
         this.router.get('/teacher/question',TokenValidation,preguntaController.listarPreguntas2);
+        this.router.get('/teacher/questionSQL',TokenValidation,preguntaController.listarPreguntasSQL);
     }
     
 }

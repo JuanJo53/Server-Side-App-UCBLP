@@ -77,7 +77,9 @@ class PreguntaController {
                 var listaPreg=[];
                 var listaCod=[] as string[];
                 for(let preg of result){
-                    listaCod.push(preg.codigo_pregunta);
+                    if(listaCod.length<=9){
+                        listaCod.push(preg.codigo_pregunta);
+                    }
                 }
                 const db=firebase.firestore()
                 var datos=await db.collection('Preguntas').where(firebase.firestore.FieldPath.documentId(),"in",listaCod).get();
@@ -94,6 +96,34 @@ class PreguntaController {
                     res.status(500).json({text:'No se pudo listar las preguntas'});
 
                 }
+            }
+        
+        });   
+
+    }
+    public async listarPreguntasSQL(req:Request,res:Response){
+        const query =`SELECT pregunta.id_pregunta,pregunta.codigo_pregunta,pregunta.id_tipo_pregunta,
+        pregunta.id_tipo_respuesta,pregunta.pregunta,pregunta.respuesta,pregunta.opciones,pregunta.recurso
+        FROM pregunta
+        WHERE pregunta.estado_pregunta=true`;
+        Db.query(query,async function(err,result:any[],fields){
+            if(err){
+                console.log("1"+err);
+                res.status(500).json({text:'No se pudo listar las preguntas'});
+            }
+            else{
+                var result2=[];
+                for(let res in result){
+                    if(result[res].codigo_pregunta==="1"){
+                        result[res].respuesta=JSON.parse(result[res].respuesta);
+                        result[res].opciones=JSON.parse(result[res].opciones);
+                        console.log(result[res]);
+                        result2.push(result[res]);
+                    }
+                }
+                res.status(200).json(result2);
+                
+                
             }
         
         });   
