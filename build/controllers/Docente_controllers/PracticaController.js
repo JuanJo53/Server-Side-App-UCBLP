@@ -120,6 +120,26 @@ class PreacticaController {
             }
         });
     }
+    agregarNotaPractica(idPractica) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const query = `insert into nota_practica (id_practica,id_alumno,nota_practica,estado_nota_practica,tx_id,tx_username,tx_host,tx_date)
+        SELECT ?,alumno.id_alumno,0,true,1,'root',' 192.168.0.10',CURRENT_TIMESTAMP()
+        FROM alumno INNER
+        JOIN curso_alumno ON
+        alumno.id_alumno=curso_alumno.id_alumno
+        INNER JOIN curso ON
+        curso.id_curso=curso_alumno.id_curso
+        INNER JOIN tema ON
+        tema.id_curso=curso.id_curso
+        INNER JOIN leccion ON
+        leccion.id_tema=tema.id_tema
+        INNER JOIN practica ON
+        practica.id_leccion=leccion.id_leccion
+        where practica.id_practica=?`;
+            const result = util_1.default.promisify(Database_1.default.query).bind(Database_1.default);
+            yield result(query, [idPractica, idPractica]);
+        });
+    }
     agregarPreguntasPracticaSQL(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const idPractica = req.body.idPractica;
@@ -154,11 +174,12 @@ class PreacticaController {
                 }
                 if (correcto) {
                     if (preguntasRepo.length != 0) {
-                        exports.practicaController.agregarPreguntaRepo(preguntasRepo);
+                        yield exports.practicaController.agregarPreguntaRepo(preguntasRepo);
                     }
                     if (preguntasRepoNuevas.length != 0) {
-                        exports.practicaController.agregarPreguntaRepo(preguntasRepoNuevas);
+                        yield exports.practicaController.agregarPreguntaRepo(preguntasRepoNuevas);
                     }
+                    yield exports.practicaController.agregarNotaPractica(idPractica);
                     res.status(200).json({ text: 'Preguntas agregadas correctamente' });
                 }
             }
