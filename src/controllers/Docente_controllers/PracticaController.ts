@@ -301,6 +301,7 @@ public async agregarPractica(req:Request,res:Response){
         const {id} = req.params;
         const idDocente = req.docenteId;
         console.log(id);
+        console.log(idDocente);
         const query =`SELECT practica.id_practica,practica.numero_practica,practica.nombre_practica,practica.inicio_fecha,inicio_hora,practica.fin_fecha,practica.fin_hora
         FROM practica 
         INNER JOIN leccion ON
@@ -315,10 +316,10 @@ public async agregarPractica(req:Request,res:Response){
         AND docente.id_docente = ?
         AND practica.estado_practica=true
         AND leccion.estado_leccion=true
-        AND tema.estado_tema !=false
+        AND tema.estado_tema =true
         AND curso.estado_curso = true
         AND docente.estado_docente = true
-        ORDER BY practica.numero_practica ASC`;
+        ORDER BY practica.inicio_fecha DESC`;
         Db.query(query,[id,idDocente],function(err,result,fields){
             if(err){
                 console.log(err);
