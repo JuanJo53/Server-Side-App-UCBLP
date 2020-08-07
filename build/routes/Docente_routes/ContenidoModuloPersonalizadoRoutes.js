@@ -15,7 +15,8 @@ class ContenidoModuloPersonalizadoRoutes {
         this.router.post('/teacher/cutson/module/content', VerifyToken_1.TokenValidation, ContenidoModuloPersonalizadoController_1.contenidoModuloPersonalizadoController.agregarContenido);
         this.router.post('/teacher/cutson/module/content/rubric', VerifyToken_1.TokenValidation, ContenidoModuloPersonalizadoController_1.contenidoModuloPersonalizadoController.actualizarRubricas);
         this.router.put('/teacher/cutson/module/content', VerifyToken_1.TokenValidation, ContenidoModuloPersonalizadoController_1.contenidoModuloPersonalizadoController.modificarContenido);
-        this.router.delete('/teacher/cutson/module/content/:id', VerifyToken_1.TokenValidation, ContenidoModuloPersonalizadoController_1.contenidoModuloPersonalizadoController.eliminarContenido);
+        // this.router.delete('/teacher/cutson/module/content/:id',TokenValidation,contenidoModuloPersonalizadoController.eliminarContenido);
+        this.router.post('/teacher/cutson/module/deleteContent/:id', VerifyToken_1.TokenValidation, ContenidoModuloPersonalizadoController_1.contenidoModuloPersonalizadoController.eliminarContenido);
         this.router.put('/teacher/cutson/module/content/enable/:id', VerifyToken_1.TokenValidation, ContenidoModuloPersonalizadoController_1.contenidoModuloPersonalizadoController.activarContenido);
         this.router.put('/teacher/cutson/module/content/disable/:id', VerifyToken_1.TokenValidation, ContenidoModuloPersonalizadoController_1.contenidoModuloPersonalizadoController.desactivarContenido);
         this.router.get('/teacher/cutson/module/content/score/get/:id', VerifyToken_1.TokenValidation, ContenidoModuloPersonalizadoController_1.contenidoModuloPersonalizadoController.listarNotasContenido);

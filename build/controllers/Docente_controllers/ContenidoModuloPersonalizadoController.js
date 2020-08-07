@@ -124,10 +124,13 @@ class ContenidoModuloPersonalizadoController {
             }
         });
     }
+    actualizarNotaModulo() {
+    }
     actualizarRubricas(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             console.log(req.body);
-            const rubricas = req.body;
+            const rubricas = req.body.rubricas;
+            const idModulo = req.body.idModulo;
             try {
                 var error = false;
                 const promises = [];
@@ -139,7 +142,13 @@ class ContenidoModuloPersonalizadoController {
                     res.status(500).json({ text: 'Error al obtener la lista de alumnos' });
                 }
                 else {
-                    res.status(200).json({ text: 'se modficaron correctamente las rubricas' });
+                    var resuNot = yield exports.contenidoModuloPersonalizadoController.anadirNotaModuloTotal(idModulo);
+                    if (resuNot) {
+                        res.status(200).json({ text: 'Se modificaron correctamente las rubricas' });
+                    }
+                    else {
+                        res.status(500).json({ text: 'Error al obtener la lista de alumnos' });
+                    }
                 }
             }
             catch (e) {
@@ -179,14 +188,25 @@ class ContenidoModuloPersonalizadoController {
     eliminarContenido(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { id } = req.params;
+            const idModulo = req.body.idModulo;
+            console.log(idModulo);
             const query = `UPDATE contenido_mod_per SET estado_contenido_mod_per = 0 WHERE id_contenido_mod_per =? `;
             Database_1.default.query(query, [id], function (err, result, fields) {
-                if (err) {
-                    res.status(500).json({ text: 'Error al eliminar contenido' });
-                }
-                else {
-                    res.status(200).json({ text: 'Contenido eliminado correctamente' });
-                }
+                return __awaiter(this, void 0, void 0, function* () {
+                    if (err) {
+                        res.status(500).json({ text: 'Error al eliminar contenido' });
+                    }
+                    else {
+                        var resTota = yield exports.contenidoModuloPersonalizadoController.anadirNotaModuloTotal(idModulo);
+                        if (resTota) {
+                            res.status(200).json({ text: 'Contenido eliminado correctamente' });
+                        }
+                        else {
+                            res.status(500).json({ text: 'Error al eliminar contenido' });
+                        }
+                        res.status(200).json({ text: 'Contenido eliminado correctamente' });
+                    }
+                });
             });
         });
     }
@@ -253,20 +273,64 @@ class ContenidoModuloPersonalizadoController {
             });
         });
     }
+    anadirNotaModuloTotal(idModulo) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const query = `SELECT alu.id_alumno
+        FROM alumno alu
+        INNER JOIN curso_alumno ca ON
+        ca.id_alumno=alu.id_alumno
+        INNER JOIN curso cur ON
+        ca.id_curso=cur.id_curso
+        INNER JOIN modulo ON
+        modulo.id_curso=cur.id_curso            
+        WHERE alu.estado_alumno = true
+        AND ca.estado_curso_alumno = true
+        AND cur.estado_curso=true
+        AND modulo.id_modulo= ?
+        AND modulo.estado_modulo=true
+        ORDER BY alu.ap_paterno_alumno`;
+                const result = util_1.default.promisify(Database_1.default.query).bind(Database_1.default);
+                var alumnos = yield result(query, [idModulo]);
+                const promises = [];
+                for (let alumno of alumnos) {
+                    promises.push(exports.contenidoModuloPersonalizadoController.anadirNotaModuloPersonalizado(idModulo, alumno.id_alumno));
+                }
+                const responses = yield Promise.all(promises);
+                if (responses.includes(false)) {
+                    return false;
+                }
+                else {
+                    return true;
+                }
+            }
+            catch (e) {
+                console.log(e);
+                return false;
+            }
+        });
+    }
     anadirNotaModuloPersonalizado(idModulo, idAlumno) {
         return __awaiter(this, void 0, void 0, function* () {
-            const query = `UPDATE nota_modulo SET nota_modulo = 
-            (SELECT SUM(ntc.nota_contenido*cmp.rubrica_contenido/100) AS nota
-                FROM nota_contenido ntc
-                INNER JOIN contenido_mod_per cmp ON cmp.id_contenido_mod_per = ntc.id_contenido_mod_per
-                WHERE ntc.id_alumno = ?
-                AND cmp.estado_contenido_mod_per=true
-                AND cmp.id_modulo=?
-                )
-            WHERE id_alumno=?
-            AND id_modulo=?`;
-            const result = util_1.default.promisify(Database_1.default.query).bind(Database_1.default);
-            yield result(query, [idAlumno, idModulo, idAlumno, idModulo]);
+            try {
+                const query = `UPDATE nota_modulo SET nota_modulo = 
+        (SELECT SUM(ntc.nota_contenido*cmp.rubrica_contenido/100) AS nota
+            FROM nota_contenido ntc
+            INNER JOIN contenido_mod_per cmp ON cmp.id_contenido_mod_per = ntc.id_contenido_mod_per
+            WHERE ntc.id_alumno = ?
+            AND cmp.estado_contenido_mod_per=true
+            AND cmp.id_modulo=?
+            )
+        WHERE id_alumno=?
+        AND id_modulo=?`;
+                const result = util_1.default.promisify(Database_1.default.query).bind(Database_1.default);
+                yield result(query, [idAlumno, idModulo, idAlumno, idModulo]);
+                return true;
+            }
+            catch (e) {
+                console.log(e);
+                return false;
+            }
         });
     }
     modificarNotaContenido(req, res) {

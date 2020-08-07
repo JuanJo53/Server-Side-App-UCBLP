@@ -110,29 +110,40 @@ class ContenidoModuloPersonalizadoController {
         }  
     }
 
+    actualizarNotaModulo(){
 
+    }
     public async actualizarRubricas(req:Request,res:Response){
+
         console.log(req.body);
-        const rubricas = req.body;
-            try{ 
-                var error=false;     
-                const promises = [];
-                for (let rubrica of rubricas){
-                    promises.push(contenidoModuloPersonalizadoController.cambiarRubrica(rubrica.id,rubrica.rubrica))
-                }  
-                const responses = await Promise.all(promises);
-                if(responses.includes(false)){
+        const rubricas = req.body.rubricas;
+        const idModulo=req.body.idModulo;
+        try{ 
+            var error=false;     
+            const promises = [];
+            for (let rubrica of rubricas){
+                promises.push(contenidoModuloPersonalizadoController.cambiarRubrica(rubrica.id,rubrica.rubrica));
+
+            }  
+            const responses = await Promise.all(promises);
+            if(responses.includes(false)){
+                res.status(500).json({text:'Error al obtener la lista de alumnos'});
+                
+            } else{
+                var resuNot=await contenidoModuloPersonalizadoController.anadirNotaModuloTotal(idModulo);
+                if(resuNot){
+                    res.status(200).json({text:'Se modificaron correctamente las rubricas'});
+                }
+                else{
                     res.status(500).json({text:'Error al obtener la lista de alumnos'});
-                    
-                } else{
-                    res.status(200).json({text:'se modficaron correctamente las rubricas'});
                 }
             }
-            catch(e){
-               console.log(e); 
-               res.status(500).json({text:'Error al obtener la lista de alumnos'});
+        }
+        catch(e){
+            console.log(e); 
+            res.status(500).json({text:'Error al obtener la lista de alumnos'});
 
-            }
+        }
 
     }
     public async desactivarContenido(req: Request, res: Response) {
@@ -163,12 +174,22 @@ class ContenidoModuloPersonalizadoController {
     }
     public async eliminarContenido(req: Request, res: Response) { 
         const {id} = req.params; 
+        const idModulo=req.body.idModulo;
+        console.log(idModulo);
         const query = `UPDATE contenido_mod_per SET estado_contenido_mod_per = 0 WHERE id_contenido_mod_per =? `;
-        Db.query(query,[id], function (err, result, fields) {
+        Db.query(query,[id], async function (err, result, fields) {
             if (err) {
                 res.status(500).json({ text: 'Error al eliminar contenido'});
             }
             else {
+                var resTota=await contenidoModuloPersonalizadoController.anadirNotaModuloTotal(idModulo);
+                if(resTota){
+                    res.status(200).json({text: 'Contenido eliminado correctamente'});
+
+                }else{
+                    res.status(500).json({ text: 'Error al eliminar contenido'});
+
+                }
                 res.status(200).json({text: 'Contenido eliminado correctamente'});
             }
         });
@@ -232,19 +253,61 @@ class ContenidoModuloPersonalizadoController {
             }
         });
     }
+    public async anadirNotaModuloTotal(idModulo:number){
+        try{
+            const query =`SELECT alu.id_alumno
+        FROM alumno alu
+        INNER JOIN curso_alumno ca ON
+        ca.id_alumno=alu.id_alumno
+        INNER JOIN curso cur ON
+        ca.id_curso=cur.id_curso
+        INNER JOIN modulo ON
+        modulo.id_curso=cur.id_curso            
+        WHERE alu.estado_alumno = true
+        AND ca.estado_curso_alumno = true
+        AND cur.estado_curso=true
+        AND modulo.id_modulo= ?
+        AND modulo.estado_modulo=true
+        ORDER BY alu.ap_paterno_alumno`;
+        const result:(arg1:string,arg2?:any[])=>Promise<unknown> = util.promisify(Db.query).bind(Db);
+        var alumnos=await result(query,[idModulo]) as any[]; 
+        const promises = [];
+        for (let alumno of alumnos){
+            promises.push(contenidoModuloPersonalizadoController.anadirNotaModuloPersonalizado(idModulo,alumno.id_alumno));
+        }  
+        const responses = await Promise.all(promises);
+        if(responses.includes(false)){
+           return false;
+            
+        } else{
+            return true;
+        }
+        }
+        catch(e){
+            console.log(e);
+            return false;
+        }
+}
     public async anadirNotaModuloPersonalizado(idModulo:number,idAlumno:number){
-            const query =`UPDATE nota_modulo SET nota_modulo = 
-            (SELECT SUM(ntc.nota_contenido*cmp.rubrica_contenido/100) AS nota
-                FROM nota_contenido ntc
-                INNER JOIN contenido_mod_per cmp ON cmp.id_contenido_mod_per = ntc.id_contenido_mod_per
-                WHERE ntc.id_alumno = ?
-                AND cmp.estado_contenido_mod_per=true
-                AND cmp.id_modulo=?
-                )
-            WHERE id_alumno=?
-            AND id_modulo=?`;
-            const result:(arg1:string,arg2?:any[])=>Promise<unknown> = util.promisify(Db.query).bind(Db);
-            await result(query,[idAlumno,idModulo,idAlumno,idModulo]) as any[]; 
+      try{
+        const query =`UPDATE nota_modulo SET nota_modulo = 
+        (SELECT SUM(ntc.nota_contenido*cmp.rubrica_contenido/100) AS nota
+            FROM nota_contenido ntc
+            INNER JOIN contenido_mod_per cmp ON cmp.id_contenido_mod_per = ntc.id_contenido_mod_per
+            WHERE ntc.id_alumno = ?
+            AND cmp.estado_contenido_mod_per=true
+            AND cmp.id_modulo=?
+            )
+        WHERE id_alumno=?
+        AND id_modulo=?`;
+        const result:(arg1:string,arg2?:any[])=>Promise<unknown> = util.promisify(Db.query).bind(Db);
+        await result(query,[idAlumno,idModulo,idAlumno,idModulo]) as any[]; 
+        return true;
+      }
+      catch(e){
+        console.log(e);
+        return false;
+      }
     }
     public async modificarNotaContenido(req: Request, res: Response) {
         const idNotaContenido = req.body.notaContenido.id;
