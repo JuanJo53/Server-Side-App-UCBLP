@@ -86,7 +86,8 @@ class LessonController{
                         AND curso.estado_curso =true
                         AND  tipo_leccion.estado_tipo_leccion=true
                         AND docente.estado_docente = true
-                        AND docente.id_docente = ?`;
+                        AND docente.id_docente = ?
+                        ORDER BY leccion.numero_leccion ASC`;
         Db.query(query,[id,idDocente],function(err,result,fields){
             if(err){
                 res.status(500).json({text:'No se pudo listar las lecciones'});

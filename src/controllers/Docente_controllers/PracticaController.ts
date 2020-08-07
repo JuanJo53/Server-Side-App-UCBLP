@@ -73,6 +73,105 @@ public async agregarPractica(req:Request,res:Response){
                 } 
                 return preg;
     }
+    async agregarPreguntaRepo(preguntas:any){
+        try{
+            const query = `INSERT INTO practica_pregunta (id_pregunta,id_practica,puntuacion_practica_pregunta,estado_pregunta_practica,tx_id,tx_username,tx_host)
+            VALUES ?;`;
+            const result:(arg1:string,arg2:any[])=>Promise<unknown> = util.promisify(Db.query).bind(Db);
+            var row =await result(query,[preguntas]) as any[];    
+            return true;
+        }   
+        catch(e){
+            console.log(e);
+            return false;
+        }    
+    }
+    async agregarPreguntaNueva(preguntas:any){  
+       try{
+            const query = `insert into pregunta (codigo_pregunta,pregunta,opciones,respuesta,recurso,id_tipo_pregunta,id_tipo_respuesta,estado_pregunta,tx_id,tx_username,tx_host)
+            values ?;`;
+            const result:(arg1:string,arg2:any[])=>Promise<unknown> = util.promisify(Db.query).bind(Db);
+            var row =await result(query,[preguntas]) as any;
+            var insId=row.insertId;  
+            console.log(insId);
+            return insId;
+       }   
+       catch(e){
+           console.log(e);
+            return false;
+       } 
+    }
+    async agregarNotaPractica(idPractica:number){
+    
+        const query =`insert into nota_practica (id_practica,id_alumno,nota_practica,estado_nota_practica,tx_id,tx_username,tx_host,tx_date)
+        SELECT ?,alumno.id_alumno,0,true,1,'root',' 192.168.0.10',CURRENT_TIMESTAMP()
+        FROM alumno INNER
+        JOIN curso_alumno ON
+        alumno.id_alumno=curso_alumno.id_alumno
+        INNER JOIN curso ON
+        curso.id_curso=curso_alumno.id_curso
+        INNER JOIN tema ON
+        tema.id_curso=curso.id_curso
+        INNER JOIN leccion ON
+        leccion.id_tema=tema.id_tema
+        INNER JOIN practica ON
+        practica.id_leccion=leccion.id_leccion
+        where practica.id_practica=?`;
+        const result:(arg1:string,arg2?:any[])=>Promise<unknown> = util.promisify(Db.query).bind(Db);
+        await result(query,[idPractica,idPractica]) as any[]; 
+        
+    }
+    public async agregarPreguntasPracticaSQL(req:Request,res: Response){    
+            const idPractica = req.body.idPractica;
+            const preguntasPractica = req.body.preguntas;
+            var correcto=true;
+            try{
+                const preguntasRepo = [];
+                const preguntasRepoNuevas = [];
+                                
+                for(let i=0;i<preguntasPractica.length;i++){
+                    var tipo_req=req.body.preguntas[i].tipo;
+                if(tipo_req){    
+                    preguntasRepo.push([req.body.preguntas[i].id,idPractica,preguntasPractica[i].puntuacion,true,1,'root','192.168.0.10']);    
+                }  
+                else{
+                    const preguntasNuevas = [];
+                    var data= preguntasPractica[i];
+                    const idTipoPregunta = data.idTipoPregunta;
+                    const idTipoRespuesta = data.idTipoRespuesta;
+                    const pregunta=data.pregunta;
+                    const respuesta=JSON.stringify(data.respuesta);
+                    const opciones=JSON.stringify(data.opciones);
+                    const recurso=data.recurso;
+                    preguntasNuevas.push([1,pregunta,opciones,respuesta,recurso,idTipoPregunta,idTipoRespuesta,true,1,'root','192.168.0.10']);  
+                    var resNuevo=await practicaController.agregarPreguntaNueva(preguntasNuevas);  
+                    if(resNuevo){
+                        preguntasRepoNuevas.push([resNuevo,idPractica,preguntasPractica[i].puntuacion,true,1,'root','192.168.0.10']);   
+                        
+                    } else{
+                        correcto=false;
+                    }
+                }
+                }          
+                if(correcto){                    
+                    if(preguntasRepo.length!=0){                        
+                    await practicaController.agregarPreguntaRepo(preguntasRepo);  
+                    }                
+                    if(preguntasRepoNuevas.length!=0){                      
+                        await practicaController.agregarPreguntaRepo(preguntasRepoNuevas); 
+                    }     
+                    await practicaController.agregarNotaPractica(idPractica);  
+                    res.status(200).json({text:'Preguntas agregadas correctamente'});    
+                                         
+                } 
+                
+            }
+            catch(e){
+               console.log(e); 
+               res.status(500).json({text:'Error al obtener la lista de alumnos'});
+
+            }  
+    }
     public async agregarPreguntasPractica(req:Request,res: Response){        
         try{
             const idPractica = req.body.idPractica;
@@ -153,11 +252,13 @@ public async agregarPractica(req:Request,res:Response){
         const idPractica = req.body.idPractica;
         const nombrePractica = req.body.nombrePractica;
         const numeroPractica = req.body.numeroPractica;
-        const inicioPractica=req.body.inicioPractica;
-        const finPractica = req.body.finPractica;
-        const query = `UPDATE practica SET nombre_practica = ?,numero_practica=?,inicio_practica=?,fin_practica =? , tx_date = CURRENT_TIMESTAMP()
-        WHERE id_practica =?`;
-        Db.query(query,[nombrePractica,numeroPractica,inicioPractica,finPractica,idPractica],function(err,result,fields){
+        const inicioFecha=req.body.inicioFecha;
+        const finFecha=req.body.finFecha;
+        const inicioHora=req.body.inicioHora;
+        const finHora=req.body.finHora;
+        const query = `UPDATE practica SET nombre_practica = ?,numero_practica=?,inicio_fecha =?,
+        inicio_hora=?,fin_fecha =?,fin_hora=? WHERE id_practica =?`;
+        Db.query(query,[nombrePractica,numeroPractica,inicioFecha,inicioHora,finFecha,finHora,idPractica],function(err,result,fields){
             if(err){
                 res.status(500).json({text:'Error al modificar la práctica'});
                 throw err;
@@ -200,6 +301,7 @@ public async agregarPractica(req:Request,res:Response){
         const {id} = req.params;
         const idDocente = req.docenteId;
         console.log(id);
+        console.log(idDocente);
         const query =`SELECT practica.id_practica,practica.numero_practica,practica.nombre_practica,practica.inicio_fecha,inicio_hora,practica.fin_fecha,practica.fin_hora
         FROM practica 
         INNER JOIN leccion ON
@@ -214,9 +316,10 @@ public async agregarPractica(req:Request,res:Response){
         AND docente.id_docente = ?
         AND practica.estado_practica=true
         AND leccion.estado_leccion=true
-        AND tema.estado_tema !=false
+        AND tema.estado_tema =true
         AND curso.estado_curso = true
-        AND docente.estado_docente = true`;
+        AND docente.estado_docente = true
+        ORDER BY practica.inicio_fecha DESC`;
         Db.query(query,[id,idDocente],function(err,result,fields){
             if(err){
                 console.log(err);

@@ -38,8 +38,6 @@ public async urlFile(req:Request,res:Response){
             action:"read",
             version:"v4",
             expires:Date.now()+100*60*60,  
-
-
             });
         res.json({url:url});
     

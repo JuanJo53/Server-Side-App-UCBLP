@@ -16,6 +16,7 @@ class PracticaRoutes{
         this.router.delete('/teacher/practice/:id',TokenValidation,practicaController.eliminarPractica);
         this.router.get('/teacher/practice/questions/:id',TokenValidation,practicaController.listarPreguntasPractica);
         this.router.post('/teacher/practice/questions',TokenValidation,practicaController.agregarPreguntasPractica);
+        this.router.post('/teacher/practice/questionsSQL',practicaController.agregarPreguntasPracticaSQL);
         this.router.put('/teacher/practice/questions',TokenValidation,practicaController.modificarPreguntaPractica);
         this.router.delete('/teacher/practice/questions/:id',TokenValidation,practicaController.eliminarPreguntaPractica);
         this.router.get('/teacher/practice/scores/:id',TokenValidation,practicaController.listarNotasPractica);
