@@ -5,7 +5,7 @@ class DashBoardController {
     public async dashPracticas(req: Request, res: Response) {
         const {id} = req.params;
         const idDocente = req.docenteId;
-        const query = `SELECT COUNT(IF(np.nota_practica >=51,1,null)) aprobados,COUNT(IF(np.nota_practica <51,1,null)) reprobados,pr.id_practica,pr.nombre_practica
+        const query = `SELECT COUNT(IF(np.nota_practica >=51 AND np.practica_dada=1,1,null)) aprobados,COUNT(IF(np.nota_practica <51  AND np.practica_dada=1,1,null)) reprobados,COUNT(IF(np.practica_dada!=1,1,null)) sin_dar,pr.id_practica,pr.nombre_practica
         FROM nota_practica np
         JOIN practica pr ON
         np.id_practica=pr.id_practica

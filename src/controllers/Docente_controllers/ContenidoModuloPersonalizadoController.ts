@@ -6,7 +6,7 @@ class ContenidoModuloPersonalizadoController {
     public async listarNotasContenido(req: Request, res: Response){
         const {id}=req.params;
         const idDocente = req.docenteId;
-        const query =`SELECT alumno.id_alumno,alumno.nombre_alumno,alumno.ap_paterno_alumno,alumno.ap_materno_alumno,nota_contenido.nota_contenido,nota_contenido.id_nota_contenido
+        const query =`SELECT alumno.id_alumno,alumno.nombre_alumno,alumno.ap_paterno_alumno,alumno.ap_materno_alumno,nota_contenido.nota_contenido,nota_contenido.id_nota_contenido,modulo.nombre_modulo
         FROM alumno INNER
         JOIN curso_alumno ON
         alumno.id_alumno=curso_alumno.id_alumno INNER
