@@ -165,7 +165,8 @@ class RecursoController {
       AND curso.estado_curso = true
       AND docente.estado_docente = true
       AND recurso.estado_recurso !=false 
-      AND tipo_recurso.estado_tipo_recurso !=false`;
+      AND tipo_recurso.estado_tipo_recurso !=false
+      ORDER BY recurso.fecha_subida_recurso ASC`;
             Database_1.default.query(query, [id, idDocente], function (err, result, fields) {
                 return __awaiter(this, void 0, void 0, function* () {
                     if (err) {

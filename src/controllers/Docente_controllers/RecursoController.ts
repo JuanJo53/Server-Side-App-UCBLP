@@ -156,7 +156,8 @@ public async subirVideo(req:Request,res:Response){
       AND curso.estado_curso = true
       AND docente.estado_docente = true
       AND recurso.estado_recurso !=false 
-      AND tipo_recurso.estado_tipo_recurso !=false`  
+      AND tipo_recurso.estado_tipo_recurso !=false
+      ORDER BY recurso.fecha_subida_recurso ASC`  
       Db.query(query,[id,idDocente],async function (err,result,fields){
         if(err){
             console.log(err);
