@@ -1,6 +1,5 @@
 import {Router} from 'express';
 import{cursoAlumnoController} from '../../controllers/Alumno_Controllers/CursoController';
-import { TokenValidation } from '../../libs/VerifyToken';
 import { TokenValidationAlumno } from '../../libs/VerifyTokenAlumno';
 
 class CursoAlumnoRoutes{
