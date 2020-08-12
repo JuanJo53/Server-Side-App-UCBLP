@@ -17,6 +17,9 @@ class TokenService {
     getToken(login_id, tipo) {
         return jsonwebtoken_1.default.sign({ id: login_id, tipo: tipo }, process.env.TOKEN_SESION_PLAT || "TOKEN_PRUEBA", { expiresIn: 60 * 60 * 24 });
     }
+    getTokenPractice(idPractica, expiracion) {
+        return jsonwebtoken_1.default.sign({ id: idPractica }, process.env.TOKEN_PRACTICA || "TOKEN_PRUEBA", { expiresIn: 60 * expiracion });
+    }
 }
 exports.TokenService = TokenService;
 //# sourceMappingURL=tokenService.js.map

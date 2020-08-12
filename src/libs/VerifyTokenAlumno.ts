@@ -17,18 +17,19 @@ export const TokenValidationAlumno =(req:Request,res:Response, next:NextFunction
         var payload;
         try{
             payload= jwt.verify(token, process.env.TOKEN_SESION_PLAT || 'tokentest') as IPayload;
+            if(payload.tipo=="alumno"){
+                req.estudianteId=payload.id; 
+                console.log("ID doc:"+payload);
+            }
+            else{
+                console.log("no definido");
+                return res.status(401).json('Acceso denegado');
+            }
+        
+            next();
         }
         catch(e){
             console.log("errortoken");
             return res.status(401).json('Acceso denegado');}
         }
-    if(payload.tipo=="alumno"){
-        req.estudianteId=payload.id; 
-        console.log("ID doc:"+payload);
     }
-    else{
-        console.log("no definido");
-        return res.status(401).json('Acceso denegado');
-    }
-
-    next();}

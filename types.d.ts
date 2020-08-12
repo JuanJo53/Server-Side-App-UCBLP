@@ -3,6 +3,7 @@ declare namespace Express{
         docenteId: string;
         estudianteId: string;
         cursoId: string;
+        practicaId:number;
     }
 }
 

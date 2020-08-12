@@ -4,6 +4,7 @@ import * as firebase from 'firebase-admin';
 import {Pregunta} from '../../model/Pregunta';
 import storage from '../../Storage'
 import util from 'util'
+import { TokenService } from 'libs/tokenService';
 
 
 class PracticaController{
@@ -192,7 +193,9 @@ class PracticaController{
                         }
                     }
                 }
-                res.status(200).json(row);
+                const tokenService=new TokenService();
+                const token=tokenService.getTokenPractice(Number(id),30);
+                res.status(200).json({preguntas:row,token:token});
             }
         }
         catch(e){
@@ -201,6 +204,9 @@ class PracticaController{
         }
 
     } 
+    async obtenerExpiracion(){
+        
+    }
     compararRespuestas(re1:number[],re2:number[]){
         var ver=true;
         if(re1.length!=re2.length){

@@ -4,23 +4,19 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-exports.TokenValidation = (req, res, next) => {
-    const token = req.header('authorization');
+exports.TokenValidationTest = (req, res, next) => {
+    const token = req.header('practice');
     console.log("Token: " + token);
     if (token == null) {
         console.log("no definido");
         return res.status(401).json('Acceso denegado');
     }
     else {
+        var practice;
         try {
-            const payload = jsonwebtoken_1.default.verify(token, process.env.TOKEN_SESION_PLAT || 'tokentest');
-            if (payload.tipo == "docente") {
-                req.docenteId = payload.id;
-                console.log("ID doc:" + payload);
-            }
-            else {
-                return res.status(401).json('Acceso denegado');
-            }
+            practice = jsonwebtoken_1.default.verify(token, process.env.TOKEN_SESION_PLAT || 'tokentest');
+            req.practicaId = practice.id;
+            console.log("Practica:" + practice);
             next();
         }
         catch (e) {
@@ -29,4 +25,4 @@ exports.TokenValidation = (req, res, next) => {
         }
     }
 };
-//# sourceMappingURL=VerifyToken.js.map
+//# sourceMappingURL=VerifyTokenTest.js.map

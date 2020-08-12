@@ -22,6 +22,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Database_1 = __importDefault(require("../../Database"));
 const firebase = __importStar(require("firebase-admin"));
 const util_1 = __importDefault(require("util"));
+const tokenService_1 = require("libs/tokenService");
 class PracticaController {
     infoPractica(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -208,13 +209,19 @@ class PracticaController {
                             }
                         }
                     }
-                    res.status(200).json(row);
+                    const tokenService = new tokenService_1.TokenService();
+                    const token = tokenService.getTokenPractice(Number(id), 30);
+                    res.status(200).json({ preguntas: row, token: token });
                 }
             }
             catch (e) {
                 console.log(e);
                 res.status(500).json({ text: 'No se pudo listar la practica' });
             }
+        });
+    }
+    obtenerExpiracion() {
+        return __awaiter(this, void 0, void 0, function* () {
         });
     }
     compararRespuestas(re1, re2) {
