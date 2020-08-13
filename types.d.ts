@@ -4,6 +4,7 @@ declare namespace Express{
         estudianteId: string;
         cursoId: string;
         practicaId:number;
+        tiempoPractica:any;
     }
 }
 

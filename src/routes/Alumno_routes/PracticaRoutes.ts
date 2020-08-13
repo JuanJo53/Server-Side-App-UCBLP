@@ -15,8 +15,9 @@ class PracticaAlumnoRoutes{
       this.router.get('/students/practices/:id',TokenValidationAlumno,practicaController.listarPracticas);
       this.router.get('/students/info/practices/:id',TokenValidationAlumno,practicaController.infoPractica);
       this.router.get('/students/practice/start/:id',TokenValidationAlumno,practicaController.obtenerPractica);
-      this.router.get('/students/practiceSQL/start/:id',TokenValidationAlumno,TokenValidationTest,practicaController.obtenerPracticaSQL);
-      this.router.post('/students/practice/finish',TokenValidationAlumno,practicaController.revisarPracticaSQL);
+      this.router.get('/students/practiceSQL/start/:id',TokenValidationAlumno,practicaController.obtenerTokenPractica);
+      this.router.get('/students/practiceSQL/questions',TokenValidationAlumno,TokenValidationTest,practicaController.obtenerPracticaSQL);
+      this.router.post('/students/practice/finish',TokenValidationAlumno,TokenValidationTest,practicaController.revisarPracticaSQL);
       // this.router.post('/students/practice/finish',TokenValidationAlumno,practicaController.revisarPractica);
     }
     

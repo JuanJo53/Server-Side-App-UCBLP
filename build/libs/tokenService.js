@@ -17,8 +17,37 @@ class TokenService {
     getToken(login_id, tipo) {
         return jsonwebtoken_1.default.sign({ id: login_id, tipo: tipo }, process.env.TOKEN_SESION_PLAT || "TOKEN_PRUEBA", { expiresIn: 60 * 60 * 24 });
     }
-    getTokenPractice(idPractica, expiracion) {
-        return jsonwebtoken_1.default.sign({ id: idPractica }, process.env.TOKEN_PRACTICA || "TOKEN_PRUEBA", { expiresIn: 60 * expiracion });
+    getTokenPracticeTiempo(idPractica, expiracion) {
+        return jsonwebtoken_1.default.sign({ id: idPractica }, process.env.TOKEN_PRACTICA || "TOKEN_PRUEBA", { expiresIn: expiracion });
+    }
+    getTokenPractice(idPractica) {
+        return jsonwebtoken_1.default.sign({ id: idPractica }, process.env.TOKEN_PRACTICA || "TOKEN_PRUEBA");
+    }
+    revisarTokenPractica(token) {
+        console.log("Token: " + token);
+        if (token == null) {
+            console.log("no definido");
+            return false;
+        }
+        else {
+            var practice;
+            try {
+                practice = jsonwebtoken_1.default.verify(token, process.env.TOKEN_PRACTICA || 'tokentest');
+                console.log(practice);
+                console.log(Date.now());
+                console.log(practice);
+                const tiempo = (practice.exp - Math.round(Date.now() / 1000)) - 60;
+                const minutos = Math.floor(tiempo / 60);
+                const segundos = tiempo - minutos * 60;
+                const tiempoRes = { minutos: minutos, segundos: segundos };
+                console.log(tiempoRes);
+                return tiempoRes;
+            }
+            catch (e) {
+                console.log("errortoken");
+                return false;
+            }
+        }
     }
 }
 exports.TokenService = TokenService;
