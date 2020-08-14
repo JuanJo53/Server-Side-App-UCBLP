@@ -293,7 +293,7 @@ class PracticaController{
         return ver;
     }
     public async revisarPracticaSQL(req:Request,res:Response){
-        const id = req.body.id;
+        const id = req.practicaId;
         const idEstudiante=req.estudianteId;
         const preguntasR=req.body.preguntas as any[];
         const query =`SELECT pregunta.id_pregunta,curso.id_curso,practica_pregunta.puntuacion_practica_pregunta,pregunta.id_tipo_pregunta,
