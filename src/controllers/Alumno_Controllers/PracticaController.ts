@@ -4,6 +4,7 @@ import * as firebase from 'firebase-admin';
 import {Pregunta} from '../../model/Pregunta';
 import storage from '../../Storage'
 import util from 'util'
+import { TokenService } from '../../libs/tokenService';
 
 
 class PracticaController{
@@ -83,9 +84,10 @@ class PracticaController{
 
     }
     public async obtenerPracticaSQL(req:Request,res:Response){
-        const {id} = req.params;        
-        const idEstudiante=req.estudianteId; 
-        const dispo=await practicaController.verificarDisponibilidad(Number(id),Number(idEstudiante)); 
+        const idAlumno=req.estudianteId;
+        const id=req.practicaId;
+        const tiempo=req.tiempoPractica;
+        const dispo=await practicaController.verificarDisponibilidad(Number(id),Number(idAlumno)); 
         console.log(dispo);      
         if(dispo==="bien"){
         const query =`SELECT practica_pregunta.puntuacion_practica_pregunta,pregunta.id_tipo_pregunta,pregunta.id_tipo_respuesta
@@ -111,7 +113,7 @@ class PracticaController{
                preg.opciones=JSON.parse(preg.opciones);
                preg.respuesta=[];
             }
-            res.status(200).json(row);
+            res.status(200).json({preguntas:row,tiempo:tiempo});
         }
        }
        catch(e){
@@ -154,7 +156,9 @@ class PracticaController{
         }
     }
     public async obtenerPractica(req:Request,res:Response){
-        const {id} = req.params;
+        const idAlumno=req.estudianteId;
+        const id=req.practicaId;
+        const tiempo=req.tiempoPractica;
             const query =`
             SELECT practica_pregunta.puntuacion_practica_pregunta,pregunta.id_tipo_pregunta,pregunta.id_tipo_respuesta,practica_pregunta.id_pregunta_practica ,practica_pregunta.id_pregunta,pregunta.codigo_pregunta,
             practica_pregunta.puntuacion_practica_pregunta 
@@ -192,7 +196,9 @@ class PracticaController{
                         }
                     }
                 }
-                res.status(200).json(row);
+                // const tokenService=new TokenService();
+                // const token=tokenService.getTokenPractice(Number(id),30);
+            res.status(500).json({text:'No se pudo listar la practica'})
             }
         }
         catch(e){
@@ -201,6 +207,76 @@ class PracticaController{
         }
 
     } 
+    async obtenerTokenPractica(req:Request,res:Response){
+        const {id}=req.params;
+        const idAlumno=req.estudianteId;
+        const query =`SELECT ntp.token ,ntp.practica_dada,
+        IF(UNIX_TIMESTAMP(CAST(CONCAT(DATE(practica.fin_fecha),' ',practica.fin_hora-INTERVAL 4 HOUR) AS DATETIME))-UNIX_TIMESTAMP(NOW()) >=practica.tiempo_limite*60,practica.tiempo_limite*60,(UNIX_TIMESTAMP(CAST(CONCAT(DATE(practica.fin_fecha),' ',practica.fin_hora-INTERVAL 4 HOUR) AS DATETIME))-UNIX_TIMESTAMP(NOW()))) as tiempo_limite
+        FROM nota_practica ntp
+        INNER JOIN practica ON
+        practica.id_practica=ntp.id_practica
+         INNER JOIN leccion ON
+        leccion.id_leccion = practica.id_leccion
+        INNER JOIN tema ON
+        tema.id_tema=leccion.id_tema
+        INNER JOIN curso ON
+        curso.id_curso = tema.id_curso
+        INNER JOIN curso_alumno ON
+        curso_alumno.id_curso=curso.id_curso
+        INNER JOIN alumno ON
+        curso_alumno.id_alumno = alumno.id_alumno AND
+        alumno.id_alumno=ntp.id_alumno
+        WHERE practica.id_practica=?
+        AND practica.estado_practica=true
+        AND leccion.estado_leccion = true
+        AND tema.estado_tema = true
+        AND curso.estado_curso = true
+        AND CAST(CONCAT(DATE(practica.inicio_fecha),' ',practica.inicio_hora-INTERVAL 4 HOUR) AS DATETIME)<=NOW()
+        AND CAST(CONCAT(DATE(practica.fin_fecha),' ',practica.fin_hora-INTERVAL 4 HOUR) AS DATETIME)>=NOW()
+        AND curso_alumno.estado_curso_alumno = true
+        AND ntp.estado_nota_practica = true
+        AND alumno.id_alumno=?`;
+        const result2:(arg1:string,arg2:any[])=>Promise<unknown> = util.promisify(Db.query).bind(Db);
+        try{
+            var row =await result2(query,[id,idAlumno]) as any[];
+            console.log(row);
+            var token="";
+            const tokenService=new TokenService();
+            if(!row[0].practica_dada){
+                if(row[0].token==null){
+                    if(row[0].tiempo_limite!=null){
+                        token=tokenService.getTokenPracticeTiempo(Number(id),row[0].tiempo_limite);
+                    }
+                    else{
+                        token=tokenService.getTokenPractice(Number(id));
+                    }
+                    const insertarToken="UPDATE nota_practica set token=? WHERE id_practica=? and id_alumno=?"
+                    await result2(insertarToken,[token,id,idAlumno]) as any[];
+                    res.status(200).json(token)
+        
+                }
+                else{
+                    token=row[0].token;
+                    if(tokenService.revisarTokenPractica(token)){
+                        res.status(200).json(token)
+                    }
+                    else{
+                        res.status(500).json({text:'No esta habilitado para dar la practica'})
+                    }
+                }
+            }
+            else{
+                res.status(500).json({text:'No esta habilitado para dar la practica'})
+
+            }
+            
+        }
+        catch(e){
+            console.log(e);
+            res.status(500).json({text:'No esta habilitado para dar la practica'})
+        }
+        
+    }
     compararRespuestas(re1:number[],re2:number[]){
         var ver=true;
         if(re1.length!=re2.length){

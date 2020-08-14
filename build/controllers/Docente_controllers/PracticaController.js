@@ -26,14 +26,18 @@ const util_1 = __importDefault(require("util"));
 class PreacticaController {
     agregarPractica(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const idLeccion = req.body.idLeccion;
-            const nombrePractica = req.body.nombre;
-            const numeroPractica = req.body.numero;
-            const inicioFecha = req.body.fechaini;
-            const inicioHora = req.body.horaini;
-            const finFecha = req.body.fechafin;
-            const finHora = req.body.horafin;
+            const practica = req.body.practica;
+            const idLeccion = practica.idLeccion;
+            const nombrePractica = practica.nombre;
+            const numeroPractica = practica.numero;
+            const inicioFecha = practica.fechaini;
+            const inicioHora = practica.horaini;
+            const finFecha = practica.fechafin;
+            const finHora = practica.horafin;
+            const tiempoLimite = practica.tiempoLimite;
+            const preguntas = req.body.preguntas;
             const query = `INSERT INTO practica (
+        tiempo_limite,
         id_leccion,
         nombre_practica,
         numero_practica,
@@ -43,16 +47,24 @@ class PreacticaController {
         fin_hora,
         estado_practica,
         tx_id,tx_username,tx_host,tx_date)
-    VALUES (?,?,?,?,?,?,?,true,1,'root','192.168.0.10',CURRENT_TIMESTAMP())`;
-            Database_1.default.query(query, [idLeccion, nombrePractica,
+    VALUES (?,?,?,?,?,?,?,?,true,1,'root','192.168.0.10',CURRENT_TIMESTAMP())`;
+            Database_1.default.query(query, [tiempoLimite, idLeccion, nombrePractica,
                 numeroPractica, inicioFecha, inicioHora, finFecha, finHora], function (err, result, fields) {
-                if (err) {
-                    console.log(err);
-                    res.status(500).json({ text: 'Error al crear la práctica ' });
-                }
-                else {
-                    res.status(200).json({ idPractica: result.insertId });
-                }
+                return __awaiter(this, void 0, void 0, function* () {
+                    if (err) {
+                        console.log(err);
+                        res.status(500).json({ text: 'Error al crear la práctica ' });
+                    }
+                    else {
+                        var resPract = yield exports.practicaController.agregarPreguntasPracticaSQL(result.insertId, preguntas);
+                        if (resPract) {
+                            res.status(200).json({ text: 'Se creo la practica correctamente' });
+                        }
+                        else {
+                            res.status(500).json({ text: 'Error al crear la práctica ' });
+                        }
+                    }
+                });
             });
         });
     }
@@ -140,18 +152,17 @@ class PreacticaController {
             yield result(query, [idPractica, idPractica]);
         });
     }
-    agregarPreguntasPracticaSQL(req, res) {
+    agregarPreguntasPracticaSQL(idPractica, preguntas) {
         return __awaiter(this, void 0, void 0, function* () {
-            const idPractica = req.body.idPractica;
-            const preguntasPractica = req.body.preguntas;
+            const preguntasPractica = preguntas;
             var correcto = true;
             try {
                 const preguntasRepo = [];
                 const preguntasRepoNuevas = [];
                 for (let i = 0; i < preguntasPractica.length; i++) {
-                    var tipo_req = req.body.preguntas[i].tipo;
+                    var tipo_req = preguntasPractica[i].tipo;
                     if (tipo_req) {
-                        preguntasRepo.push([req.body.preguntas[i].id, idPractica, preguntasPractica[i].puntuacion, true, 1, 'root', '192.168.0.10']);
+                        preguntasRepo.push([preguntasPractica[i].id, idPractica, preguntasPractica[i].puntuacion, true, 1, 'root', '192.168.0.10']);
                     }
                     else {
                         const preguntasNuevas = [];
@@ -180,12 +191,12 @@ class PreacticaController {
                         yield exports.practicaController.agregarPreguntaRepo(preguntasRepoNuevas);
                     }
                     yield exports.practicaController.agregarNotaPractica(idPractica);
-                    res.status(200).json({ text: 'Preguntas agregadas correctamente' });
+                    return true;
                 }
             }
             catch (e) {
                 console.log(e);
-                res.status(500).json({ text: 'Error al obtener la lista de alumnos' });
+                return false;
             }
         });
     }

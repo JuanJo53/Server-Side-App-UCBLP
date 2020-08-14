@@ -20,6 +20,8 @@ import PracticaAlumnoRoutes from './routes/Alumno_routes/PracticaRoutes';
 import TemaAlumnoRoutes from './routes/Alumno_routes/TemaAlumnoRoutes';
 import LeccionAlumnoRoutes from './routes/Alumno_routes/LeccionAlumnoRoutes';
 import CursoAlumnoRoutes from './routes/Alumno_routes/CursoAlumnoRoutes';
+import RecursoAlumnoRoutes from './routes/Alumno_routes/RecursoAlumnoRoutes';
+import ModuloAlumnoRoutes from './routes/Alumno_routes/ModuloAlumnoRoutes';
 import morgan from 'morgan';
 import cors from 'cors';
 import { ConFirebase } from './FIrebase';
@@ -63,6 +65,8 @@ class Server{
         this.app.use(AlumnoRoutes);
         this.app.use(DashBoardRoutes);
         this.app.use(ContenidoModuloPersonalizadoRoutes);
+        this.app.use(RecursoAlumnoRoutes);
+        this.app.use(ModuloAlumnoRoutes);
     }
     alumnoRoutes():void{
         this.app.use(LoginAlumnoRoutes);
