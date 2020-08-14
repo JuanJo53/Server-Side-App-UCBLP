@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-exports.TokenValidation = (req, res, next) => {
+exports.TokenValidationAlumno = (req, res, next) => {
     const token = req.header('authorization');
     console.log("Token: " + token);
     if (token == null) {
@@ -12,21 +12,23 @@ exports.TokenValidation = (req, res, next) => {
         return res.status(401).json('Acceso denegado');
     }
     else {
+        var payload;
         try {
-            const payload = jsonwebtoken_1.default.verify(token, process.env.TOKEN_SESION_PLAT || 'tokentest');
-            if (payload.tipo == "docente") {
-                req.docenteId = payload.id;
-                console.log("ID doc:" + payload);
-            }
-            else {
-                return res.status(401).json('Acceso denegado');
-            }
-            next();
+            payload = jsonwebtoken_1.default.verify(token, process.env.TOKEN_SESION_PLAT || 'tokentest');
         }
         catch (e) {
             console.log("errortoken");
             return res.status(401).json('Acceso denegado');
         }
     }
+    if (payload.tipo == "alumno") {
+        req.estudianteId = payload.id;
+        console.log("ID doc:" + payload);
+    }
+    else {
+        console.log("no definido");
+        return res.status(401).json('Acceso denegado');
+    }
+    next();
 };
-//# sourceMappingURL=VerifyToken.js.map
+//# sourceMappingURL=VerifyTokenPractica.js.map
