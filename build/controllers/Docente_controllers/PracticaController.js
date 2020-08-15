@@ -34,7 +34,7 @@ class PreacticaController {
             const inicioHora = practica.horaini;
             const finFecha = practica.fechafin;
             const finHora = practica.horafin;
-            const tiempoLimite = practica.tiempoLimite;
+            const tiempoLimite = practica.tiempoLimite + 1;
             const preguntas = req.body.preguntas;
             const query = `INSERT INTO practica (
         tiempo_limite,
