@@ -308,7 +308,7 @@ class PracticaController {
     }
     revisarPracticaSQL(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const id = req.body.id;
+            const id = req.practicaId;
             const idEstudiante = req.estudianteId;
             const preguntasR = req.body.preguntas;
             const query = `SELECT pregunta.id_pregunta,curso.id_curso,practica_pregunta.puntuacion_practica_pregunta,pregunta.id_tipo_pregunta,
