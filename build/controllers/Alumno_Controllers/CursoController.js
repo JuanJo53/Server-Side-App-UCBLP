@@ -17,15 +17,22 @@ class CursoAlumnoController {
     listarCursos(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const idAlumno = req.estudianteId;
-            const query = `SELECT curso.nombre_curso,curso.id_curso
+            const query = `SELECT curso.nombre_curso,curso.id_curso,semestre.semestre,docente.nombre_docente,docente.ap_pat_docente
+        ,docente.ap_mat_docente
         FROM curso
         INNER JOIN curso_alumno ON
         curso_alumno.id_curso = curso.id_curso
         INNER JOIN alumno ON
         alumno.id_alumno = curso_alumno.id_alumno
+        INNER JOIN semestre ON
+        semestre.id_semestre=curso.id_semestre
+        INNER JOIN docente ON
+        docente.id_docente=curso.id_docente
         AND curso.estado_curso = true
         AND curso_alumno.estado_curso_alumno = true
         AND alumno.estado_alumno = true
+        AND docente.estado_docente=true
+        AND semestre.estado_semestre=true
         AND alumno.id_alumno = ?`;
             Database_1.default.query(query, [idAlumno], function (err, result, fields) {
                 if (err) {
