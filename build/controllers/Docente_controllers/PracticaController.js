@@ -147,7 +147,13 @@ class PreacticaController {
         leccion.id_tema=tema.id_tema
         INNER JOIN practica ON
         practica.id_leccion=leccion.id_leccion
-        where practica.id_practica=?`;
+        WHERE practica.id_practica=?
+        AND alumno.estado_alumno=true
+        AND curso_alumno.estado_curso_alumno=true
+        AND curso.estado_curso=true
+        AND tema.estado_tema=true
+        AND leccion.estado_leccion=true
+        AND practica.estado_practica=true`;
             const result = util_1.default.promisify(Database_1.default.query).bind(Database_1.default);
             yield result(query, [idPractica, idPractica]);
         });

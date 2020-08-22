@@ -127,7 +127,13 @@ public async agregarPractica(req:Request,res:Response){
         leccion.id_tema=tema.id_tema
         INNER JOIN practica ON
         practica.id_leccion=leccion.id_leccion
-        where practica.id_practica=?`;
+        WHERE practica.id_practica=?
+        AND alumno.estado_alumno=true
+        AND curso_alumno.estado_curso_alumno=true
+        AND curso.estado_curso=true
+        AND tema.estado_tema=true
+        AND leccion.estado_leccion=true
+        AND practica.estado_practica=true`;
         const result:(arg1:string,arg2?:any[])=>Promise<unknown> = util.promisify(Db.query).bind(Db);
         await result(query,[idPractica,idPractica]) as any[]; 
         
