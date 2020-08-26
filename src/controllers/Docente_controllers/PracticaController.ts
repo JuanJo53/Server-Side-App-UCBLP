@@ -138,6 +138,72 @@ public async agregarPractica(req:Request,res:Response){
         await result(query,[idPractica,idPractica]) as any[]; 
         
     }
+    async sacarPractica(idPractica:number,idDocente:number){
+        try{
+            const query =`SELECT practica.id_practica,practica.nombre_practica,practica.inicio_fecha,practica.fin_fecha,practica.inicio_hora,practica.fin_hora,practica.tiempo_limite
+            FROM practica INNER JOIN leccion ON
+            leccion.id_leccion = practica.id_leccion
+            INNER JOIN tema ON
+            tema.id_tema = leccion.id_tema
+            INNER JOIN curso ON
+            tema.id_curso = curso.id_curso
+            INNER JOIN docente ON 
+            docente.id_docente = curso.id_docente
+            WHERE docente.id_docente = ?
+            AND leccion.estado_leccion=true
+            AND tema.estado_tema =true
+            AND curso.estado_curso = true
+            AND docente.estado_docente = true
+            AND practica.id_practica=?`;        
+            const result2:(arg1:string,arg2?:any[])=>Promise<unknown> = util.promisify(Db.query).bind(Db);
+            var row =await result2(query,[idDocente,idPractica]) as any[];
+            console.log(row);
+            return row[0];
+        }
+        catch(e){
+            console.log(e);
+            return false;
+        }
+    }
+    public async obtenerPractica(req:Request,res:Response){
+        const {id}=req.params;
+        const idDocente=req.docenteId;
+        const practica=await practicaController.sacarPractica(Number(id),Number(idDocente));
+        if(practica){
+            const query =`SELECT practica_pregunta.puntuacion_practica_pregunta,pregunta.id_tipo_pregunta,pregunta.id_tipo_respuesta
+            ,practica_pregunta.id_pregunta_practica ,practica_pregunta.id_pregunta,pregunta.codigo_pregunta,
+            practica_pregunta.puntuacion_practica_pregunta,pregunta.pregunta,pregunta.respuesta,pregunta.opciones,pregunta.recurso 
+            FROM practica INNER JOIN practica_pregunta ON
+            practica.id_practica = practica_pregunta.id_practica
+            INNER JOIN pregunta ON
+            pregunta.id_pregunta = practica_pregunta.id_pregunta
+            WHERE practica_pregunta.estado_pregunta_practica   = true
+            AND practica.id_practica=?`;
+           try{ 
+                const result2:(arg1:string,arg2?:any[])=>Promise<unknown> = util.promisify(Db.query).bind(Db);
+                var row =await result2(query,[id]) as any[];
+                if(row.length==0){            
+                    res.status(500).json({text:'No esta habilitado para ver esta practica'})
+                }   
+                else{   
+                    for(let preg of row){
+                    preg.opciones=JSON.parse(preg.opciones);
+                    preg.respuesta=JSON.parse(preg.respuesta);
+                    }
+                    res.status(200).json({practica,preguntas:row});
+                }
+           }
+           catch(e){
+                console.log(e);
+                res.status(500).json({text:'No se pudo listar la practica'})
+           }
+        }
+        else{
+            res.status(500).json({text:'No se pudo listar la practica'})
+        }
+        
+   
+    }
     public async agregarPreguntasPracticaSQL(idPractica:number,preguntas:any[]){    
             const preguntasPractica = preguntas;
             var correcto=true;
