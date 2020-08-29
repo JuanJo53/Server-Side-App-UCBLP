@@ -158,6 +158,74 @@ class PreacticaController {
             yield result(query, [idPractica, idPractica]);
         });
     }
+    sacarPractica(idPractica, idDocente) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const query = `SELECT practica.id_practica,practica.nombre_practica,practica.inicio_fecha,practica.fin_fecha,practica.inicio_hora,practica.fin_hora,practica.tiempo_limite
+            FROM practica INNER JOIN leccion ON
+            leccion.id_leccion = practica.id_leccion
+            INNER JOIN tema ON
+            tema.id_tema = leccion.id_tema
+            INNER JOIN curso ON
+            tema.id_curso = curso.id_curso
+            INNER JOIN docente ON 
+            docente.id_docente = curso.id_docente
+            WHERE docente.id_docente = ?
+            AND leccion.estado_leccion=true
+            AND tema.estado_tema =true
+            AND curso.estado_curso = true
+            AND docente.estado_docente = true
+            AND practica.id_practica=?`;
+                const result2 = util_1.default.promisify(Database_1.default.query).bind(Database_1.default);
+                var row = yield result2(query, [idDocente, idPractica]);
+                console.log(row);
+                return row[0];
+            }
+            catch (e) {
+                console.log(e);
+                return false;
+            }
+        });
+    }
+    obtenerPractica(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { id } = req.params;
+            const idDocente = req.docenteId;
+            const practica = yield exports.practicaController.sacarPractica(Number(id), Number(idDocente));
+            if (practica) {
+                const query = `SELECT practica_pregunta.id_pregunta_practica,practica_pregunta.puntuacion_practica_pregunta,pregunta.id_tipo_pregunta,pregunta.id_tipo_respuesta
+            ,practica_pregunta.id_pregunta_practica ,practica_pregunta.id_pregunta,pregunta.codigo_pregunta,
+            practica_pregunta.puntuacion_practica_pregunta,pregunta.pregunta,pregunta.respuesta,pregunta.opciones,pregunta.recurso 
+            FROM practica INNER JOIN practica_pregunta ON
+            practica.id_practica = practica_pregunta.id_practica
+            INNER JOIN pregunta ON
+            pregunta.id_pregunta = practica_pregunta.id_pregunta
+            WHERE practica_pregunta.estado_pregunta_practica   = true
+            AND practica.id_practica=?`;
+                try {
+                    const result2 = util_1.default.promisify(Database_1.default.query).bind(Database_1.default);
+                    var row = yield result2(query, [id]);
+                    if (row.length == 0) {
+                        res.status(200).json({ practica, preguntas: row });
+                    }
+                    else {
+                        for (let preg of row) {
+                            preg.opciones = JSON.parse(preg.opciones);
+                            preg.respuesta = JSON.parse(preg.respuesta);
+                        }
+                        res.status(200).json({ practica, preguntas: row });
+                    }
+                }
+                catch (e) {
+                    console.log(e);
+                    res.status(500).json({ text: 'No se pudo listar la practica' });
+                }
+            }
+            else {
+                res.status(500).json({ text: 'No se pudo listar la practica' });
+            }
+        });
+    }
     agregarPreguntasPracticaSQL(idPractica, preguntas) {
         return __awaiter(this, void 0, void 0, function* () {
             const preguntasPractica = preguntas;
@@ -167,7 +235,7 @@ class PreacticaController {
                 const preguntasRepoNuevas = [];
                 for (let i = 0; i < preguntasPractica.length; i++) {
                     var tipo_req = preguntasPractica[i].tipo;
-                    if (tipo_req) {
+                    if (tipo_req == 1) {
                         preguntasRepo.push([preguntasPractica[i].id, idPractica, preguntasPractica[i].puntuacion, true, 1, 'root', '192.168.0.10']);
                     }
                     else {
@@ -284,26 +352,136 @@ class PreacticaController {
             }
         });
     }
-    modificarPractica(req, res) {
+    eliminarPreguntas(preguntasEli) {
         return __awaiter(this, void 0, void 0, function* () {
-            const idPractica = req.body.idPractica;
-            const nombrePractica = req.body.nombrePractica;
-            const numeroPractica = req.body.numeroPractica;
-            const inicioFecha = req.body.inicioFecha;
-            const finFecha = req.body.finFecha;
-            const inicioHora = req.body.inicioHora;
-            const finHora = req.body.finHora;
-            const query = `UPDATE practica SET nombre_practica = ?,numero_practica=?,inicio_fecha =?,
-        inicio_hora=?,fin_fecha =?,fin_hora=? WHERE id_practica =?`;
-            Database_1.default.query(query, [nombrePractica, numeroPractica, inicioFecha, inicioHora, finFecha, finHora, idPractica], function (err, result, fields) {
-                if (err) {
-                    res.status(500).json({ text: 'Error al modificar la práctica' });
-                    throw err;
+            try {
+                if (preguntasEli.length > 0) {
+                    const queryEl = "UPDATE practica_pregunta SET estado_pregunta_practica = 0 WHERE id_pregunta_practica IN (?)";
+                    const result2 = util_1.default.promisify(Database_1.default.query).bind(Database_1.default);
+                    yield result2(queryEl, [preguntasEli]);
+                }
+                return true;
+            }
+            catch (e) {
+                console.log(e);
+                return false;
+            }
+        });
+    }
+    actualizarPregunta(pregunta) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const queryEl = "UPDATE practica_pregunta SET puntuacion_practica_pregunta = ? WHERE id_pregunta_practica=?";
+                const result2 = util_1.default.promisify(Database_1.default.query).bind(Database_1.default);
+                yield result2(queryEl, [pregunta.puntuacion, pregunta.id]);
+                return true;
+            }
+            catch (e) {
+                console.log(e);
+                return false;
+            }
+        });
+    }
+    modificarPreguntas(preguntas, idPractica) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const preguntasPractica = preguntas;
+            var correcto = true;
+            try {
+                const preguntasRepo = [];
+                const preguntasRepoNuevas = [];
+                const promises = [];
+                for (let i = 0; i < preguntasPractica.length; i++) {
+                    var tipo_req = preguntasPractica[i].tipo;
+                    if (tipo_req == 1) {
+                        preguntasRepo.push([preguntasPractica[i].id, idPractica, preguntasPractica[i].puntuacion, true, 1, 'root', '192.168.0.10']);
+                    }
+                    else {
+                        if (tipo_req == 0) {
+                            const preguntasNuevas = [];
+                            var data = preguntasPractica[i];
+                            const idTipoPregunta = data.idTipoPregunta;
+                            const idTipoRespuesta = data.idTipoRespuesta;
+                            const pregunta = data.pregunta;
+                            const respuesta = JSON.stringify(data.respuesta);
+                            const opciones = JSON.stringify(data.opciones);
+                            const recurso = data.recurso;
+                            preguntasNuevas.push([1, pregunta, opciones, respuesta, recurso, idTipoPregunta, idTipoRespuesta, true, 1, 'root', '192.168.0.10']);
+                            var resNuevo = yield exports.practicaController.agregarPreguntaNueva(preguntasNuevas);
+                            if (resNuevo) {
+                                preguntasRepoNuevas.push([resNuevo, idPractica, preguntasPractica[i].puntuacion, true, 1, 'root', '192.168.0.10']);
+                            }
+                            else {
+                                correcto = false;
+                            }
+                        }
+                        else {
+                            if (tipo_req == 2) {
+                                promises.push(exports.practicaController.actualizarPregunta(preguntasPractica[i]));
+                            }
+                        }
+                    }
+                }
+                const responses = yield Promise.all(promises);
+                if (responses.includes(false)) {
+                    correcto = false;
+                }
+                if (correcto) {
+                    if (preguntasRepo.length != 0) {
+                        yield exports.practicaController.agregarPreguntaRepo(preguntasRepo);
+                    }
+                    if (preguntasRepoNuevas.length != 0) {
+                        yield exports.practicaController.agregarPreguntaRepo(preguntasRepoNuevas);
+                    }
+                    yield exports.practicaController.agregarNotaPractica(idPractica);
+                    return true;
                 }
                 else {
-                    res.status(200).json({ text: 'Práctica modificada correctamente' });
+                    return false;
                 }
-            });
+            }
+            catch (e) {
+                console.log(e);
+                return false;
+            }
+        });
+    }
+    modificarPractica(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            console.log(req.body);
+            const practica = req.body.practica;
+            const idPractica = practica.id;
+            const nombrePractica = practica.nombre;
+            const inicioFecha = practica.fechaini;
+            const inicioHora = practica.horaini;
+            const finFecha = practica.fechafin;
+            const finHora = practica.horafin;
+            const tiempoLimite = practica.tiempoLimite + 1;
+            const preguntas = req.body.preguntas;
+            const query = `UPDATE practica 
+        set tiempo_limite=?,
+        nombre_practica=?,
+        inicio_fecha=?,
+        inicio_hora=?,
+        fin_fecha=?,
+        fin_hora=?
+        WHERE id_practica=?
+        `;
+            try {
+                const result2 = util_1.default.promisify(Database_1.default.query).bind(Database_1.default);
+                yield result2(query, [tiempoLimite, nombrePractica, inicioFecha, inicioHora, finFecha, finHora, idPractica]);
+                var pregEli = yield exports.practicaController.eliminarPreguntas(req.body.preguntasEli);
+                var pregRes = yield exports.practicaController.modificarPreguntas(preguntas, idPractica);
+                if (pregEli && pregRes) {
+                    res.status(200).json("Practica modificada correctamente");
+                }
+                else {
+                    res.status(500).json("No se pudo modificar la practica");
+                }
+            }
+            catch (e) {
+                console.log(e);
+                res.status(500).json("No se pudo modificar la practica");
+            }
         });
     }
     eliminarPractica(req, res) {
