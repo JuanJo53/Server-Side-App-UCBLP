@@ -408,7 +408,6 @@ public async agregarPractica(req:Request,res:Response){
                 if(preguntasRepoNuevas.length!=0){                      
                     await practicaController.agregarPreguntaRepo(preguntasRepoNuevas); 
                 }     
-                await practicaController.agregarNotaPractica(idPractica);  
                 return true;
                                         
             } 
