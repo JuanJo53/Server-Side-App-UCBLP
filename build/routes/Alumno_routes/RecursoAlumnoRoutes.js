@@ -12,6 +12,7 @@ class RecursoAlumnoRoutes {
     //configurar respuesta routas
     config() {
         this.router.get('/students/courses/resources/:id', VerifyTokenAlumno_1.TokenValidationAlumno, RecursoAlumnoController_1.recursoAlumnoController.obtenerRecursosAlumno);
+        this.router.post('/students/resource/file', VerifyTokenAlumno_1.TokenValidationAlumno, RecursoAlumnoController_1.recursoAlumnoController.urlFile);
     }
 }
 const recursoAlumnoRoutes = new RecursoAlumnoRoutes();
