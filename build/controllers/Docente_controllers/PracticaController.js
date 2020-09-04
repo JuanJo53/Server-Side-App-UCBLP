@@ -34,7 +34,10 @@ class PreacticaController {
             const inicioHora = practica.horaini;
             const finFecha = practica.fechafin;
             const finHora = practica.horafin;
-            const tiempoLimite = practica.tiempoLimite + 1;
+            var tiempoLimite = null;
+            if (practica.tiempoLimite != null) {
+                tiempoLimite = practica.tiempoLimite + 1;
+            }
             const preguntas = req.body.preguntas;
             const query = `INSERT INTO practica (
         tiempo_limite,
@@ -432,7 +435,6 @@ class PreacticaController {
                     if (preguntasRepoNuevas.length != 0) {
                         yield exports.practicaController.agregarPreguntaRepo(preguntasRepoNuevas);
                     }
-                    yield exports.practicaController.agregarNotaPractica(idPractica);
                     return true;
                 }
                 else {
@@ -455,7 +457,10 @@ class PreacticaController {
             const inicioHora = practica.horaini;
             const finFecha = practica.fechafin;
             const finHora = practica.horafin;
-            const tiempoLimite = practica.tiempoLimite + 1;
+            var tiempoLimite = null;
+            if (practica.tiempoLimite != null) {
+                tiempoLimite = practica.tiempoLimite + 1;
+            }
             const preguntas = req.body.preguntas;
             const query = `UPDATE practica 
         set tiempo_limite=?,

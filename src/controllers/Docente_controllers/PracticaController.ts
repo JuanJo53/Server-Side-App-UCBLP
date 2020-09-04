@@ -16,7 +16,10 @@ public async agregarPractica(req:Request,res:Response){
         const inicioHora=practica.horaini;
         const finFecha = practica.fechafin;
         const finHora = practica.horafin;
-        const tiempoLimite= practica.tiempoLimite+1;
+        var tiempoLimite=null;
+        if(practica.tiempoLimite!=null){
+            tiempoLimite=practica.tiempoLimite+1;
+        }
     const preguntas=req.body.preguntas;
   
     const query =`INSERT INTO practica (
@@ -430,7 +433,10 @@ public async agregarPractica(req:Request,res:Response){
         const inicioHora=practica.horaini;
         const finFecha = practica.fechafin;
         const finHora = practica.horafin;
-        const tiempoLimite= practica.tiempoLimite+1;
+        var tiempoLimite=null;
+        if(practica.tiempoLimite!=null){
+            tiempoLimite=practica.tiempoLimite+1;
+        }
         const preguntas=req.body.preguntas;
   
         const query =`UPDATE practica 
