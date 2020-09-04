@@ -608,7 +608,7 @@ class PreacticaController {
             const { id } = req.params;
             const idDocente = req.docenteId;
             const query = `SELECT practica_pregunta.id_pregunta_practica ,practica_pregunta.id_pregunta,pregunta.codigo_pregunta,
-        practica_pregunta.puntuacion_practica_pregunta 
+        practica_pregunta.puntuacion_practica_pregunta, pregunta.pregunta,pregunta.opciones
         FROM practica INNER JOIN practica_pregunta ON
         practica.id_practica = practica_pregunta.id_practica
         INNER JOIN pregunta ON

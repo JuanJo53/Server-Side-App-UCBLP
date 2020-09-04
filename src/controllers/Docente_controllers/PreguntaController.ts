@@ -62,6 +62,7 @@ class PreguntaController {
         });
 
     }
+    
     public async listarPreguntas2(req:Request,res:Response){
         const query =`SELECT 'vacio' as pregunta,pregunta.id_pregunta,pregunta.codigo_pregunta,pregunta.id_tipo_pregunta,pregunta.id_tipo_respuesta
         FROM pregunta
