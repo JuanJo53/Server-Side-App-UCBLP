@@ -20,6 +20,7 @@ public async agregarPractica(req:Request,res:Response){
         if(practica.tiempoLimite!=null){
             tiempoLimite=practica.tiempoLimite+1;
         }
+        
     const preguntas=req.body.preguntas;
   
     const query =`INSERT INTO practica (
