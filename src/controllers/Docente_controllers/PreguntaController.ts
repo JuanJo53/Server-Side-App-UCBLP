@@ -46,7 +46,7 @@ class PreguntaController {
 
     }
     public async listarPreguntas(req: Request, res: Response) {
-        const query = `SELECT pregunta.id_pregunta,pregunta.codigo_pregunta,tipo_pregunta.tipo_pregunta,tipo_respuesta.tipo_respuesta 
+        const query = `SELECT pregunta.id_pregunta,pregunta.pregunta,pregunta.opciones,pregunta.codigo_pregunta,tipo_pregunta.tipo_pregunta,tipo_respuesta.tipo_respuesta 
         FROM tipo_pregunta INNER JOIN pregunta ON
         tipo_pregunta.id_tipo_pregunta= pregunta.id_tipo_pregunta
         INNER JOIN tipo_respuesta ON

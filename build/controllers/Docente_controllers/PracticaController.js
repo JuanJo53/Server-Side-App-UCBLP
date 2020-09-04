@@ -432,7 +432,6 @@ class PreacticaController {
                     if (preguntasRepoNuevas.length != 0) {
                         yield exports.practicaController.agregarPreguntaRepo(preguntasRepoNuevas);
                     }
-                    yield exports.practicaController.agregarNotaPractica(idPractica);
                     return true;
                 }
                 else {
