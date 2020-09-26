@@ -111,7 +111,22 @@ class PracticaController{
             console.log(row);
             for(let preg of row){
                preg.opciones=JSON.parse(preg.opciones);
-               preg.respuesta=[];
+               switch(preg.id_tipo_respuesta){
+                case 4:
+                    preg.respuesta=JSON.parse(preg.respuesta);
+                    preg.opciones.sort(practicaController.funci);
+                    break;
+                case 3:
+                    preg.respuesta=JSON.parse(preg.respuesta);
+                    for(let pregun of preg.respuesta){
+                        pregun.cards=[];
+                    }
+                    preg.opciones.sort(practicaController.funci);
+                    break;
+                default:
+                    preg.respuesta=[];
+                    break
+               }
             }
             res.status(200).json({preguntas:row,tiempo:tiempo});
         }
@@ -277,18 +292,77 @@ class PracticaController{
         }
         
     }
-    compararRespuestas(re1:number[],re2:number[]){
+    compararRespuestas(re:any,re2:any){
         var ver=true;
-        if(re1.length!=re2.length){
-           ver=false;
-        }
-        else{
-            for(let i in re1){
-                if(re1[i]!=re2[i]){
+        var re1=JSON.parse(re.respuesta);
+        var opc=JSON.parse(re.opciones);
+        console.log(re2);
+        console.log(re1);
+        switch(re.id_tipo_respuesta){
+            case 3:
+                if(re1.length!=re2.respuesta.length){
                     ver=false;
-                    break;
                 }
-            }
+                else{
+                    var respuesta=[];
+                    for(let rep of re1){
+                        var letra=[];
+                        for(let card of rep.cards){
+                            letra.push(opc[card]);
+                        }
+                        respuesta.push(letra);
+                    }
+                    for(let i in respuesta){
+                        respuesta[i].sort();
+                        re2.respuesta[i].sort();
+                        if(re2.respuesta[i].length==respuesta[i].length){
+                            for(let j in respuesta[i]){
+                                if(respuesta[i][j]!==re2.respuesta[i][j]){
+                                    ver=false;
+                                }
+                            }
+                        }
+                        else{
+                            ver=false;
+                            break;
+                        }
+
+                    }
+                }
+                break;
+            case 4:
+                console.log(re1);
+                console.log(re2.respuestaFill);
+                ver=true;
+                var tamR=0;
+                for(let resp of re1){
+                    if(resp==="*"){
+                        tamR++;
+                    }
+                }
+                if(tamR<=opc.length&&opc.length>=re2.respuestaFill.length){
+                    for(let i=0;i<tamR;i++){
+                        if(opc[i]!==re2.respuestaFill[i]){
+                            ver=false;
+                        }
+                    }
+                }
+                break;
+            case 5:
+                break;
+            default:
+                if(re1.length!=re2.respuesta.length){
+                    ver=false;
+                 }
+                 else{
+                     for(let i in re1){
+                         if(re1[i]!=re2.respuesta[i]){
+                             ver=false;
+                             break;
+                         }
+                     }
+                 }
+                 break;
         }
         return ver;
     }
@@ -321,7 +395,8 @@ class PracticaController{
         AND practica_pregunta.estado_pregunta_practica   = true
         AND CAST(CONCAT(DATE(practica.inicio_fecha),' ',practica.inicio_hora-INTERVAL 4 HOUR) AS DATETIME)<=NOW()
         AND CAST(CONCAT(DATE(practica.fin_fecha),' ',practica.fin_hora-INTERVAL 4 HOUR) AS DATETIME)>=NOW()
-        AND practica.id_practica=?`;
+        AND practica.id_practica=?
+        AND alumno.id_alumno=?`;
         const agregarNota =`
             UPDATE nota_practica set nota_practica=?, practica_dada=true
             WHERE id_alumno=? AND id_practica=?`            
@@ -361,15 +436,15 @@ class PracticaController{
             WHERE id_alumno=? AND id_modulo=?`
     try{ 
         const result2:(arg1:string,arg2?:any[])=>Promise<unknown> = util.promisify(Db.query).bind(Db);
-        var row =await result2(query,[id]) as any[];
+        var row =await result2(query,[id,idEstudiante]) as any[];
         if(row.length==0){            
             res.status(500).json({text:'No esta habilitado para ver esta practica'})
         }   
         else{            
-            console.log(row);
             if(row.length!=preguntasR.length){
+                console.log(row);
+                console.log(preguntasR);
                 res.status(500).json({text:'Error en los datos Enviados'})
-                
             }
             else{
                 var puntuacion=0;
@@ -377,12 +452,12 @@ class PracticaController{
                 for(let preg of row){                    
                     for(let pregR of preguntasR){
                         if(preg.id_pregunta===pregR.idPregunta){  
-                            if(practicaController.compararRespuestas(JSON.parse(preg.respuesta),pregR.respuesta)){
+                            if(practicaController.compararRespuestas(preg,pregR)){
                                 puntuacion+=preg.puntuacion_practica_pregunta;
                             }                            
                             respuestas.push([idEstudiante,preg.id_pregunta,JSON.stringify(pregR.respuesta),true,1,'root','192.168.0.10']);
                             break;
-                        }
+                        } 
                         
                     }
                 }
@@ -403,6 +478,10 @@ class PracticaController{
     }
 
     }
+
+    private funci(a:any, b:any) {  
+        return 0.5 - Math.random();
+    }  
     public async revisarPractica(req:Request,res:Response){
         const id = req.body.id;
         const idEstudiante=req.estudianteId;
