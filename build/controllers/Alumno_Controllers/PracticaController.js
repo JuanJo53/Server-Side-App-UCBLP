@@ -344,8 +344,6 @@ class PracticaController {
                 }
                 break;
             case 4:
-                console.log(re1);
-                console.log(re2.respuestaFill);
                 ver = true;
                 var tamR = 0;
                 for (let resp of re1) {
@@ -353,9 +351,9 @@ class PracticaController {
                         tamR++;
                     }
                 }
-                if (tamR <= opc.length && opc.length >= re2.respuestaFill.length) {
+                if (tamR <= opc.length && opc.length >= re2.respuesta.length) {
                     for (let i = 0; i < tamR; i++) {
-                        if (opc[i] !== re2.respuestaFill[i]) {
+                        if (opc[i] !== re2.respuesta[i]) {
                             ver = false;
                         }
                     }
@@ -384,7 +382,7 @@ class PracticaController {
             const id = req.practicaId;
             const idEstudiante = req.estudianteId;
             const preguntasR = req.body.preguntas;
-            const query = `SELECT pregunta.id_pregunta,curso.id_curso,practica_pregunta.puntuacion_practica_pregunta,pregunta.id_tipo_pregunta,
+            const query = `SELECT practica_pregunta.id_pregunta_practica,curso.id_curso,practica_pregunta.puntuacion_practica_pregunta,pregunta.id_tipo_pregunta,
         pregunta.id_tipo_respuesta,practica_pregunta.id_pregunta_practica ,practica_pregunta.id_pregunta,pregunta.codigo_pregunta,
         practica_pregunta.puntuacion_practica_pregunta,pregunta.pregunta,pregunta.respuesta,pregunta.opciones,pregunta.recurso 
         FROM practica INNER JOIN practica_pregunta ON
@@ -415,7 +413,7 @@ class PracticaController {
             UPDATE nota_practica set nota_practica=?, practica_dada=true
             WHERE id_alumno=? AND id_practica=?`;
             const agregarRespuesta = `
-        INSERT INTO pregunta_respuesta(id_alumno,id_pregunta,respuesta,estado_pregunta_respuesta,tx_id,tx_username,tx_host)
+        INSERT INTO pregunta_respuesta(id_alumno,id_pregunta_practica,respuesta,estado_pregunta_respuesta,tx_id,tx_username,tx_host,puntaje)
         VALUES ?`;
             const obtenerNotasPractica = `
         SELECT AVG(nota_practica.nota_practica) as promedio
@@ -469,7 +467,10 @@ class PracticaController {
                                     if (exports.practicaController.compararRespuestas(preg, pregR)) {
                                         puntuacion += preg.puntuacion_practica_pregunta;
                                     }
-                                    respuestas.push([idEstudiante, preg.id_pregunta, JSON.stringify(pregR.respuesta), true, 1, 'root', '192.168.0.10']);
+                                    else {
+                                        preg.puntuacion_practica_pregunta = 0;
+                                    }
+                                    respuestas.push([idEstudiante, preg.id_pregunta_practica, JSON.stringify(pregR.respuesta), true, 1, 'root', '192.168.0.10', preg.puntuacion_practica_pregunta]);
                                     break;
                                 }
                             }

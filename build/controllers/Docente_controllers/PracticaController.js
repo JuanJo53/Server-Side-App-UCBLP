@@ -647,6 +647,55 @@ class PreacticaController {
             });
         });
     }
+    respuestasEstudiante(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { id } = req.params;
+            const idDocente = req.docenteId;
+            console.log(id);
+            var query = `SELECT pregunta.pregunta,practica_pregunta.puntuacion_practica_pregunta, pregunta.id_tipo_respuesta,pregunta.id_tipo_pregunta,
+        pregunta_respuesta.respuesta as alumno_respuesta,pregunta_respuesta.puntaje,pregunta.opciones,pregunta.respuesta
+        FROM practica INNER JOIN practica_pregunta ON
+        practica.id_practica = practica_pregunta.id_practica
+        INNER JOIN pregunta ON
+        pregunta.id_pregunta = practica_pregunta.id_pregunta
+        INNER JOIN leccion ON
+        leccion.id_leccion = practica.id_leccion
+        INNER JOIN tema ON
+        tema.id_tema = leccion.id_tema
+        INNER JOIN curso ON
+        tema.id_curso = curso.id_curso
+        INNER JOIN docente ON 
+        docente.id_docente = curso.id_docente
+        INNER JOIN nota_practica ON
+        nota_practica.id_practica=practica.id_practica
+        INNER JOIN pregunta_respuesta ON
+        pregunta_respuesta.id_pregunta_practica=practica_pregunta.id_pregunta_practica
+        and pregunta_respuesta.id_alumno=nota_practica.id_alumno
+        WHERE practica_pregunta.estado_pregunta_practica= true
+        AND practica.estado_practica = true
+        AND leccion.estado_leccion=true
+        AND tema.estado_tema !=false
+        AND curso.estado_curso = true
+        AND docente.estado_docente = true
+        AND nota_practica.estado_nota_practica=true
+        AND pregunta_respuesta.estado_pregunta_respuesta=true
+        AND nota_practica.id_nota_practica=?
+        AND docente.id_docente = ?;`;
+            const result2 = util_1.default.promisify(Database_1.default.query).bind(Database_1.default);
+            try {
+                var row = yield result2(query, [id, idDocente]);
+                for (let preg of row) {
+                    preg.respuesta = JSON.parse(preg.respuesta);
+                    preg.opciones = JSON.parse(preg.opciones);
+                    preg.alumno_respuesta = JSON.parse(preg.alumno_respuesta);
+                }
+                res.status(200).json(row);
+            }
+            catch (e) {
+                res.status(500).json({ text: 'No se pudo listar las respuestas' });
+            }
+        });
+    }
 }
 exports.practicaController = new PreacticaController();
 //# sourceMappingURL=PracticaController.js.map
