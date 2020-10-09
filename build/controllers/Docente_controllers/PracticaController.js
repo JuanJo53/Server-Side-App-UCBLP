@@ -561,7 +561,7 @@ class PreacticaController {
         return __awaiter(this, void 0, void 0, function* () {
             const idDocente = req.docenteId;
             const { id } = req.params;
-            const query = `SELECT ntp.id_nota_practica,ntp.nota_practica,alumno.nombre_alumno,alumno.ap_paterno_alumno,alumno.ap_materno_alumno
+            const query = `SELECT ntp.id_nota_practica,ntp.nota_practica,alumno.nombre_alumno,alumno.ap_paterno_alumno,alumno.ap_materno_alumno,ntp.practica_dada
         FROM nota_practica ntp
         INNER JOIN practica ON
         practica.id_practica=ntp.id_practica

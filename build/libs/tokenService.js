@@ -15,6 +15,7 @@ class TokenService {
         return ver;
     }
     getToken(login_id, tipo) {
+        console.log(process.env.TOKEN_SESION_PLAT);
         return jsonwebtoken_1.default.sign({ id: login_id, tipo: tipo }, process.env.TOKEN_SESION_PLAT || "TOKEN_PRUEBA", { expiresIn: 60 * 60 * 24 });
     }
     getTokenPracticeTiempo(idPractica, expiracion) {

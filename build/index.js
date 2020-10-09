@@ -4,7 +4,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const dotenv_1 = __importDefault(require("dotenv"));
 const LoginRoutes_1 = __importDefault(require("./routes/Docente_routes/LoginRoutes"));
 const CursoRoutes_1 = __importDefault(require("./routes/Docente_routes/CursoRoutes"));
 const ClassRoutes_1 = __importDefault(require("./routes/Docente_routes/ClassRoutes"));
@@ -30,7 +29,6 @@ const ModuloAlumnoRoutes_1 = __importDefault(require("./routes/Alumno_routes/Mod
 const morgan_1 = __importDefault(require("morgan"));
 const cors_1 = __importDefault(require("cors"));
 const FIrebase_1 = require("./FIrebase");
-dotenv_1.default.config();
 class Server {
     constructor() {
         this.app = express_1.default();
