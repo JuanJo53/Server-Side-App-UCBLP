@@ -30,8 +30,9 @@ class PracticaController {
             const idEstudiante = req.estudianteId;
             const nota = yield exports.practicaController.verificarDisponibilidad(Number(id), Number(idEstudiante));
             const query = `SELECT 
-        practica.id_practica,practica.numero_practica,practica.nombre_practica,practica.inicio_fecha,inicio_hora,practica.fin_fecha,practica.fin_hora
-        FROM practica INNER JOIN leccion ON
+        practica.tiempo_limite,COUNT(practica_pregunta.id_pregunta_practica) as preguntas,practica.id_practica,practica.numero_practica,practica.nombre_practica,practica.inicio_fecha,inicio_hora,practica.fin_fecha,practica.fin_hora
+        
+        FROM practica_pregunta,practica INNER JOIN leccion ON
         leccion.id_leccion = practica.id_leccion
         INNER JOIN tema ON
         tema.id_tema=leccion.id_tema
@@ -47,13 +48,18 @@ class PracticaController {
         AND tema.estado_tema = true
         AND curso.estado_curso = true
         AND curso_alumno.estado_curso_alumno = true
-        AND alumno.id_alumno=?`;
+        AND alumno.id_alumno=?
+        and practica.id_practica=practica_pregunta.id_practica`;
             Database_1.default.query(query, [id, idEstudiante], function (err, result, fields) {
                 if (err) {
                     console.log(err);
                     res.status(500).json({ text: 'No se pudo listar las practicas' });
                 }
                 else {
+                    if (result[0].tiempo_limite != null) {
+                        result[0].tiempo_limite -= 1;
+                    }
+                    ;
                     res.status(200).json({
                         info: result[0],
                         nota: nota

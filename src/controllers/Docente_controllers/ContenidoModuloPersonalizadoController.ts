@@ -215,7 +215,7 @@ class ContenidoModuloPersonalizadoController {
         const idCurso = req.body.idCurso;
         const idModulo = req.body.idModulo;
         const idDocente =req.docenteId;
-        const query = `SELECT cont.id_contenido_mod_per, cont.numero_contenido,cont.nombre_contenido,cont.rubrica_contenido
+        const query = `SELECT modu.id_color, cont.id_contenido_mod_per, cont.numero_contenido,cont.nombre_contenido,cont.rubrica_contenido
         FROM contenido_mod_per cont
         JOIN modulo modu ON
         cont.id_modulo=modu.id_modulo
