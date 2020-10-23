@@ -121,7 +121,12 @@ class PracticaController{
                 case 4:
                     preg.respuesta=JSON.parse(preg.respuesta);
                     preg.opciones.sort(practicaController.funci);
-                    break;
+                    break;                
+                case 5:
+                        preg.respuesta=JSON.parse(preg.respuesta);
+                        preg.opciones.sort(practicaController.funci);
+                        preg.respuesta.sort(practicaController.funci);
+                        break;    
                 case 3:
                     preg.respuesta=JSON.parse(preg.respuesta);
                     for(let pregun of preg.respuesta){
@@ -260,7 +265,6 @@ class PracticaController{
         const result2:(arg1:string,arg2:any[])=>Promise<unknown> = util.promisify(Db.query).bind(Db);
         try{
             var row =await result2(query,[id,idAlumno]) as any[];
-            console.log(row);
             var token="";
             const tokenService=new TokenService();
             if(!row[0].practica_dada){
@@ -302,8 +306,6 @@ class PracticaController{
         var ver=true;
         var re1=JSON.parse(re.respuesta);
         var opc=JSON.parse(re.opciones);
-        console.log(re2);
-        console.log(re1);
         switch(re.id_tipo_respuesta){
             case 3:
                 if(re1.length!=re2.respuesta.length){
@@ -353,6 +355,26 @@ class PracticaController{
                 }
                 break;
             case 5:
+                if(re1.length!=re2.respuesta.length||opc.length!=re2.opciones.length){
+                    ver=false;
+                }
+                else{
+                    re1.sort();
+                    opc.sort();
+                    re2.opciones.sort();
+                    re2.respuesta.sort();
+                    ver=true;
+                    for(let i in re1){
+                        if(re1[i]!=re2.respuesta[i]){
+                            ver=false;
+                        }
+                    }
+                    for(let j in opc){
+                        if(opc[j]!=re2.opciones[j]){
+                            ver=false;
+                        }
+                    }
+                }
                 break;
             default:
                 if(re1.length!=re2.respuesta.length){
