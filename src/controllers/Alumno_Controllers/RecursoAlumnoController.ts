@@ -20,7 +20,7 @@ class RecursoAlumnoController{
       AND curso_alumno.estado_curso_alumno=true
       AND alumno.estado_alumno=true
       AND alumno.id_alumno=?`      
-      const query2=`SELECT recurso.nombre_recurso,recurso.ruta_recurso,tipo_recurso.id_tipo_recurso,recurso.id_recurso
+      const query2=`SELECT recurso.id_recurso,recurso.nombre_recurso,recurso.ruta_recurso,tipo_recurso.id_tipo_recurso,recurso.id_recurso,recurso.fecha_subida_recurso
       FROM recurso 
       INNER JOIN tipo_recurso ON
       recurso.id_tipo_recurso=tipo_recurso.id_tipo_recurso
@@ -33,7 +33,7 @@ class RecursoAlumnoController{
       AND curso.estado_curso = true
       AND recurso.estado_recurso !=false 
       AND tipo_recurso.estado_tipo_recurso !=false
-      ORDER BY recurso.fecha_subida_recurso ASC`  
+      ORDER BY recurso.fecha_subida_recurso DESC`  
       Db.query(query,[id,req.estudianteId],async function (err,result,fields){
         if(err){
             console.log(err);
