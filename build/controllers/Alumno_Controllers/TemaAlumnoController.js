@@ -31,7 +31,8 @@ class TemaAlumnoController {
         AND cur.estado_curso = true
         AND ca.estado_curso_alumno = true
         AND alu.estado_alumno = true
-        AND alu.id_alumno = ?`;
+        AND alu.id_alumno = ?
+        ORDER BY tm.numero_tema`;
             Database_1.default.query(query, [id, idAlumno], function (err, result, fields) {
                 if (err) {
                     res.status(500).json({ text: 'Error al cargar los temas' });

@@ -20,7 +20,8 @@ public async listarLecciones(req:Request,res:Response){
         AND curso.estado_curso = true
         AND curso_alumno.estado_curso_alumno = true
         AND alumno.estado_alumno = true
-        AND alumno.id_alumno = ?`;
+        AND alumno.id_alumno = ?
+        ORDER BY leccion.numero_leccion`;
         Db.query(query,[id,idAlumno],function(err,result,fields){
             if(err){
                 res.status(500).json({text:'Error al cargar las lecciones'});
