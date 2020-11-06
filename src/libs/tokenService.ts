@@ -13,6 +13,7 @@ export class TokenService{
         return ver; 
     }
     getToken(login_id:string,tipo:string):string{
+        console.log(process.env.TOKEN_SESION_PLAT);
         return jwt.sign({id:login_id,tipo:tipo},process.env.TOKEN_SESION_PLAT||"TOKEN_PRUEBA",{expiresIn:60*60*24});
     }
     getTokenPracticeTiempo(idPractica:number,expiracion:number){

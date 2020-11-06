@@ -14,8 +14,9 @@ class PracticaController{
         const idEstudiante=req.estudianteId;
         const nota=await practicaController.verificarDisponibilidad(Number(id),Number(idEstudiante));
         const query =`SELECT 
-        practica.id_practica,practica.numero_practica,practica.nombre_practica,practica.inicio_fecha,inicio_hora,practica.fin_fecha,practica.fin_hora
-        FROM practica INNER JOIN leccion ON
+        practica.tiempo_limite,COUNT(practica_pregunta.id_pregunta_practica) as preguntas,practica.id_practica,practica.numero_practica,practica.nombre_practica,practica.inicio_fecha,inicio_hora,practica.fin_fecha,practica.fin_hora
+        
+        FROM practica_pregunta,practica INNER JOIN leccion ON
         leccion.id_leccion = practica.id_leccion
         INNER JOIN tema ON
         tema.id_tema=leccion.id_tema
@@ -31,7 +32,8 @@ class PracticaController{
         AND tema.estado_tema = true
         AND curso.estado_curso = true
         AND curso_alumno.estado_curso_alumno = true
-        AND alumno.id_alumno=?`;
+        AND alumno.id_alumno=?
+        and practica.id_practica=practica_pregunta.id_practica`;
         Db.query(query,[id,idEstudiante],function(err,result,fields){
             if(err){
                 console.log(err);
@@ -39,8 +41,12 @@ class PracticaController{
                 
             }
             else{
+                if(result[0].tiempo_limite!=null){
+                    result[0].tiempo_limite-=1;
+                };
                 res.status(200).json(
                     {
+                        
                         info:result[0],
                         nota:nota
                     });
@@ -115,7 +121,12 @@ class PracticaController{
                 case 4:
                     preg.respuesta=JSON.parse(preg.respuesta);
                     preg.opciones.sort(practicaController.funci);
-                    break;
+                    break;                
+                case 5:
+                        preg.respuesta=JSON.parse(preg.respuesta);
+                        preg.opciones.sort(practicaController.funci);
+                        preg.respuesta.sort(practicaController.funci);
+                        break;    
                 case 3:
                     preg.respuesta=JSON.parse(preg.respuesta);
                     for(let pregun of preg.respuesta){
@@ -254,7 +265,6 @@ class PracticaController{
         const result2:(arg1:string,arg2:any[])=>Promise<unknown> = util.promisify(Db.query).bind(Db);
         try{
             var row =await result2(query,[id,idAlumno]) as any[];
-            console.log(row);
             var token="";
             const tokenService=new TokenService();
             if(!row[0].practica_dada){
@@ -296,8 +306,6 @@ class PracticaController{
         var ver=true;
         var re1=JSON.parse(re.respuesta);
         var opc=JSON.parse(re.opciones);
-        console.log(re2);
-        console.log(re1);
         switch(re.id_tipo_respuesta){
             case 3:
                 if(re1.length!=re2.respuesta.length){
@@ -347,6 +355,26 @@ class PracticaController{
                 }
                 break;
             case 5:
+                if(re1.length!=re2.respuesta.length||opc.length!=re2.opciones.length){
+                    ver=false;
+                }
+                else{
+                    re1.sort();
+                    opc.sort();
+                    re2.opciones.sort();
+                    re2.respuesta.sort();
+                    ver=true;
+                    for(let i in re1){
+                        if(re1[i]!=re2.respuesta[i]){
+                            ver=false;
+                        }
+                    }
+                    for(let j in opc){
+                        if(opc[j]!=re2.opciones[j]){
+                            ver=false;
+                        }
+                    }
+                }
                 break;
             default:
                 if(re1.length!=re2.respuesta.length){

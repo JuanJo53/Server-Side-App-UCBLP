@@ -1,5 +1,4 @@
 import express, { Application } from 'express';
-import dotenv from 'dotenv';
 import LoginRoutes from './routes/Docente_routes/LoginRoutes';
 import CursoRoutes from './routes/Docente_routes/CursoRoutes';
 import ClassRoutes from './routes/Docente_routes/ClassRoutes';
@@ -25,7 +24,6 @@ import ModuloAlumnoRoutes from './routes/Alumno_routes/ModuloAlumnoRoutes';
 import morgan from 'morgan';
 import cors from 'cors';
 import { ConFirebase } from './FIrebase';
-dotenv.config();
 class Server{ 
 
 
