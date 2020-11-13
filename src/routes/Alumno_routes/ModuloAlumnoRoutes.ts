@@ -12,7 +12,8 @@ class ModuloAlumnoRoutes{
     config():void{
        this.router.get('/students/courses/modules/:id',TokenValidationAlumno,moduloAlumnoController.listarNombreModulos);
        this.router.get('/students/courses/modules/notes/:id',TokenValidationAlumno,moduloAlumnoController.listarNotasModulos);
-       this.router.get('/students/courses/modules/personalized/:id',TokenValidationAlumno,moduloAlumnoController.modulosPersonalizadosSimple);
+       this.router.get('/students/courses/modules/custom/:id',TokenValidationAlumno,moduloAlumnoController.modulosPersonalizadosSimple);
+       this.router.get('/students/courses/modules/custom/score/:id',TokenValidationAlumno,moduloAlumnoController.scoreModuloPersonalizado);
       
     }
 }
