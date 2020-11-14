@@ -18,7 +18,8 @@ public async listarTemas(req:Request,res:Response){
         AND cur.estado_curso = true
         AND ca.estado_curso_alumno = true
         AND alu.estado_alumno = true
-        AND alu.id_alumno = ?`;
+        AND alu.id_alumno = ?
+        ORDER BY tm.numero_tema ASC`;
         Db.query(query,[id,idAlumno],function(err,result,fields){
             if(err){
                 res.status(500).json({text:'Error al cargar los temas'});
