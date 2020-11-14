@@ -3,16 +3,15 @@ import Db from '../../Database';
 
 class LessonController{
     public async agregarLeccion(req: Request, res: Response){
-        
+        console.log(req.body);
         const id = req.body.idTema;
         const numeroLeccion = req.body.numeroLeccion;
         const nombreLeccion = req.body.nombre;
-        const idTipoLeccion = req.body.idTipoLeccion;
         const idImagen=req.body.idImagen;
         const query = `INSERT INTO leccion 
-        (id_tema,numero_leccion,nombre_leccion,estado_leccion,id_tipo_leccion,id_imagen,tx_id,tx_username,tx_host,tx_date)
-        VALUES (?,?,?,true,?,?,1,'root','192.168.0.10',CURRENT_TIMESTAMP())`;
-        Db.query(query,[id,numeroLeccion,nombreLeccion,idTipoLeccion,idImagen],function(err,result,fields){
+        (id_tema,numero_leccion,nombre_leccion,estado_leccion,id_imagen,tx_id,tx_username,tx_host,tx_date)
+        VALUES (?,?,?,true,?,1,'root','192.168.0.10',CURRENT_TIMESTAMP())`;
+        Db.query(query,[id,numeroLeccion,nombreLeccion,idImagen],function(err,result,fields){
             if(err){
                 console.log(err);
                 res.status(500).json({text:'Error al crear nueva lección'});
@@ -26,11 +25,10 @@ class LessonController{
         const id =req.body.id;
         const numeroLeccion = req.body.numeroLeccion;
         const nombreLeccion = req.body.nombre;
-        const idTipoLeccion = req.body.idTipoLeccion;
         const idImagen=req.body.idImagen;
         const estado=req.body.estado;
-        const query = `UPDATE leccion SET numero_leccion=?, nombre_leccion=?, estado_leccion = ?,id_imagen=?,id_tipo_leccion=? WHERE id_leccion= ?`;
-        Db.query(query,[numeroLeccion,nombreLeccion,estado,idImagen,idTipoLeccion,id],function(err,result,fields){
+        const query = `UPDATE leccion SET numero_leccion=?, nombre_leccion=?, estado_leccion = ?,id_imagen=? WHERE id_leccion= ?`;
+        Db.query(query,[numeroLeccion,nombreLeccion,estado,idImagen,id],function(err,result,fields){
             if(err){
                 res.status(500).json({text:'Error al actualizar lección lección'});
                 throw err;

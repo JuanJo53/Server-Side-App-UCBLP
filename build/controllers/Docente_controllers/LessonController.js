@@ -16,15 +16,15 @@ const Database_1 = __importDefault(require("../../Database"));
 class LessonController {
     agregarLeccion(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
+            console.log(req.body);
             const id = req.body.idTema;
             const numeroLeccion = req.body.numeroLeccion;
             const nombreLeccion = req.body.nombre;
-            const idTipoLeccion = req.body.idTipoLeccion;
             const idImagen = req.body.idImagen;
             const query = `INSERT INTO leccion 
-        (id_tema,numero_leccion,nombre_leccion,estado_leccion,id_tipo_leccion,id_imagen,tx_id,tx_username,tx_host,tx_date)
-        VALUES (?,?,?,true,?,?,1,'root','192.168.0.10',CURRENT_TIMESTAMP())`;
-            Database_1.default.query(query, [id, numeroLeccion, nombreLeccion, idTipoLeccion, idImagen], function (err, result, fields) {
+        (id_tema,numero_leccion,nombre_leccion,estado_leccion,id_imagen,tx_id,tx_username,tx_host,tx_date)
+        VALUES (?,?,?,true,?,1,'root','192.168.0.10',CURRENT_TIMESTAMP())`;
+            Database_1.default.query(query, [id, numeroLeccion, nombreLeccion, idImagen], function (err, result, fields) {
                 if (err) {
                     console.log(err);
                     res.status(500).json({ text: 'Error al crear nueva lección' });
@@ -40,11 +40,10 @@ class LessonController {
             const id = req.body.id;
             const numeroLeccion = req.body.numeroLeccion;
             const nombreLeccion = req.body.nombre;
-            const idTipoLeccion = req.body.idTipoLeccion;
             const idImagen = req.body.idImagen;
             const estado = req.body.estado;
-            const query = `UPDATE leccion SET numero_leccion=?, nombre_leccion=?, estado_leccion = ?,id_imagen=?,id_tipo_leccion=? WHERE id_leccion= ?`;
-            Database_1.default.query(query, [numeroLeccion, nombreLeccion, estado, idImagen, idTipoLeccion, id], function (err, result, fields) {
+            const query = `UPDATE leccion SET numero_leccion=?, nombre_leccion=?, estado_leccion = ?,id_imagen=? WHERE id_leccion= ?`;
+            Database_1.default.query(query, [numeroLeccion, nombreLeccion, estado, idImagen, id], function (err, result, fields) {
                 if (err) {
                     res.status(500).json({ text: 'Error al actualizar lección lección' });
                     throw err;
@@ -90,11 +89,9 @@ class LessonController {
         return __awaiter(this, void 0, void 0, function* () {
             const { id } = req.params;
             const idDocente = req.docenteId;
-            const query = `SELECT leccion.estado_leccion,leccion.id_leccion, leccion.numero_leccion, leccion.nombre_leccion,tipo_leccion.id_tipo_leccion,leccion.id_imagen
+            const query = `SELECT leccion.estado_leccion,leccion.id_leccion, leccion.numero_leccion, leccion.nombre_leccion,leccion.id_imagen
                         FROM leccion INNER JOIN tema ON
-                        leccion.id_tema=tema.id_tema
-                        INNER JOIN tipo_leccion ON
-                        tipo_leccion.id_tipo_leccion = leccion.id_tipo_leccion
+                        leccion.id_tema=tema.id_tema          
                         INNER JOIN curso ON
                         curso.id_curso = tema.id_curso 
                         INNER JOIN docente ON 
@@ -102,10 +99,9 @@ class LessonController {
                         WHERE tema.id_tema = ? AND
                         leccion.estado_leccion != false
                         AND tema.estado_tema != false
-                        AND curso.estado_curso =true
-                        AND  tipo_leccion.estado_tipo_leccion=true
+                        AND curso.estado_curso =true                       
                         AND docente.estado_docente = true
-                        AND docente.id_docente = ?
+                        AND docente.id_docente =?
                         ORDER BY leccion.numero_leccion ASC`;
             Database_1.default.query(query, [id, idDocente], function (err, result, fields) {
                 if (err) {

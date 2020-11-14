@@ -359,19 +359,17 @@ class PracticaController{
                     ver=false;
                 }
                 else{
-                    re1.sort();
-                    opc.sort();
-                    re2.opciones.sort();
-                    re2.respuesta.sort();
+                    console.log(re1);
+                    console.log(opc);
+                    console.log(re2.opciones);
+                    console.log(re2.respuesta);
                     ver=true;
                     for(let i in re1){
-                        if(re1[i]!=re2.respuesta[i]){
-                            ver=false;
-                        }
-                    }
-                    for(let j in opc){
-                        if(opc[j]!=re2.opciones[j]){
-                            ver=false;
+                        for(let j in opc){
+                            if(re2.respuesta[i]==re1[j]&&re2.opciones[i]!=opc[j]){
+                                ver=false;
+                                break;
+                            }
                         }
                     }
                 }
