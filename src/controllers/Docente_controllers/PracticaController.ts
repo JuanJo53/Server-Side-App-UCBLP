@@ -177,7 +177,7 @@ public async agregarPractica(req:Request,res:Response){
         if(practica){
             const query =`SELECT practica_pregunta.id_pregunta_practica,practica_pregunta.puntuacion_practica_pregunta,pregunta.id_tipo_pregunta,pregunta.id_tipo_respuesta
             ,practica_pregunta.id_pregunta_practica ,practica_pregunta.id_pregunta,pregunta.codigo_pregunta,
-            practica_pregunta.puntuacion_practica_pregunta,pregunta.pregunta,pregunta.respuesta,pregunta.opciones,pregunta.recurso 
+            practica_pregunta.puntuacion_practica_pregunta,pregunta.pregunta,pregunta.respuesta,pregunta.opciones,pregunta.recurso ,pregunta.id_habilidad
             FROM practica INNER JOIN practica_pregunta ON
             practica.id_practica = practica_pregunta.id_practica
             INNER JOIN pregunta ON
