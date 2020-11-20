@@ -1,6 +1,6 @@
 import{Request,Response} from 'express';
 import Db from '../../Database'; 
-
+import {NotaModuloPersRequest} from '../../model/NotaModuloPersRequest'
 class ModuloAlumnoController{
 public async listarNombreModulos(req:Request,res:Response){
         const {id}=req.params;
@@ -94,7 +94,10 @@ public async listarNombreModulos(req:Request,res:Response){
     public async scoreModuloPersonalizado(req:Request,res:Response){
         const {id}=req.params;
         const idAlumno = req.estudianteId;
-        const query =`SELECT cmp.nombre_contenido,ncon.nota_contenido,cmp.rubrica_contenido,color.valor as color
+        const query =`SELECT cmp.nombre_contenido,
+        ncon.nota_contenido,
+        cmp.rubrica_contenido,
+        color.valor as color
         FROM nota_contenido ncon        
         JOIN contenido_mod_per cmp ON
 		cmp.id_contenido_mod_per=ncon.id_contenido_mod_per
@@ -126,6 +129,7 @@ public async listarNombreModulos(req:Request,res:Response){
                 res.status(500).json({text:'Error al cargar los modulos personalizados'});
             }
             else{
+
                 res.status(200).json(result);
             }
         });  

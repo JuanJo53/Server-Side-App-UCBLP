@@ -110,7 +110,10 @@ class ModuloAlumnoController {
         return __awaiter(this, void 0, void 0, function* () {
             const { id } = req.params;
             const idAlumno = req.estudianteId;
-            const query = `SELECT cmp.nombre_contenido,ncon.nota_contenido,cmp.rubrica_contenido,color.valor as color
+            const query = `SELECT cmp.nombre_contenido,
+        ncon.nota_contenido,
+        cmp.rubrica_contenido,
+        color.valor as color
         FROM nota_contenido ncon        
         JOIN contenido_mod_per cmp ON
 		cmp.id_contenido_mod_per=ncon.id_contenido_mod_per
