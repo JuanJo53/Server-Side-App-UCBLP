@@ -103,7 +103,7 @@ public async agregarPractica(req:Request,res:Response){
     }
     async agregarPreguntaNueva(preguntas:any){  
        try{
-            const query = `insert into pregunta (codigo_pregunta,pregunta,opciones,respuesta,recurso,id_tipo_pregunta,id_tipo_respuesta,estado_pregunta,tx_id,tx_username,tx_host)
+            const query = `insert into pregunta (codigo_pregunta,pregunta,opciones,respuesta,recurso,id_tipo_pregunta,id_tipo_respuesta,id_habilidad,estado_pregunta,tx_id,tx_username,tx_host)
             values ?;`;
             const result:(arg1:string,arg2:any[])=>Promise<unknown> = util.promisify(Db.query).bind(Db);
             var row =await result(query,[preguntas]) as any;
@@ -226,11 +226,12 @@ public async agregarPractica(req:Request,res:Response){
                     var data= preguntasPractica[i];
                     const idTipoPregunta = data.idTipoPregunta;
                     const idTipoRespuesta = data.idTipoRespuesta;
+                    const idHabilidad = data.idHabilidad;
                     const pregunta=data.pregunta;
                     const respuesta=JSON.stringify(data.respuesta);
                     const opciones=JSON.stringify(data.opciones);
                     const recurso=data.recurso;
-                    preguntasNuevas.push([1,pregunta,opciones,respuesta,recurso,idTipoPregunta,idTipoRespuesta,true,1,'root','192.168.0.10']);  
+                    preguntasNuevas.push([1,pregunta,opciones,respuesta,recurso,idTipoPregunta,idTipoRespuesta,idHabilidad,true,1,'root','192.168.0.10']);  
                     var resNuevo=await practicaController.agregarPreguntaNueva(preguntasNuevas);  
                     if(resNuevo){
                         preguntasRepoNuevas.push([resNuevo,idPractica,preguntasPractica[i].puntuacion,true,1,'root','192.168.0.10']);   
@@ -380,11 +381,12 @@ public async agregarPractica(req:Request,res:Response){
                     var data= preguntasPractica[i];
                     const idTipoPregunta = data.idTipoPregunta;
                     const idTipoRespuesta = data.idTipoRespuesta;
+                    const idHabilidad=data.idHabilidad;
                     const pregunta=data.pregunta;
                     const respuesta=JSON.stringify(data.respuesta);
                     const opciones=JSON.stringify(data.opciones);
                     const recurso=data.recurso;
-                    preguntasNuevas.push([1,pregunta,opciones,respuesta,recurso,idTipoPregunta,idTipoRespuesta,true,1,'root','192.168.0.10']);  
+                    preguntasNuevas.push([1,pregunta,opciones,respuesta,recurso,idTipoPregunta,idTipoRespuesta,idHabilidad,true,1,'root','192.168.0.10']);  
                     var resNuevo=await practicaController.agregarPreguntaNueva(preguntasNuevas);  
                     if(resNuevo){
                         preguntasRepoNuevas.push([resNuevo,idPractica,preguntasPractica[i].puntuacion,true,1,'root','192.168.0.10']);   

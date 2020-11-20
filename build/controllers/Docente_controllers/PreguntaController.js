@@ -127,7 +127,7 @@ class PreguntaController {
     listarPreguntasSQL(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const query = `SELECT pregunta.id_pregunta,pregunta.codigo_pregunta,pregunta.id_tipo_pregunta,
-        pregunta.id_tipo_respuesta,pregunta.pregunta,pregunta.respuesta,pregunta.opciones,pregunta.recurso
+        pregunta.id_tipo_respuesta,pregunta.pregunta,pregunta.respuesta,pregunta.opciones,pregunta.recurso,pregunta.id_habilidad
         FROM pregunta
         WHERE pregunta.estado_pregunta=true`;
             Database_1.default.query(query, function (err, result, fields) {

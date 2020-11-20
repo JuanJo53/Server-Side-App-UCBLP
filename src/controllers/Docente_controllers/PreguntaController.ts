@@ -103,7 +103,7 @@ class PreguntaController {
     }
     public async listarPreguntasSQL(req:Request,res:Response){
         const query =`SELECT pregunta.id_pregunta,pregunta.codigo_pregunta,pregunta.id_tipo_pregunta,
-        pregunta.id_tipo_respuesta,pregunta.pregunta,pregunta.respuesta,pregunta.opciones,pregunta.recurso
+        pregunta.id_tipo_respuesta,pregunta.pregunta,pregunta.respuesta,pregunta.opciones,pregunta.recurso,pregunta.id_habilidad
         FROM pregunta
         WHERE pregunta.estado_pregunta=true`;
         Db.query(query,async function(err,result:any[],fields){

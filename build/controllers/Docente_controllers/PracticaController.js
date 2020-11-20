@@ -121,7 +121,7 @@ class PreacticaController {
     agregarPreguntaNueva(preguntas) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const query = `insert into pregunta (codigo_pregunta,pregunta,opciones,respuesta,recurso,id_tipo_pregunta,id_tipo_respuesta,estado_pregunta,tx_id,tx_username,tx_host)
+                const query = `insert into pregunta (codigo_pregunta,pregunta,opciones,respuesta,recurso,id_tipo_pregunta,id_tipo_respuesta,id_habilidad,estado_pregunta,tx_id,tx_username,tx_host)
             values ?;`;
                 const result = util_1.default.promisify(Database_1.default.query).bind(Database_1.default);
                 var row = yield result(query, [preguntas]);
@@ -246,11 +246,12 @@ class PreacticaController {
                         var data = preguntasPractica[i];
                         const idTipoPregunta = data.idTipoPregunta;
                         const idTipoRespuesta = data.idTipoRespuesta;
+                        const idHabilidad = data.idHabilidad;
                         const pregunta = data.pregunta;
                         const respuesta = JSON.stringify(data.respuesta);
                         const opciones = JSON.stringify(data.opciones);
                         const recurso = data.recurso;
-                        preguntasNuevas.push([1, pregunta, opciones, respuesta, recurso, idTipoPregunta, idTipoRespuesta, true, 1, 'root', '192.168.0.10']);
+                        preguntasNuevas.push([1, pregunta, opciones, respuesta, recurso, idTipoPregunta, idTipoRespuesta, idHabilidad, true, 1, 'root', '192.168.0.10']);
                         var resNuevo = yield exports.practicaController.agregarPreguntaNueva(preguntasNuevas);
                         if (resNuevo) {
                             preguntasRepoNuevas.push([resNuevo, idPractica, preguntasPractica[i].puntuacion, true, 1, 'root', '192.168.0.10']);
@@ -404,11 +405,12 @@ class PreacticaController {
                             var data = preguntasPractica[i];
                             const idTipoPregunta = data.idTipoPregunta;
                             const idTipoRespuesta = data.idTipoRespuesta;
+                            const idHabilidad = data.idHabilidad;
                             const pregunta = data.pregunta;
                             const respuesta = JSON.stringify(data.respuesta);
                             const opciones = JSON.stringify(data.opciones);
                             const recurso = data.recurso;
-                            preguntasNuevas.push([1, pregunta, opciones, respuesta, recurso, idTipoPregunta, idTipoRespuesta, true, 1, 'root', '192.168.0.10']);
+                            preguntasNuevas.push([1, pregunta, opciones, respuesta, recurso, idTipoPregunta, idTipoRespuesta, idHabilidad, true, 1, 'root', '192.168.0.10']);
                             var resNuevo = yield exports.practicaController.agregarPreguntaNueva(preguntasNuevas);
                             if (resNuevo) {
                                 preguntasRepoNuevas.push([resNuevo, idPractica, preguntasPractica[i].puntuacion, true, 1, 'root', '192.168.0.10']);
