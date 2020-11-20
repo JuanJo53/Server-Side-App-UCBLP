@@ -15,7 +15,6 @@ class PracticaController{
         const nota=await practicaController.verificarDisponibilidad(Number(id),Number(idEstudiante));
         const query =`SELECT 
         practica.tiempo_limite,COUNT(practica_pregunta.id_pregunta_practica) as preguntas,practica.id_practica,practica.numero_practica,practica.nombre_practica,practica.inicio_fecha,inicio_hora,practica.fin_fecha,practica.fin_hora
-        
         FROM practica_pregunta,practica INNER JOIN leccion ON
         leccion.id_leccion = practica.id_leccion
         INNER JOIN tema ON
