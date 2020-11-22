@@ -698,6 +698,52 @@ class PreacticaController {
             }
         });
     }
+    dataSetPractica(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const idDocente = req.docenteId;
+            const { id } = req.params;
+            const query = `SELECT DISTINCT alu.id_alumno,alu.genero_alumno,alu.edad_alumno,car.carrera
+        FROM carrera car 
+        JOIN alumno alu ON
+        alu.id_alumno = car.id_carrera
+        JOIN curso_alumno ca ON
+        ca.id_alumno = alu.id_alumno
+        JOIN curso cur ON
+        ca.id_curso = cur.id_curso
+        JOIN tema tm ON
+        tm.id_curso = cur.id_curso
+        JOIN leccion lc ON
+        lc.id_tema = tm.id_tema
+        JOIN practica pr ON
+        pr.id_leccion = lc.id_leccion
+        JOIN nota_practica npr ON
+        npr.id_practica = pr.id_practica
+        JOIN docente dc ON
+        cur.id_docente = dc.id_docente
+        WHERE alu.id_alumno = npr.id_alumno
+        AND alu.estado_alumno = true
+        AND car.estado_carrera=true
+        AND ca.estado_curso_alumno=true
+        AND cur.estado_curso = true
+        AND tm.estado_tema =true
+        AND lc.estado_leccion = true
+        AND pr.estado_practica = true
+        AND npr.estado_nota_practica = true
+        AND npr.practica_dada = 1
+        AND pr.id_practica = ?
+        AND dc.id_docente = ?;`;
+            Database_1.default.query(query, [id, idDocente], function (err, result, fields) {
+                return __awaiter(this, void 0, void 0, function* () {
+                    if (err) {
+                        res.status(500).json({ text: 'No se pudo listar los exámenes' });
+                    }
+                    else {
+                        res.status(200).json(result);
+                    }
+                });
+            });
+        });
+    }
 }
 exports.practicaController = new PreacticaController();
 //# sourceMappingURL=PracticaController.js.map

@@ -23,6 +23,7 @@ class PracticaRoutes {
         this.router.delete('/teacher/practice/questions/:id', VerifyToken_1.TokenValidation, PracticaController_1.practicaController.eliminarPreguntaPractica);
         this.router.get('/teacher/practice/scores/:id', VerifyToken_1.TokenValidation, PracticaController_1.practicaController.listarNotasPractica);
         this.router.get('/teacher/practice/scores/individual/:id', VerifyToken_1.TokenValidation, PracticaController_1.practicaController.respuestasEstudiante);
+        this.router.get('/teacher/practice/dataset/:id', PracticaController_1.practicaController.dataSetPractica);
     }
 }
 const practicaRoutes = new PracticaRoutes();
