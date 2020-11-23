@@ -22,7 +22,7 @@ class PracticaRoutes{
         this.router.delete('/teacher/practice/questions/:id',TokenValidation,practicaController.eliminarPreguntaPractica);
         this.router.get('/teacher/practice/scores/:id',TokenValidation,practicaController.listarNotasPractica);
         this.router.get('/teacher/practice/scores/individual/:id',TokenValidation,practicaController.respuestasEstudiante);
-        this.router.get('/teacher/practice/dataset/:id',practicaController.dataSetPractica);
+        this.router.get('/teacher/dataset',TokenValidation,practicaController.dataSetPractica);
     }
 }
 const practicaRoutes=new PracticaRoutes();

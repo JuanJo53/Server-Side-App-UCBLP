@@ -674,43 +674,81 @@ public async agregarPractica(req:Request,res:Response){
     }
     public async dataSetPractica(req: Request,res:Response){
         const idDocente = req.docenteId;
-        const {id}=req.params;
-        const query =`SELECT DISTINCT alu.id_alumno,alu.genero_alumno,alu.edad_alumno,car.carrera
-        FROM carrera car 
-        JOIN alumno alu ON
-        alu.id_alumno = car.id_carrera
-        JOIN curso_alumno ca ON
-        ca.id_alumno = alu.id_alumno
-        JOIN curso cur ON
-        ca.id_curso = cur.id_curso
-        JOIN tema tm ON
-        tm.id_curso = cur.id_curso
-        JOIN leccion lc ON
-        lc.id_tema = tm.id_tema
-        JOIN practica pr ON
-        pr.id_leccion = lc.id_leccion
-        JOIN nota_practica npr ON
-        npr.id_practica = pr.id_practica
-        JOIN docente dc ON
-        cur.id_docente = dc.id_docente
-        WHERE alu.id_alumno = npr.id_alumno
-        AND alu.estado_alumno = true
-        AND car.estado_carrera=true
-        AND ca.estado_curso_alumno=true
-        AND cur.estado_curso = true
-        AND tm.estado_tema =true
-        AND lc.estado_leccion = true
-        AND pr.estado_practica = true
-        AND npr.estado_nota_practica = true
-        AND npr.practica_dada = 1
-        AND pr.id_practica = ?
-        AND dc.id_docente = ?;`;
-        Db.query(query,[id,idDocente],async function(err,result,fields){
+        const query =`SELECT alu.id_alumno,alu.genero_alumno,alu.edad_alumno,car.carrera,COUNT(IF(hab.id_habilidad=1,1,null)) as "L",
+        COUNT(IF(hab.id_habilidad=2,1,null)) as "R",COUNT(IF(hab.id_habilidad=3,1,null)) as "G",COUNT(IF(hab.id_habilidad=4,1,null)) as "V",
+        iF(AVG(npr.nota_practica)>51,"Si","No") approved
+                FROM carrera car 
+                JOIN alumno alu ON
+                alu.id_alumno = car.id_carrera
+                JOIN curso_alumno ca ON
+                ca.id_alumno = alu.id_alumno
+                JOIN curso cur ON
+                ca.id_curso = cur.id_curso
+                JOIN tema tm ON
+                tm.id_curso = cur.id_curso
+                JOIN leccion lc ON
+                lc.id_tema = tm.id_tema
+                JOIN practica pr ON
+                pr.id_leccion = lc.id_leccion
+                JOIN nota_practica npr ON
+                npr.id_practica = pr.id_practica
+                JOIN practica_pregunta prpr ON
+                prpr.id_practica=pr.id_practica 
+                JOIN pregunta preg on
+                preg.id_pregunta=prpr.id_pregunta
+                JOIN habilidad hab on
+                hab.id_habilidad=preg.id_habilidad
+                JOIN pregunta_respuesta pregres on
+                (pregres.id_pregunta_practica=prpr.id_pregunta_practica
+                and pregres.id_alumno=alu.id_alumno)    
+                JOIN docente dc ON
+                cur.id_docente = dc.id_docente
+                WHERE alu.id_alumno = npr.id_alumno
+                AND alu.estado_alumno = true
+                AND car.estado_carrera=true
+                AND ca.estado_curso_alumno=true
+                AND cur.estado_curso = true
+                AND tm.estado_tema =true
+                AND lc.estado_leccion = true
+                AND pr.estado_practica = true
+                AND npr.estado_nota_practica = true
+                AND preg.estado_pregunta = true
+                AND hab.estado = true
+                AND pregres.estado_pregunta_respuesta=true
+                AND npr.practica_dada = 1
+                AND dc.id_docente = ?
+                AND pregres.puntaje=0
+                GROUP BY alu.id_alumno;`;
+        Db.query(query,[idDocente],async function(err,result,fields){
             if(err){
                 res.status(500).json({text:'No se pudo listar los exámenes'});
             }
-            else{
-               
+            else{ 
+                var menor="";
+                for(let fila of result){
+                    if(fila["L"]<fila["R"]&&fila["L"]<fila["V"]&&fila["L"]<fila["G"]){
+                        menor="Listening";   
+                    }
+                    else{
+                        if(fila["R"]<fila["L"]&&fila["R"]<fila["V"]&&fila["R"]<fila["G"]){
+                            menor="Reading";   
+                        }
+                        else{
+                            if(fila["V"]<fila["L"]&&fila["V"]<fila["R"]&&fila["V"]<fila["G"]){
+                                menor="Vocabulary";   
+                            }
+                            else{
+                                menor="Grammar";
+                            }
+                        }
+                    }
+                    delete fila["L"];
+                    delete fila["V"];
+                    delete fila["G"];
+                    delete fila["R"];
+                    fila["weak_skill"]=menor;
+                }
+                
                 res.status(200).json(result);
             }
         });   
