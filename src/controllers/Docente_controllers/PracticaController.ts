@@ -674,7 +674,7 @@ public async agregarPractica(req:Request,res:Response){
     }
     public async dataSetPractica(req: Request,res:Response){
         const idDocente = req.docenteId;
-        const query =`SELECT alu.id_alumno,alu.genero_alumno,alu.edad_alumno,car.carrera,COUNT(IF(hab.id_habilidad=1,1,null)) as "L",
+        const query =`SELECT alu.genero_alumno,alu.edad_alumno,car.carrera,COUNT(IF(hab.id_habilidad=1,1,null)) as "L",
         COUNT(IF(hab.id_habilidad=2,1,null)) as "R",COUNT(IF(hab.id_habilidad=3,1,null)) as "G",COUNT(IF(hab.id_habilidad=4,1,null)) as "V",
         iF(AVG(npr.nota_practica)>51,"Si","No") approved
                 FROM carrera car 
