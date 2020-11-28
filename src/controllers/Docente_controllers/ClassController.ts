@@ -6,8 +6,10 @@ class ClassController {
 
     public async listaAlumnos(req: Request, res: Response) {
         const { id } = req.params;
+        const lim=Number(req.query["lim"]);
+        const ini=Number(req.query["ini"]);
         const idDocente = req.docenteId;
-        const query = `select curso_alumno.id_curso_alumno ,alumno.id_alumno, alumno.nombre_alumno, alumno.ap_paterno_alumno,alumno.ap_materno_alumno, sum(nota_modulo.nota_modulo*modulo.rubrica/100) as 'nota'
+        const query = `select SQL_CALC_FOUND_ROWS curso_alumno.* ,curso_alumno.id_curso_alumno ,alumno.id_alumno, alumno.nombre_alumno, alumno.ap_paterno_alumno,alumno.ap_materno_alumno, sum(nota_modulo.nota_modulo*modulo.rubrica/100) as 'nota'
         from curso_alumno inner join alumno on 
         curso_alumno.id_alumno = alumno.id_alumno
         inner join nota_modulo on
@@ -28,10 +30,17 @@ class ClassController {
         and curso_alumno.estado_curso_alumno=true
         AND docente.estado_docente = true
         group by curso_alumno.id_alumno , curso_alumno.id_curso_alumno
-        order by alumno.ap_paterno_alumno;`;
-        await Db.query(query, [id,idDocente], function (err, result, fields) {
-            if (err) throw err;
-            res.json(result);
+        order by alumno.ap_paterno_alumno
+        limit ? offset ?;SELECT FOUND_ROWS() as total;
+        `;
+        await Db.query(query, [id,idDocente,lim,ini], async function (err, result, fields){
+            if (err) {
+                res.status(500).json("error");
+            }
+            else{
+                console.log(result[1]);
+                res.json({data:result[0],total:result[1][0].total}); 
+            }
         });
     }
     public async bajaAlumnoCurso(req: Request, res: Response) {
