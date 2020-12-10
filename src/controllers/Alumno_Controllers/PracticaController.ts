@@ -118,14 +118,17 @@ class PracticaController{
             console.log(row);
             for(let preg of row){
                preg.opciones=JSON.parse(preg.opciones);
-
+             var tiempoRecurso=tiempo.minutos;
+             if(tiempoRecurso>=10000){
+                 tiempoRecurso=10000;
+             }
                if(preg.id_habilidad==1){
-                var url=await recursoController.getUrlViewResourcePractice(preg.recurso,tiempo.minutos);
+                var url=await recursoController.getUrlViewResourcePractice(preg.recurso,tiempoRecurso);
                 console.log(url);
                 preg.recurso=url[0];
                 }
                 else if(preg.id_habilidad==2){
-                    var url=await recursoController.getUrlViewResourcePractice(preg.recurso,tiempo.minutos);
+                    var url=await recursoController.getUrlViewResourcePractice(preg.recurso,tiempoRecurso);
                     preg.recurso=url;
                 }
                 else {
