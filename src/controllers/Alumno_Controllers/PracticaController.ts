@@ -75,7 +75,8 @@ class PracticaController{
         AND tema.estado_tema = true
         AND curso.estado_curso = true
         AND curso_alumno.estado_curso_alumno = true
-        AND alumno.id_alumno=?`;
+        AND alumno.id_alumno=?
+        ORDER BY practica.inicio_fecha DESC`;
         Db.query(query,[id,idEstudiante],function(err,result,fields){
             if(err){
                 console.log(err);
