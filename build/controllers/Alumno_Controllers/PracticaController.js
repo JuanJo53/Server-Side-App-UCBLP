@@ -23,6 +23,7 @@ const Database_1 = __importDefault(require("../../Database"));
 const firebase = __importStar(require("firebase-admin"));
 const util_1 = __importDefault(require("util"));
 const tokenService_1 = require("../../libs/tokenService");
+const RecursoController_1 = require("../Docente_controllers/RecursoController");
 class PracticaController {
     infoPractica(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -111,7 +112,7 @@ class PracticaController {
             const dispo = yield exports.practicaController.verificarDisponibilidad(Number(id), Number(idAlumno));
             console.log(dispo);
             if (dispo === "bien") {
-                const query = `SELECT practica_pregunta.puntuacion_practica_pregunta,pregunta.id_tipo_pregunta,pregunta.id_tipo_respuesta
+                const query = `SELECT pregunta.id_habilidad,practica_pregunta.puntuacion_practica_pregunta,pregunta.id_tipo_pregunta,pregunta.id_tipo_respuesta
         ,practica_pregunta.id_pregunta_practica ,practica_pregunta.id_pregunta,pregunta.codigo_pregunta,
         practica_pregunta.puntuacion_practica_pregunta,pregunta.pregunta,pregunta.respuesta,pregunta.opciones,pregunta.recurso 
         FROM practica INNER JOIN practica_pregunta ON
@@ -132,6 +133,18 @@ class PracticaController {
                         console.log(row);
                         for (let preg of row) {
                             preg.opciones = JSON.parse(preg.opciones);
+                            if (preg.id_habilidad == 1) {
+                                var url = yield RecursoController_1.recursoController.getUrlViewResourcePractice(preg.recurso, tiempo.minutos);
+                                console.log(url);
+                                preg.recurso = url[0];
+                            }
+                            else if (preg.id_habilidad == 2) {
+                                var url = yield RecursoController_1.recursoController.getUrlViewResourcePractice(preg.recurso, tiempo.minutos);
+                                preg.recurso = url;
+                            }
+                            else {
+                                preg.recurso = null;
+                            }
                             switch (preg.id_tipo_respuesta) {
                                 case 4:
                                     preg.respuesta = JSON.parse(preg.respuesta);

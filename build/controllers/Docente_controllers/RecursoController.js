@@ -30,7 +30,7 @@ class RecursoController {
             const url = yield a.file(ubicacion).getSignedUrl({
                 action: "read",
                 version: "v4",
-                expires: Date.now() + 100 * 60 * 60 * timeMin,
+                expires: Date.now() + 1000 * 60 * timeMin,
             });
             return url;
         });

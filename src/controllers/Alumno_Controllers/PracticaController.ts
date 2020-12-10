@@ -5,6 +5,7 @@ import {Pregunta} from '../../model/Pregunta';
 import storage from '../../Storage'
 import util from 'util'
 import { TokenService } from '../../libs/tokenService';
+import { recursoController } from '../Docente_controllers/RecursoController';
 
 
 class PracticaController{
@@ -96,7 +97,7 @@ class PracticaController{
         const dispo=await practicaController.verificarDisponibilidad(Number(id),Number(idAlumno)); 
         console.log(dispo);      
         if(dispo==="bien"){
-        const query =`SELECT practica_pregunta.puntuacion_practica_pregunta,pregunta.id_tipo_pregunta,pregunta.id_tipo_respuesta
+        const query =`SELECT pregunta.id_habilidad,practica_pregunta.puntuacion_practica_pregunta,pregunta.id_tipo_pregunta,pregunta.id_tipo_respuesta
         ,practica_pregunta.id_pregunta_practica ,practica_pregunta.id_pregunta,pregunta.codigo_pregunta,
         practica_pregunta.puntuacion_practica_pregunta,pregunta.pregunta,pregunta.respuesta,pregunta.opciones,pregunta.recurso 
         FROM practica INNER JOIN practica_pregunta ON
@@ -117,6 +118,20 @@ class PracticaController{
             console.log(row);
             for(let preg of row){
                preg.opciones=JSON.parse(preg.opciones);
+
+               if(preg.id_habilidad==1){
+                var url=await recursoController.getUrlViewResourcePractice(preg.recurso,tiempo.minutos);
+                console.log(url);
+                preg.recurso=url[0];
+                }
+                else if(preg.id_habilidad==2){
+                    var url=await recursoController.getUrlViewResourcePractice(preg.recurso,tiempo.minutos);
+                    preg.recurso=url;
+                }
+                else {
+                    preg.recurso=null;
+                }
+                
                switch(preg.id_tipo_respuesta){
                 case 4:
                     preg.respuesta=JSON.parse(preg.respuesta);
