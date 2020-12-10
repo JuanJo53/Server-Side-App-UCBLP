@@ -102,26 +102,29 @@ class PreguntaController {
 
     }
     public async listarPreguntasSQL(req:Request,res:Response){
-        const query =`SELECT pregunta.id_pregunta,pregunta.codigo_pregunta,pregunta.id_tipo_pregunta,
+        const lim=Number(req.query["lim"]);
+        const ini=Number(req.query["ini"]);
+        const query =`SELECT SQL_CALC_FOUND_ROWS pregunta.* ,pregunta.id_pregunta,pregunta.codigo_pregunta,pregunta.id_tipo_pregunta,
         pregunta.id_tipo_respuesta,pregunta.pregunta,pregunta.respuesta,pregunta.opciones,pregunta.recurso,pregunta.id_habilidad
         FROM pregunta
-        WHERE pregunta.estado_pregunta=true`;
-        Db.query(query,async function(err,result:any[],fields){
+        WHERE pregunta.estado_pregunta=true
+        limit ? offset ?;SELECT FOUND_ROWS() as total;`;
+        Db.query(query,[lim,ini],async function(err,result:any[],fields){
             if(err){
                 console.log("1"+err);
                 res.status(500).json({text:'No se pudo listar las preguntas'});
             }
             else{
                 var result2=[];
-                for(let res in result){
-                    if(result[res].codigo_pregunta==="1"){
-                        result[res].respuesta=JSON.parse(result[res].respuesta);
-                        result[res].opciones=JSON.parse(result[res].opciones);
-                        console.log(result[res]);
-                        result2.push(result[res]);
+                for(let res in result[0]){
+                    console.log("1asdf"+result[0][res].opciones);
+                    if(result[0][res].codigo_pregunta==="1"){
+                        result[0][res].respuesta=JSON.parse(result[0][res].respuesta);
+                        result[0][res].opciones=JSON.parse(result[0][res].opciones);
+                        result2.push(result[0][res]);
                     }
                 }
-                res.status(200).json(result2);
+                res.status(200).json({data:result[0],total:result[1][0].total});
                 
                 
             }
