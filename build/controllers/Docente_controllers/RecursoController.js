@@ -24,6 +24,54 @@ class RecursoController {
         }
         return autoId;
     }
+    getUrlViewResourcePractice(ubicacion, timeMin) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const a = yield Storage_1.default.bucket("archivos-idiomas");
+            const url = yield a.file(ubicacion).getSignedUrl({
+                action: "read",
+                version: "v4",
+                expires: Date.now() + 100 * 60 * 60 * timeMin,
+            });
+            return url;
+        });
+    }
+    deleteResourcePractice(ubicacion) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const a = yield Storage_1.default.bucket("archivos-idiomas");
+                yield a.file(ubicacion).delete();
+                return true;
+            }
+            catch (e) {
+                return false;
+            }
+        });
+    }
+    getUrlResourcePractice(type) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const a = yield Storage_1.default.bucket("archivos-idiomas");
+            const nombre = exports.recursoController.generateId();
+            var date = String(Date.now());
+            switch (type) {
+                case 1:
+                    const urlAudio = yield a.file("audio/" + nombre + date).getSignedUrl({
+                        action: "write",
+                        version: "v4",
+                        expires: Date.now() + 100 * 60 * 60 * 20,
+                    });
+                    return { url: urlAudio, route: "audio/" + nombre + date };
+                case 2:
+                    const urlVideo = yield a.file("doc/" + nombre + date).getSignedUrl({
+                        action: "write",
+                        version: "v4",
+                        expires: Date.now() + 100 * 60 * 60 * 20,
+                    });
+                    return { url: urlVideo, route: "doc/" + nombre + date };
+                default:
+                    return null;
+            }
+        });
+    }
     crearImaasdf(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             var filename = './src/archivos/asdf.jpg';

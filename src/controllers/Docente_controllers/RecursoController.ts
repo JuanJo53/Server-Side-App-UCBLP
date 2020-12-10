@@ -3,6 +3,7 @@ import Db from '../../Database';
 import * as firebase from 'firebase-admin';
 import {Pregunta} from '../../model/Pregunta';
 import storage from '../../Storage'
+import { isYieldExpression } from 'typescript';
 
 class RecursoController{
     private generateId():string{
@@ -16,6 +17,61 @@ class RecursoController{
       
         return autoId;
       }    
+public async getUrlViewResourcePractice(ubicacion:string,timeMin:number){
+    
+        const a=await storage.bucket("archivos-idiomas");
+            const url=await a.file(ubicacion).getSignedUrl({
+    
+                action:"read",
+                version:"v4",
+                expires:Date.now()+100*60*60*timeMin,  
+                });
+        return url     
+        
+    }    
+public async deleteResourcePractice(ubicacion:string){
+    try{
+
+        const a=await storage.bucket("archivos-idiomas");
+        await a.file(ubicacion).delete();
+        return true;  
+    }
+    catch(e){
+        return false;
+    }
+        
+    }       
+public async getUrlResourcePractice(type:number){
+    
+    const a=await storage.bucket("archivos-idiomas");
+    const nombre=recursoController.generateId()
+    var date=String(Date.now());
+    switch(type){
+        case 1:
+
+            const urlAudio=await a.file("audio/"+nombre+date).getSignedUrl({
+
+                action:"write",
+                version:"v4",
+                expires:Date.now()+100*60*60*20,  
+    
+    
+                });
+            return {url:urlAudio,route:"audio/"+nombre+date};    
+        case 2:
+            const urlVideo=await a.file("doc/"+nombre+date).getSignedUrl({
+
+                action:"write",
+                version:"v4",
+                expires:Date.now()+100*60*60*20,  
+    
+    
+                });
+            return {url:urlVideo,route:"doc/"+nombre+date}; 
+        default:
+            return null;        
+    }
+}
 public async crearImaasdf(req:Request,res:Response){
     var filename = './src/archivos/asdf.jpg';
     const bucketName = 'bucket-name';

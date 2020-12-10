@@ -4,6 +4,7 @@ import * as firebase from 'firebase-admin';
 import {Pregunta} from '../../model/Pregunta';
 import storage from '../../Storage'
 import util from 'util'
+import { recursoController } from './RecursoController';
 
 
 class PreacticaController{
@@ -43,8 +44,8 @@ public async agregarPractica(req:Request,res:Response){
             }
             else{
                 var resPract=await practicaController.agregarPreguntasPracticaSQL(result.insertId,preguntas);
-                if(resPract){
-                    res.status(200).json({text:'Se creo la practica correctamente'});
+                if(resPract!=null){
+                    res.status(200).json({recursos:resPract});
                 }
                 else{
                     res.status(500).json({text:'Error al crear la práctica '});
@@ -194,6 +195,18 @@ public async agregarPractica(req:Request,res:Response){
                     for(let preg of row){
                     preg.opciones=JSON.parse(preg.opciones);
                     preg.respuesta=JSON.parse(preg.respuesta);
+                    
+                    if(preg.id_habilidad==1){
+                        var url=await recursoController.getUrlViewResourcePractice(preg.recurso,120);
+                        preg.recurso=url;
+                    }
+                    else if(preg.id_habilidad==2){
+                        var url=await recursoController.getUrlViewResourcePractice(preg.recurso,120);
+                        preg.recurso=url;
+                    }
+                    else {
+                        preg.recurso=null;
+                    }
                     }
                     res.status(200).json({practica,preguntas:row});
                 }
@@ -213,15 +226,18 @@ public async agregarPractica(req:Request,res:Response){
             const preguntasPractica = preguntas;
             var correcto=true;
             try{
+                var resourcesList=[];
                 const preguntasRepo = [];
                 const preguntasRepoNuevas = [];
                                 
+            
                 for(let i=0;i<preguntasPractica.length;i++){
                     var tipo_req=preguntasPractica[i].tipo;
                 if(tipo_req==1){    
                     preguntasRepo.push([preguntasPractica[i].id,idPractica,preguntasPractica[i].puntuacion,true,1,'root','192.168.0.10']);    
                 }  
                 else{
+
                     const preguntasNuevas = [];
                     var data= preguntasPractica[i];
                     const idTipoPregunta = data.idTipoPregunta;
@@ -230,7 +246,20 @@ public async agregarPractica(req:Request,res:Response){
                     const pregunta=data.pregunta;
                     const respuesta=JSON.stringify(data.respuesta);
                     const opciones=JSON.stringify(data.opciones);
-                    const recurso=data.recurso;
+                    var recurso=data.recurso;
+                    if(idHabilidad==1){
+                        recurso=await recursoController.getUrlResourcePractice(1);
+                        resourcesList.push(recurso["url"]);
+                        recurso=recurso["route"];
+                    }
+                    else if(idHabilidad==2){
+                        recurso=await recursoController.getUrlResourcePractice(2);
+                        resourcesList.push(recurso["url"]);
+                        recurso=recurso["route"];
+                    }
+                    else {
+                        recurso=null;
+                    }
                     preguntasNuevas.push([1,pregunta,opciones,respuesta,recurso,idTipoPregunta,idTipoRespuesta,idHabilidad,true,1,'root','192.168.0.10']);  
                     var resNuevo=await practicaController.agregarPreguntaNueva(preguntasNuevas);  
                     if(resNuevo){
@@ -249,14 +278,14 @@ public async agregarPractica(req:Request,res:Response){
                         await practicaController.agregarPreguntaRepo(preguntasRepoNuevas); 
                     }     
                     await practicaController.agregarNotaPractica(idPractica);  
-                    return true;
+                    return resourcesList;
                                          
                 } 
                 
             }
             catch(e){
                console.log(e); 
-               return false;
+               return null;
             }  
     }
     public async agregarPreguntasPractica(req:Request,res: Response){        
@@ -339,8 +368,8 @@ public async agregarPractica(req:Request,res:Response){
         try{
             if(preguntasEli.length>0){
                 const queryEl="UPDATE practica_pregunta SET estado_pregunta_practica = 0 WHERE id_pregunta_practica IN (?)"
-            const result2:(arg1:string,arg2?:any[])=>Promise<unknown> = util.promisify(Db.query).bind(Db);
-            await result2(queryEl,[preguntasEli]) as any[];
+                const result2:(arg1:string,arg2?:any[])=>Promise<unknown> = util.promisify(Db.query).bind(Db);
+                await result2(queryEl,[preguntasEli]) as any[];
             }
             return true;
         }
@@ -369,7 +398,7 @@ public async agregarPractica(req:Request,res:Response){
             const preguntasRepo = [];
             const preguntasRepoNuevas = [];
             const promises = [];
-                            
+            var resourcesList=[];                
             for(let i=0;i<preguntasPractica.length;i++){
                 var tipo_req=preguntasPractica[i].tipo;
             if(tipo_req==1){    
@@ -385,7 +414,27 @@ public async agregarPractica(req:Request,res:Response){
                     const pregunta=data.pregunta;
                     const respuesta=JSON.stringify(data.respuesta);
                     const opciones=JSON.stringify(data.opciones);
-                    const recurso=data.recurso;
+                    var recurso=data.recurso;
+                    var recPar=String(recurso).split("/");
+                    var codigo=recPar[recPar.length-1].split("?");
+                    if(String(recurso).substring(0,30)==="https://storage.googleapis.com"){
+                        recurso=recPar[recPar.length-2]+"/"+codigo[0];
+                    }
+                    else{
+                        if(idHabilidad==1){
+                            recurso=await recursoController.getUrlResourcePractice(1);
+                            resourcesList.push(recurso["url"]);
+                            recurso=recurso["route"];
+                        }
+                        else if(idHabilidad==2){
+                            recurso=await recursoController.getUrlResourcePractice(2);
+                            resourcesList.push(recurso["url"]);
+                            recurso=recurso["route"];
+                        }
+                        else {
+                            recurso=null;
+                        }
+                    }
                     preguntasNuevas.push([1,pregunta,opciones,respuesta,recurso,idTipoPregunta,idTipoRespuesta,idHabilidad,true,1,'root','192.168.0.10']);  
                     var resNuevo=await practicaController.agregarPreguntaNueva(preguntasNuevas);  
                     if(resNuevo){
@@ -398,7 +447,7 @@ public async agregarPractica(req:Request,res:Response){
                 else{
                     if(tipo_req==2){              
                         promises.push(practicaController.actualizarPregunta(preguntasPractica[i]))
-                        }
+                    }
                 }
             }
             }
@@ -414,7 +463,8 @@ public async agregarPractica(req:Request,res:Response){
                 if(preguntasRepoNuevas.length!=0){                      
                     await practicaController.agregarPreguntaRepo(preguntasRepoNuevas); 
                 }     
-                return true;
+                console.log(resourcesList);
+                return resourcesList;
                                         
             } 
             else{
@@ -459,7 +509,7 @@ public async agregarPractica(req:Request,res:Response){
             var pregEli=await practicaController.eliminarPreguntas(req.body.preguntasEli);
             var pregRes=await practicaController.modificarPreguntas(preguntas,idPractica);
             if(pregEli&&pregRes){
-                res.status(200).json("Practica modificada correctamente");
+                res.status(200).json({recursos:pregRes});
             }
             else{
                 res.status(500).json("No se pudo modificar la practica");
