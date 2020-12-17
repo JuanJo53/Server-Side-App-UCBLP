@@ -27,6 +27,7 @@ class PracticaController{
         INNER JOIN alumno ON
         curso_alumno.id_alumno = alumno.id_alumno
         WHERE practica.id_practica=?
+        AND practica_pregunta.estado_pregunta_practica=1
         AND practica.estado_practica=true
         AND leccion.estado_leccion = true
         AND tema.estado_tema = true
