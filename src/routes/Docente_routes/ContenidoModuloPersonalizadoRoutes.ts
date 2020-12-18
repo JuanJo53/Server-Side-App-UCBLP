@@ -10,7 +10,7 @@ class ContenidoModuloPersonalizadoRoutes{
     }
     //configurar respuesta routas
     config():void{
-        this.router.post('/teacher/cutson/module/content/get',TokenValidation,contenidoModuloPersonalizadoController.listarContenido);
+        this.router.get('/teacher/cutson/module/content/:id',TokenValidation,contenidoModuloPersonalizadoController.listarContenido);
         this.router.post('/teacher/cutson/module/content',TokenValidation,contenidoModuloPersonalizadoController.agregarContenido);
         this.router.post('/teacher/cutson/module/content/rubric',TokenValidation,contenidoModuloPersonalizadoController.actualizarRubricas);
         this.router.put('/teacher/cutson/module/content',TokenValidation,contenidoModuloPersonalizadoController.modificarContenido);

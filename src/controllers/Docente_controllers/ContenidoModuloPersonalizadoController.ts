@@ -212,10 +212,19 @@ class ContenidoModuloPersonalizadoController {
 
     }
     public async listarContenido(req: Request, res: Response) {
-        const idCurso = req.body.idCurso;
-        const idModulo = req.body.idModulo;
+        const idModulo = req.params["id"];
         const idDocente =req.docenteId;
-        const query = `SELECT modu.id_color, cont.id_contenido_mod_per, cont.numero_contenido,cont.nombre_contenido,cont.rubrica_contenido
+        const queryTitulo = `SELECT modu.nombre_modulo,modu.id_color
+        FROM  modulo modu 
+        JOIN curso cur ON
+        cur.id_curso = modu.id_curso
+        JOIN docente dc ON
+        dc.id_docente = cur.id_docente
+        WHERE cur.estado_curso=true
+        AND modu.estado_modulo!=0
+        AND modu.id_modulo= ?
+        AND dc.id_docente = ?`;
+        const query = `SELECT cont.id_contenido_mod_per, cont.numero_contenido,cont.nombre_contenido,cont.rubrica_contenido
         FROM contenido_mod_per cont
         JOIN modulo modu ON
         cont.id_modulo=modu.id_modulo
@@ -226,17 +235,28 @@ class ContenidoModuloPersonalizadoController {
         WHERE cur.estado_curso=true
         AND modu.estado_modulo!=0
         AND cont.estado_contenido_mod_per!=0
-        AND cur.id_curso = ?
         AND modu.id_modulo= ?
         AND dc.id_docente = ?`;
-        Db.query(query,[idCurso,idModulo,idDocente], function (err, result, fields) {
-            if (err) {
-                res.status(500).json({ text: 'Error al eliminar contenido'});
-            }
-            else {
-                res.status(200).json(result);
-            }
-        });
+        
+        try{
+            const result:(arg1:string,arg2?:any[])=>Promise<unknown> = util.promisify(Db.query).bind(Db);
+            var row =await result(queryTitulo,[idModulo,idDocente]) as any[];  
+            console.log(row);
+            Db.query(query,[idModulo,idDocente], function (err, result, fields) {
+                if (err) {
+                    console.log(err);
+                    res.status(500).json({ text: 'Error al eliminar contenido'});
+                }
+                else {
+                    res.status(200).json({nombre_modulo:row[0].nombre_modulo,id_color:row[0].id_color,contenido:result});
+                }
+            });
+        }
+        catch(err){
+            console.log(err);
+            res.status(500).json({ text: 'Error al eliminar contenido'});
+
+        }
     }
     public async agregarNotaAContenido(req: Request, res: Response) {
         const idContenidoModPer = req.body.idContenidoModPer;

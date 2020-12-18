@@ -11,7 +11,7 @@ class ContenidoModuloPersonalizadoRoutes {
     ;
     //configurar respuesta routas
     config() {
-        this.router.post('/teacher/cutson/module/content/get', VerifyToken_1.TokenValidation, ContenidoModuloPersonalizadoController_1.contenidoModuloPersonalizadoController.listarContenido);
+        this.router.get('/teacher/cutson/module/content/:id', VerifyToken_1.TokenValidation, ContenidoModuloPersonalizadoController_1.contenidoModuloPersonalizadoController.listarContenido);
         this.router.post('/teacher/cutson/module/content', VerifyToken_1.TokenValidation, ContenidoModuloPersonalizadoController_1.contenidoModuloPersonalizadoController.agregarContenido);
         this.router.post('/teacher/cutson/module/content/rubric', VerifyToken_1.TokenValidation, ContenidoModuloPersonalizadoController_1.contenidoModuloPersonalizadoController.actualizarRubricas);
         this.router.put('/teacher/cutson/module/content', VerifyToken_1.TokenValidation, ContenidoModuloPersonalizadoController_1.contenidoModuloPersonalizadoController.modificarContenido);
